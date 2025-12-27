@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+/* Tambahkan baris di bawah ini untuk Flowbite */
+@source "../../node_modules/flowbite/**/*.js";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source "../**/*.blade.php";
+@source "../**/*.js";
+@source "../**/*.vue";
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    --font-qwitcher: 'Qwitcher Grypen', cursive;
+    /* Tambahkan custom color primary di sini jika ingin menggunakan class text-primary */
+    --color-primary: #EAB308;
+}
