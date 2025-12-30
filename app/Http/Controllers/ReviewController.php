@@ -3,49 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
-use App\Models\Gallery;
+// Gallery sudah tidak perlu di-import jika hanya digunakan untuk store review
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    // TAMBAHKAN INI MASSEH
     public function index()
     {
-        // Mengambil semua review, urutkan dari yang terbaru
         $reviews = Review::latest()->get();
-        
-        // Arahkan ke file view (pastikan file resources/views/reviews.blade.php sudah ada)
         return view('reviews', compact('reviews'));
     }
 
     public function store(Request $request)
     {
-        // ... kode store yang tadi sudah kita buat ...
         $request->validate([
             'name' => 'required|string|max:255',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi tiap file
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('reviews', 'public');
-
-            Gallery::create([
-                'title' => 'Review dari ' . $request->name,
-                'image' => $imagePath,
-                'category' => 'customer',
-                'description' => $request->comment,
-                'uploaded_by' => $request->name,
-            ]);
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('reviews', 'public');
+            }
         }
 
         Review::create([
             'name' => $request->name,
             'rating' => $request->rating,
             'comment' => $request->comment,
-            'image' => $imagePath,
+            'image' => $imagePaths, // Simpan sebagai array
         ]);
 
         return redirect()->back()->with('success', 'Review berhasil dikirim!');

@@ -10,4 +10,8 @@ class Review extends Model
 
     // Tambahkan 'rating' di sini
     protected $fillable = ['name', 'comment', 'rating', 'image', 'is_approved'];
+
+    protected $casts = [
+        'image' => 'array', // Tambahkan ini agar Laravel otomatis mengubah JSON ke Array
+    ];
 }

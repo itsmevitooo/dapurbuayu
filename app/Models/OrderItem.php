@@ -11,13 +11,13 @@ class OrderItem extends Model
 
     protected $fillable = [
         'order_id',
+        'paket_id', // Ini tetap paket_id (sebagai foreign key)
         'item_name',
         'quantity',
         'price_per_item',
         'side_dish',
     ];
 
-    // Otomatis konversi json side_dish menjadi array saat diakses
     protected $casts = [
         'side_dish' => 'array',
     ];
@@ -25,5 +25,15 @@ class OrderItem extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /**
+     * Relasi ke tabel products
+     * Masseh ganti 'Paket::class' menjadi 'Product::class' 
+     * karena tabelnya sekarang bernama 'products'.
+     */
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'paket_id');
     }
 }

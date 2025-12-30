@@ -17,7 +17,6 @@
                 </h3>
                 
                 <div class="w-full h-64 overflow-hidden rounded-lg bg-gray-100 mb-6">
-                    {{-- Perbaikan: $package->image (huruf kecil) --}}
                     @if($package->image)
                         <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-full h-full object-cover">
                     @else
@@ -103,12 +102,11 @@
                     </div>
                 </div>
 
-                {{-- 3. Kuantitas (Sekarang Mengikuti Minimal Order dari Filament) --}}
+                {{-- 3. Kuantitas --}}
                 <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <label class="block text-xl font-black text-gray-800 mb-1">Kuantitas Pesanan</label>
-                            {{-- Mengambil angka minimal dari database --}}
                             <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi/Box.</p>
                         </div>
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
@@ -123,7 +121,7 @@
                             <span class="pr-4 text-gray-400 font-bold">Box</span>
                         </div>
                     </div>
-                </div>>
+                </div>
 
                 <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-3xl shadow-2xl transition-all hover:-translate-y-1">
                     <span class="flex items-center justify-center text-xl">Lanjutkan ke Pembayaran</span>

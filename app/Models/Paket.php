@@ -9,19 +9,19 @@ class Paket extends Model
 {
     use HasFactory;
 
-    // WAJIB: Karena nama model (Paket) beda dengan nama tabel (products)
     protected $table = 'products';
 
     protected $fillable = [
-        'name',
-        'price',
-        'image', // Pastikan sudah huruf kecil
-        'items',
-        'min_order',
-        'category',
+        'name', 
+        'category', 
+        'price', 
+        'min_order', 
+        'image', 
+        'items', 
+        'total_orders',
     ];
 
     protected $casts = [
-        'items' => 'array', // Supaya data JSON menu bisa diinput/diedit
+        'items' => 'array',
     ];
 }
