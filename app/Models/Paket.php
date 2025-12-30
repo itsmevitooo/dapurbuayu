@@ -18,6 +18,7 @@ class Paket extends Model
         'image', // Pastikan sudah huruf kecil
         'items',
         'min_order',
+        'category',
     ];
 
     protected $casts = [

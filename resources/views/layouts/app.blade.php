@@ -54,9 +54,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('home') }}#packages" 
-                           class="block py-2 px-3 text-gray-500 hover:text-primary transition duration-300 md:p-0">
-                            Order
+                        <a href="{{ route('paket.index') }}" 
+                           class="block py-2 px-3 transition duration-300 md:p-0 {{ request()->routeIs('paket.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary' }}">
+                            Paket
                         </a>
                     </li>
                     <li>
@@ -95,7 +95,7 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gray-900 text-white mt-12 py-16 border-t-4 border-primary">
+    <footer class="bg-gray-900 text-white mt-12 py-12 border-t-4 border-primary">
         <div class="max-w-7xl mx-auto px-6">
             
             {{-- AREA GRID (Kolom-kolom) --}}
@@ -144,7 +144,7 @@
             </div>
     
             {{-- PEMBATAS & COPYRIGHT --}}
-            <div class="mt-16 border-t border-gray-800 pt-8 text-center text-xs text-gray-600 uppercase tracking-widest">
+            <div class="mt-10 border-t border-gray-800 pt-8 text-center text-xs text-gray-600 uppercase tracking-widest">
                 &copy; 2025 Dapur Bu Ayu. All Rights Reserved.
             </div>
     

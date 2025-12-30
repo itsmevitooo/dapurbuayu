@@ -6,6 +6,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select; // Import Select
 use Filament\Schemas\Schema;
 
 class PaketForm
@@ -13,6 +14,19 @@ class PaketForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
+            // 1. Tambahkan Select Category agar muncul di filter halaman paket
+            Select::make('category')
+                ->label('Kategori Layanan')
+                ->options([
+                    'nasi_box' => 'Nasi Box',
+                    'prasmanan' => 'Prasmanan',
+                    'tumpeng' => 'Tumpeng',
+                    'akikah' => 'Akikah',
+                ])
+                ->required()
+                ->native(false)
+                ->columnSpanFull(),
+
             TextInput::make('name')
                 ->label('Nama Paket')
                 ->required(),
@@ -37,7 +51,7 @@ class PaketForm
                 ->preserveFilenames()
                 ->required(),
 
-            // INI SOLUSINYA: Mengubah input items menjadi Repeater Bertingkat
+            // Repeater Bertingkat untuk Detail Menu
             Repeater::make('items')
                 ->label('Pengaturan Kategori Menu')
                 ->schema([
@@ -46,12 +60,10 @@ class PaketForm
                         ->placeholder('Contoh: Menu Utama atau Sayuran')
                         ->required(),
                     
-                    // Toggle inilah yang menentukan apakah menu bisa dipilih atau tidak
                     Toggle::make('is_selectable')
                         ->label('Customer bisa pilih menu di kategori ini?')
                         ->default(false),
 
-                    // Repeater kedua untuk list menu di dalam kategori tersebut
                     Repeater::make('menus')
                         ->label('Daftar Menu')
                         ->schema([
@@ -62,7 +74,8 @@ class PaketForm
                         ->createItemButtonLabel('Tambah Menu')
                 ])
                 ->createItemButtonLabel('Tambah Kategori Baru')
-                ->itemLabel(fn (array $state): ?string => $state['category_name'] ?? null),
+                ->itemLabel(fn (array $state): ?string => $state['category_name'] ?? null)
+                ->columnSpanFull(),
         ]);
     }
 }

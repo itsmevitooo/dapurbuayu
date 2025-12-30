@@ -1,37 +1,44 @@
 <?php
 
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaketController;
 use App\Http\Controllers\CheckOrderController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
-// --- Halaman Umum ---
+/*
+|--------------------------------------------------------------------------
+| Web Routes - Dapur Bu Ayu (Revisi 2025)
+|--------------------------------------------------------------------------
+*/
+
+// --- Halaman Utama & Umum ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/lokasi', [HomeController::class, 'location'])->name('location');
-
-// Halaman Galeri (Menggunakan HomeController sesuai kode Mas di atas)
 Route::get('/galeri', [HomeController::class, 'gallery'])->name('gallery.index');
 
-// --- Review System ---
-// Menampilkan semua review (Halaman khusus daftar review)
+// --- Sistem Review ---
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-// Menyimpan review baru (Diproses oleh ReviewController agar support upload foto)
 Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-
-// --- 1. Proses Order ---
-Route::prefix('order')->name('order.')->group(function () {
-    Route::get('/', [OrderController::class, 'selectType'])->name('select_type');
-    Route::get('/paket/{type}', [OrderController::class, 'selectPackage'])->name('select_package');
-    Route::get('/detail/{package_id}', [OrderController::class, 'showDetailForm'])->name('show_detail');
-    Route::post('/detail', [OrderController::class, 'processDetail'])->name('process_detail');
-    Route::get('/payment', [OrderController::class, 'showPayment'])->name('show_payment'); 
-    Route::post('/process-payment', [OrderController::class, 'processPayment'])->name('process_payment');
-    Route::get('/success', [OrderController::class, 'success'])->name('success');
+// --- Katalog Paket (Nasi Box, Prasmanan, Tumpeng, Akikah) ---
+Route::controller(PaketController::class)->group(function () {
+    // Daftar semua paket / filter kategori
+    Route::get('/paket', 'index')->name('paket.index');
+    
+    // Detail paket (PENTING: Gunakan nama 'paket.detail' agar sinkron dengan tombol di Home)
+    Route::get('/paket/detail/{id}', 'show')->name('paket.detail');
 });
 
-// --- 2. Cek Order ---
+// --- Proses Transaksi / Checkout ---
+Route::prefix('checkout')->name('checkout.')->group(function () {
+    Route::post('/tambah/{id}', [PaketController::class, 'addToCart'])->name('add_to_cart');
+    Route::get('/pembayaran', [PaketController::class, 'showPayment'])->name('payment');
+    Route::post('/proses', [PaketController::class, 'process'])->name('process');
+    Route::get('/success', [PaketController::class, 'success'])->name('success');
+});
+
+// --- Fitur Lacak Pesanan ---
 Route::prefix('cek-order')->name('check_order.')->controller(CheckOrderController::class)->group(function () {
     Route::get('/', 'index')->name('index'); 
     Route::get('/search', 'search')
