@@ -4,7 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\CheckOrderController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\OrderController; // Tambahkan ini
+use App\Http\Controllers\OrderController; 
 use Illuminate\Support\Facades\Route;
 
 // --- Halaman Utama & Umum ---
@@ -18,7 +18,6 @@ Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store
 
 // --- Katalog & Detail Order ---
 Route::get('/paket', [PaketController::class, 'index'])->name('paket.index');
-// Route ini yang dipanggil tombol "Pilih Paket"
 Route::get('/paket/detail/{id}', [OrderController::class, 'showDetailForm'])->name('paket.detail');
 
 // --- Proses Transaksi ---
@@ -26,6 +25,7 @@ Route::prefix('checkout')->name('order.')->group(function () {
     Route::post('/process-detail', [OrderController::class, 'processDetail'])->name('process_detail');
     Route::get('/pembayaran', [OrderController::class, 'showPayment'])->name('payment');
     Route::post('/proses-final', [OrderController::class, 'processPayment'])->name('process_payment');
+    Route::get('/success', [OrderController::class, 'success'])->name('success');
 });
 
 // --- Fitur Lacak Pesanan ---

@@ -16,7 +16,7 @@ return new class extends Migration
             // Menghubungkan ke tabel orders
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
             // Menghubungkan ke tabel paket
-            $table->foreignId('paket_id')->constrained('paket');
+            $table->foreignId('paket_id')->constrained('products');
             
             $table->integer('quantity'); // Jumlah yang dibeli
             $table->decimal('price', 15, 2); // Harga satuan saat dibeli (untuk arsip)

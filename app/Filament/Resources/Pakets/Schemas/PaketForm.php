@@ -47,6 +47,7 @@ class PaketForm
             FileUpload::make('image')
                 ->label('Foto Paket')
                 ->image()
+                ->disk('public')
                 ->directory('pakets')
                 ->preserveFilenames()
                 ->required(),

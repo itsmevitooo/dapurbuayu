@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Paket; // Menggunakan nama model Paket sesuai instruksi Anda
+use App\Models\Paket; 
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
@@ -11,14 +11,18 @@ use Carbon\Carbon;
 
 class OrderController extends Controller
 {
+    /**
+     * Menampilkan form detail pesanan (orderdetail.blade.php)
+     */
     public function showDetailForm($id)
     {
-        // Mengambil data dari tabel products melalui model Paket
         $package = Paket::findOrFail($id);
-        
         return view('orderdetail', compact('package'));
     }
 
+    /**
+     * Memproses input dari form detail dan menyimpannya ke session
+     */
     public function processDetail(Request $request)
     {
         $request->validate([
@@ -48,6 +52,24 @@ class OrderController extends Controller
         return redirect()->route('order.payment');
     }
 
+    /**
+     * Menampilkan halaman pembayaran (payment.blade.php)
+     */
+    public function showPayment()
+    {
+        $orderData = session('order_data');
+
+        if (!$orderData) {
+            return redirect()->route('home')->with('error', 'Sesi pesanan hilang.');
+        }
+
+        // Revisi: Memanggil 'payment' bukan 'order.payment' karena file ada di folder views
+        return view('payment', compact('orderData'));
+    }
+
+    /**
+     * Memproses finalisasi order (AJAX / Fetch dari payment.blade.php)
+     */
     public function processPayment(Request $request)
     {
         $orderData = session('order_data');
@@ -57,12 +79,11 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
-            $invoiceCode = 'INV/' . date('YmdHis') . '/' . mt_rand(1000, 9999);
-            
+            $invoiceCode = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
             $deliveryDate = Carbon::parse($orderData['delivery_date']);
             $paymentDeadline = $deliveryDate->copy()->subDays(2)->endOfDay();
 
-            // Insert ke tabel orders
+            // 1. Simpan ke Tabel Orders
             $order = Order::create([
                 'invoice_code'     => $invoiceCode,
                 'full_name'        => $orderData['full_name'],
@@ -76,6 +97,7 @@ class OrderController extends Controller
                 'order_status'     => 'DIPROSES',
             ]);
 
+            // 2. Simpan ke Tabel OrderItems
             OrderItem::create([
                 'order_id'       => $order->id,
                 'product_id'     => $orderData['package_id'],
@@ -85,17 +107,47 @@ class OrderController extends Controller
                 'side_dish'      => json_encode($orderData['menu_selections']),
             ]);
 
-            // Update total_orders di tabel products melalui model Paket
+            // 3. Update total order di tabel products (model paket)
             Paket::where('id', $orderData['package_id'])->increment('total_orders');
 
             DB::commit();
-            session()->forget('order_data');
 
-            return response()->json(['status' => 'success', 'invoice' => $invoiceCode]);
+            // Logika respon untuk JavaScript (Fetch) di payment.blade.php
+            if ($request->payment_method === 'COD') {
+                $whatsappUrl = "https://wa.me/628123456789?text=" . urlencode(
+                    "Halo Dapur Bu Ayu, saya ingin konfirmasi pesanan COD.\n\n" .
+                    "Invoice: " . $invoiceCode . "\n" .
+                    "Nama: " . $orderData['full_name'] . "\n" .
+                    "Paket: " . $orderData['package_name'] . "\n" .
+                    "Total: Rp " . number_format($orderData['total_price'], 0, ',', '.')
+                );
+                
+                session()->forget('order_data');
+                return response()->json([
+                    'method' => 'COD',
+                    'redirect_url' => $whatsappUrl
+                ]);
+            } else {
+                // Untuk Midtrans, pastikan Anda nanti mengisi snap_token yang asli
+                return response()->json([
+                    'method' => 'MIDTRANS',
+                    'snap_token' => 'YOUR_SNAP_TOKEN_HERE', 
+                    'invoice_code' => $invoiceCode
+                ]);
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Menampilkan halaman sukses (paymentsuccess.blade.php)
+     */
+    public function success()
+    {
+        // Revisi: Memanggil 'paymentsuccess' bukan 'order.paymentsuccess'
+        return view('paymentsuccess');
     }
 }
