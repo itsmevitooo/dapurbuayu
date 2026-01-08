@@ -11,18 +11,12 @@ use Carbon\Carbon;
 
 class OrderController extends Controller
 {
-    /**
-     * Menampilkan form detail pesanan (orderdetail.blade.php)
-     */
     public function showDetailForm($id)
     {
         $package = Paket::findOrFail($id);
         return view('orderdetail', compact('package'));
     }
 
-    /**
-     * Memproses input dari form detail dan menyimpannya ke session
-     */
     public function processDetail(Request $request)
     {
         $request->validate([
@@ -52,24 +46,15 @@ class OrderController extends Controller
         return redirect()->route('order.payment');
     }
 
-    /**
-     * Menampilkan halaman pembayaran (payment.blade.php)
-     */
     public function showPayment()
     {
         $orderData = session('order_data');
-
         if (!$orderData) {
             return redirect()->route('home')->with('error', 'Sesi pesanan hilang.');
         }
-
-        // Revisi: Memanggil 'payment' bukan 'order.payment' karena file ada di folder views
         return view('payment', compact('orderData'));
     }
 
-    /**
-     * Memproses finalisasi order (AJAX / Fetch dari payment.blade.php)
-     */
     public function processPayment(Request $request)
     {
         $orderData = session('order_data');
@@ -81,6 +66,8 @@ class OrderController extends Controller
         try {
             $invoiceCode = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
             $deliveryDate = Carbon::parse($orderData['delivery_date']);
+            
+            // Catatan: Pastikan kolom payment_deadline sudah ada di tabel orders Anda
             $paymentDeadline = $deliveryDate->copy()->subDays(2)->endOfDay();
 
             // 1. Simpan ke Tabel Orders
@@ -97,22 +84,20 @@ class OrderController extends Controller
                 'order_status'     => 'DIPROSES',
             ]);
 
-            // 2. Simpan ke Tabel OrderItems
+            // 2. Simpan ke Tabel OrderItems (Disesuaikan dengan image_49866c.jpg)
             OrderItem::create([
-                'order_id'       => $order->id,
-                'product_id'     => $orderData['package_id'],
-                'item_name'      => $orderData['package_name'],
-                'quantity'       => $orderData['quantity'],
-                'price_per_item' => $orderData['package_price'],
-                'side_dish'      => json_encode($orderData['menu_selections']),
+                'order_id'  => $order->id,
+                'paket_id'  => $orderData['package_id'], // Sesuai kolom database
+                'quantity'  => $orderData['quantity'],
+                'price'     => $orderData['package_price'], // Sesuai kolom database
+                'subtotal'  => $orderData['total_price'],   // Sesuai kolom database
             ]);
 
-            // 3. Update total order di tabel products (model paket)
+            // 3. Update total order di tabel products
             Paket::where('id', $orderData['package_id'])->increment('total_orders');
 
             DB::commit();
 
-            // Logika respon untuk JavaScript (Fetch) di payment.blade.php
             if ($request->payment_method === 'COD') {
                 $whatsappUrl = "https://wa.me/628123456789?text=" . urlencode(
                     "Halo Dapur Bu Ayu, saya ingin konfirmasi pesanan COD.\n\n" .
@@ -128,7 +113,6 @@ class OrderController extends Controller
                     'redirect_url' => $whatsappUrl
                 ]);
             } else {
-                // Untuk Midtrans, pastikan Anda nanti mengisi snap_token yang asli
                 return response()->json([
                     'method' => 'MIDTRANS',
                     'snap_token' => 'YOUR_SNAP_TOKEN_HERE', 
@@ -142,12 +126,8 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Menampilkan halaman sukses (paymentsuccess.blade.php)
-     */
     public function success()
     {
-        // Revisi: Memanggil 'paymentsuccess' bukan 'order.paymentsuccess'
         return view('paymentsuccess');
     }
 }

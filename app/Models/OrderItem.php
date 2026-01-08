@@ -11,11 +11,10 @@ class OrderItem extends Model
 
     protected $fillable = [
         'order_id',
-        'paket_id', // Ini tetap paket_id (sebagai foreign key)
-        'item_name',
+        'paket_id',
         'quantity',
-        'price_per_item',
-        'side_dish',
+        'price',
+        'subtotal',
     ];
 
     protected $casts = [
