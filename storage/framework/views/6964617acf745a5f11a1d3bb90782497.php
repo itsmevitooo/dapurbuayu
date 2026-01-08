@@ -124,16 +124,21 @@
             }
 
             if (data.method === 'COD') {
-                // ALUR COD: Alert sukses lalu pindah ke WhatsApp
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Pesanan Dicatat!',
-                    text: 'Silakan konfirmasi ke WhatsApp Admin agar segera diproses.',
-                    confirmButtonText: 'Lanjut ke WhatsApp'
-                }).then(() => {
-                    window.location.href = data.redirect_url;
-                });
-            } 
+            // ALUR COD: Alert sukses dengan nomor Invoice
+            Swal.fire({
+                icon: 'success',
+                title: 'Pesanan Dicatat!',
+                // Bagian di bawah ini ditambahkan template literal untuk invoice
+                html: `Pesanan Anda berhasil dibuat dengan nomor invoice:<br><br>` +
+                    `<span class="text-xl font-black text-primary p-2 bg-gray-100 rounded border border-dashed border-gray-400">` + 
+                    `${data.invoice_code}</span><br><br>` +
+                    `Silakan catat nomor invoice dan konfirmasi ke WhatsApp Admin agar segera diproses.`,
+                confirmButtonText: 'Lanjut ke WhatsApp',
+                confirmButtonColor: '#EAB308', // Warna kuning primary
+            }).then(() => {
+                window.location.href = data.redirect_url;
+            });
+        }
             else if (data.method === 'MIDTRANS') {
                 // ALUR TRANSFER: Munculkan Snap Popup
                 Swal.close();

@@ -110,6 +110,7 @@ class OrderController extends Controller
                 session()->forget('order_data');
                 return response()->json([
                     'method' => 'COD',
+                    'invoice_code' => $invoiceCode,
                     'redirect_url' => $whatsappUrl
                 ]);
             } else {
