@@ -9,7 +9,7 @@ class ReviewController extends Controller
 {
     public function index()
     {
-        // Hanya ambil yang sudah diapprove jika perlu, atau semua seperti di bawah:
+        // Mengambil semua review terbaru tanpa filter approval
         $reviews = Review::latest()->get();
         return view('reviews', compact('reviews'));
     }
@@ -24,10 +24,8 @@ class ReviewController extends Controller
         ]);
 
         $imagePaths = [];
-        // PERBAIKAN: Menggunakan 'image' sesuai dengan name="image[]" di Blade
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $file) {
-                // Menyimpan ke storage/app/public/reviews
                 $imagePaths[] = $file->store('reviews', 'public');
             }
         }
@@ -36,10 +34,10 @@ class ReviewController extends Controller
             'name' => $request->name,
             'rating' => $request->rating,
             'comment' => $request->comment,
-            'image' => $imagePaths, // Tersimpan sebagai array JSON di DB
-            'is_approved' => 0,
+            'image' => $imagePaths,
+            // 'is_approved' dihapus dari sini
         ]);
 
-        return redirect()->back()->with('success', 'Review berhasil dikirim!');
+        return redirect()->back()->with('success', 'Review Anda telah berhasil diterbitkan!');
     }
 }

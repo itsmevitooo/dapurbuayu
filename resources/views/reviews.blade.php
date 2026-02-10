@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-12">
-    {{-- Header --}}
     <div class="text-center mb-12">
         <h1 class="text-6xl font-bold text-primary font-[Qwitcher_Grypen]">Review Pengguna</h1>
         <p class="text-gray-500 font-inter uppercase tracking-[0.3em] text-[10px] mt-2 font-bold">Apa Kata Mereka Tentang Dapur Bu Ayu</p>
@@ -11,7 +10,6 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         @forelse($reviews as $review)
             <div class="bg-white p-6 rounded-2xl shadow-xl border-b-4 border-primary font-inter flex flex-col h-full transition-all hover:shadow-2xl">
-                {{-- Rating Bintang --}}
                 <div class="flex mb-4">
                     @for($i = 1; $i <= 5; $i++)
                         <svg class="w-6 h-6 {{ $i <= (int)$review->rating ? 'text-yellow-400' : 'text-gray-200' }}" fill="currentColor" viewBox="0 0 20 20">
@@ -20,63 +18,37 @@
                     @endfor
                 </div>
 
-                {{-- Komentar --}}
-                <p class="text-gray-600 italic mb-6 text-sm leading-relaxed flex-grow">
-                    "{{ $review->comment }}"
-                </p>
+                <p class="text-gray-600 italic mb-6 text-sm flex-grow">"{{ $review->comment }}"</p>
 
-                {{-- Galeri Foto Review --}}
                 @if($review->image)
                     @php
-                        // Logika tangguh untuk menangani berbagai format data gambar di database
-                        $images = [];
-                        if (is_array($review->image)) {
-                            $images = $review->image;
-                        } else {
-                            $decoded = json_decode($review->image, true);
-                            $images = is_array($decoded) ? $decoded : [$review->image];
-                        }
+                        $images = is_array($review->image) ? $review->image : json_decode($review->image, true);
                     @endphp
-                    
+                    @if(!empty($images))
                     <div class="flex flex-wrap gap-2 mb-6">
                         @foreach($images as $img)
                             @if($img)
-                                <div class="group relative w-20 h-20 overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-gray-50">
-                                    <img src="{{ asset('storage/' . ltrim($img, '/')) }}" 
-                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 cursor-zoom-in"
-                                         onerror="this.onerror=null;this.src='https://placehold.co/100x100?text=No+Photo'"
-                                         alt="Review dari {{ $review->name }}">
-                                </div>
+                            <div class="w-20 h-20 overflow-hidden rounded-xl border border-gray-100 shadow-sm">
+                                <img src="{{ asset('storage/' . ltrim($img, '/')) }}" class="w-full h-full object-cover">
+                            </div>
                             @endif
                         @endforeach
                     </div>
+                    @endif
                 @endif
 
-                {{-- Footer Info --}}
-                <div class="border-t border-gray-50 pt-4 mt-auto flex items-center justify-between">
-                    <div>
-                        <p class="font-black text-gray-900 uppercase tracking-wider text-[11px]">{{ $review->name }}</p>
-                        <p class="text-[9px] text-gray-400 mt-0.5 font-bold uppercase tracking-tighter">
-                            {{ $review->created_at ? $review->created_at->translatedFormat('d F Y') : 'Baru saja' }}
-                        </p>
-                    </div>
-                    <div class="bg-primary/10 px-2 py-1 rounded text-[9px] font-bold text-primary uppercase">
-                        Verified
-                    </div>
+                <div class="border-t border-gray-50 pt-4 mt-auto">
+                    <p class="font-black text-gray-900 uppercase tracking-wider text-[11px]">{{ $review->name }}</p>
+                    <p class="text-[9px] text-gray-400 mt-0.5 uppercase tracking-tighter">
+                        {{ $review->created_at ? $review->created_at->translatedFormat('d F Y') : 'Baru saja' }}
+                    </p>
                 </div>
             </div>
         @empty
             <div class="col-span-full text-center py-20">
-                <p class="text-gray-400 font-inter italic">Belum ada ulasan untuk saat ini.</p>
+                <p class="text-gray-400 italic">Belum ada ulasan untuk saat ini.</p>
             </div>
         @endforelse
     </div>
 </div>
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Qwitcher_Grypen:wght@400;700&display=swap');
-    
-    /* Memastikan font inter tersedia jika tidak ada di app.blade */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-</style>
 @endsection

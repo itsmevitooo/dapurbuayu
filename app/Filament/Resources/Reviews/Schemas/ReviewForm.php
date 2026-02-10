@@ -4,26 +4,30 @@ namespace App\Filament\Resources\Reviews\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\FileUpload;
 
 class ReviewForm
 {
-    public static function configure(Schema $schema): Schema
+    public static function configure($form)
     {
-        return $schema
-            ->components([
+        return $form
+            ->schema([
                 TextInput::make('name')
                     ->required(),
-                Textarea::make('comment')
-                    ->required()
-                    ->columnSpanFull(),
                 TextInput::make('rating')
                     ->required()
                     ->numeric()
+                    ->minValue(1)
+                    ->maxValue(5)
                     ->default(5),
-                Toggle::make('is_approved')
-                    ->required(),
+                Textarea::make('comment')
+                    ->required()
+                    ->columnSpanFull(),
+                FileUpload::make('image')
+                    ->multiple()
+                    ->directory('reviews')
+                    ->image()
+                    ->columnSpanFull(),
             ]);
     }
 }

@@ -6,7 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -20,9 +19,13 @@ class ReviewsTable
                     ->searchable(),
                 TextColumn::make('rating')
                     ->numeric()
-                    ->sortable(),
-                IconColumn::make('is_approved')
-                    ->boolean(),
+                    ->sortable()
+                    ->label('Rating'),
+                // Mengganti is_approved menjadi comment (Deskripsi Review)
+                TextColumn::make('comment')
+                    ->label('Deskripsi Review')
+                    ->limit(50) // Membatasi teks agar tabel tidak terlalu lebar
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
