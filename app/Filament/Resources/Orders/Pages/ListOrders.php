@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\Orders\Pages;
 
-use App\Filament\Resources\Orders\OrderResource; // Namespace yang benar
+use App\Filament\Resources\Orders\OrderResource;
 use App\Exports\OrderExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Forms\Components\Select;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ListOrders extends ListRecords
 {
@@ -44,10 +45,13 @@ class ListOrders extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data) {
-                    // Nama file menggunakan format: penjualan-paket-MM-YYYY.xlsx
+                    $fileName = "penjualan-paket-{$data['month']}-{$data['year']}.xlsx";
+                    
+                    // Menggunakan return download langsung agar tidak merusak session UI Filament
                     return Excel::download(
                         new OrderExport($data['month'], $data['year']), 
-                        "penjualan-paket-{$data['month']}-{$data['year']}.xlsx"
+                        $fileName,
+                        \Maatwebsite\Excel\Excel::XLSX
                     );
                 }),
         ];

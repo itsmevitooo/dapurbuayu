@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
-// Gallery sudah tidak perlu di-import jika hanya digunakan untuk store review
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
     public function index()
     {
+        // Hanya ambil yang sudah diapprove jika perlu, atau semua seperti di bawah:
         $reviews = Review::latest()->get();
         return view('reviews', compact('reviews'));
     }
@@ -20,13 +20,15 @@ class ReviewController extends Controller
             'name' => 'required|string|max:255',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi tiap file
+            'image.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
         ]);
 
         $imagePaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePaths[] = $image->store('reviews', 'public');
+        // PERBAIKAN: Menggunakan 'image' sesuai dengan name="image[]" di Blade
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $file) {
+                // Menyimpan ke storage/app/public/reviews
+                $imagePaths[] = $file->store('reviews', 'public');
             }
         }
 
@@ -34,7 +36,8 @@ class ReviewController extends Controller
             'name' => $request->name,
             'rating' => $request->rating,
             'comment' => $request->comment,
-            'image' => $imagePaths, // Simpan sebagai array
+            'image' => $imagePaths, // Tersimpan sebagai array JSON di DB
+            'is_approved' => 0,
         ]);
 
         return redirect()->back()->with('success', 'Review berhasil dikirim!');

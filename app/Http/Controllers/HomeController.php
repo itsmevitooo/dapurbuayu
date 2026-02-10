@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Paket; 
 use App\Models\Review;
 use App\Models\Gallery; 
@@ -12,18 +11,20 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Mengambil 4 data terlaris dari model Paket (yang nyambung ke tabel products)
-        $packages = \App\Models\Paket::orderBy('total_orders', 'desc')
+        // Ambil 4 paket terlaris
+        $packages = Paket::orderBy('total_orders', 'desc')
             ->take(4)
             ->get(); 
     
-        $reviews = \App\Models\Review::where('is_approved', true)
-            ->latest()
-            ->take(4) 
+        // Ambil 3 review terbaru (Tanpa filter is_approved agar langsung muncul)
+        $reviews = Review::latest()
+            ->take(3) 
             ->get();
         
+        // Kita pakai 'welcome' agar sesuai dengan file blade kamu
         return view('welcome', compact('packages', 'reviews')); 
     }
+
     public function gallery() 
     { 
         $galleries = Gallery::latest()->get();
