@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
 
 class OrdersTable
@@ -17,30 +18,46 @@ class OrdersTable
                 TextColumn::make('invoice_code')
                     ->searchable(),
                 TextColumn::make('full_name')
-                    ->label ('Nama Lengkap')
+                    ->label('Nama Lengkap')
                     ->searchable(),
                 TextColumn::make('phone_number')
-                    ->label ('No Telp.')
+                    ->label('No Telp.')
                     ->searchable(),
                 TextColumn::make('delivery_date')
-                    ->label ('Tangga Pengiriman')
+                    ->label('Tanggal Pengiriman')
                     ->date()
                     ->sortable(),
-                TextColumn::make('address') // Sesuaikan dengan field 'address' yang ada di Form Mas
-                    ->label ('Lokasi Pengiriman')
-                    ->limit(50) // Biar kalau alamatnya panjang nggak ngerusak layout tabel
+                TextColumn::make('address')
+                    ->label('Lokasi Pengiriman')
+                    ->limit(50)
                     ->searchable(),
                 TextColumn::make('total_price')
                     ->label('Harga')
-                    ->money('IDR', locale: 'id_ID') // Mengubah simbol $ ke Rp dan format ribuan ke titik
+                    ->money('IDR', locale: 'id_ID')
                     ->sortable(),
                 TextColumn::make('payment_method')
-                    ->label ('Metode Pembayaran')
+                    ->label('Metode Pembayaran')
+                    ->badge()
+                    ->color('gray')
                     ->searchable(),
                 TextColumn::make('payment_status')
+                    ->label('Status Bayar')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'LUNAS' => 'success',
+                        'PENDING' => 'warning',
+                        'EXPIRED' => 'danger',
+                        default => 'gray',
+                    })
                     ->searchable(),
-                TextColumn::make('order_status')
-                    ->searchable(),
+                // Menggunakan SelectColumn agar status bisa diubah langsung di tabel
+                SelectColumn::make('order_status')
+                    ->label('Status Pesanan')
+                    ->options([
+                        'DIPROSES' => 'DIPROSES',
+                        'TELAH SELESAI' => 'TELAH SELESAI',
+                    ])
+                    ->selectablePlaceholder(false),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
