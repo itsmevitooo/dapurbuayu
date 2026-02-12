@@ -30,6 +30,10 @@ class OrderController extends Controller
 
         $package = Paket::findOrFail($request->package_id);
         
+        // Perbaikan: Ambil hanya VALUE dari array selections (nama menunya saja)
+        $selections = $request->input('selections', []);
+        $menuArray = is_array($selections) ? array_values($selections) : [$selections];
+
         session(['order_data' => [
             'package_id'      => $package->id,
             'package_name'    => $package->name,
@@ -40,7 +44,7 @@ class OrderController extends Controller
             'delivery_date'   => $request->delivery_date,
             'quantity'        => $request->quantity,
             'total_price'     => $package->price * $request->quantity,
-            'menu_selections' => $request->selections, 
+            'menu_selections' => $menuArray, // Simpan array yang sudah dibersihkan
         ]]);
 
         return redirect()->route('order.payment');
@@ -66,8 +70,6 @@ class OrderController extends Controller
         try {
             $invoiceCode = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
             $deliveryDate = Carbon::parse($orderData['delivery_date']);
-            
-            // Catatan: Pastikan kolom payment_deadline sudah ada di tabel orders Anda
             $paymentDeadline = $deliveryDate->copy()->subDays(2)->endOfDay();
 
             // 1. Simpan ke Tabel Orders
@@ -84,26 +86,32 @@ class OrderController extends Controller
                 'order_status'     => 'DIPROSES',
             ]);
 
-            // 2. Simpan ke Tabel OrderItems (Disesuaikan dengan image_49866c.jpg)
+            // Pastikan menu_selections digabung menjadi string untuk kolom side_dish
+            $menuSelections = $orderData['menu_selections'] ?? [];
+            $menuString = implode(', ', $menuSelections);
+
+            // 2. Simpan ke Tabel OrderItems
             OrderItem::create([
                 'order_id'  => $order->id,
-                'paket_id'  => $orderData['package_id'], // Sesuai kolom database
+                'paket_id'  => $orderData['package_id'],
+                'item_name' => $orderData['package_name'], 
                 'quantity'  => $orderData['quantity'],
-                'price'     => $orderData['package_price'], // Sesuai kolom database
-                'subtotal'  => $orderData['total_price'],   // Sesuai kolom database
+                'price'     => $orderData['package_price'],
+                'subtotal'  => $orderData['total_price'],
+                'side_dish' => $menuString, // Sekarang tidak akan null jika user memilih menu
             ]);
 
-            // 3. Update total order di tabel products
+            // 3. Update total order di tabel paket
             Paket::where('id', $orderData['package_id'])->increment('total_orders');
 
             DB::commit();
 
             if ($request->payment_method === 'COD') {
                 $whatsappUrl = "https://wa.me/628123456789?text=" . urlencode(
-                    "Halo Dapur Bu Ayu, saya ingin konfirmasi pesanan COD.\n\n" .
+                    "Halo Dapur Bu Ayu, saya konfirmasi pesanan.\n\n" .
                     "Invoice: " . $invoiceCode . "\n" .
                     "Nama: " . $orderData['full_name'] . "\n" .
-                    "Paket: " . $orderData['package_name'] . "\n" .
+                    "Menu: " . ($menuString ?: 'Standar') . "\n" .
                     "Total: Rp " . number_format($orderData['total_price'], 0, ',', '.')
                 );
                 
@@ -116,7 +124,7 @@ class OrderController extends Controller
             } else {
                 return response()->json([
                     'method' => 'MIDTRANS',
-                    'snap_token' => 'YOUR_SNAP_TOKEN_HERE', 
+                    'snap_token' => 'YOUR_SNAP_TOKEN', 
                     'invoice_code' => $invoiceCode
                 ]);
             }

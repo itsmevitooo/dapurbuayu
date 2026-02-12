@@ -27,12 +27,11 @@ class OrderItem extends Model
     }
 
     /**
-     * Relasi ke tabel products
-     * Masseh ganti 'Paket::class' menjadi 'Product::class' 
-     * karena tabelnya sekarang bernama 'products'.
+     * RELASI DIBERESIN DISINI
+     * Kita pakai Paket::class karena itu nama file model kamu!
      */
     public function product()
     {
-        return $this->belongsTo(Product::class, 'paket_id');
+        return $this->belongsTo(Paket::class, 'paket_id');
     }
 }

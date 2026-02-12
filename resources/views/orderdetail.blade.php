@@ -50,7 +50,6 @@
             <form action="{{ route('order.process_detail') }}" method="POST" class="space-y-10">
                 @csrf
                 <input type="hidden" name="package_id" value="{{ $package->id }}">
-                <input type="hidden" name="package_price" value="{{ $package->price }}">
 
                 {{-- 1. Pilihan Menu --}}
                 <div class="space-y-8">
@@ -64,16 +63,22 @@
                                 </h4>
                                 <div class="flex flex-wrap gap-3">
                                     @foreach($category['menus'] as $menu)
+                                        @php 
+                                            // Pastikan kita mengambil nama menu dengan benar
+                                            $menuName = is_array($menu) ? $menu['name'] : $menu; 
+                                        @endphp
+                                        
                                         @if($category['is_selectable'])
                                             <label class="relative group cursor-pointer">
-                                                <input type="radio" name="selections[{{ $category['category_name'] }}]" value="{{ $menu['name'] }}" required class="peer hidden">
+                                                <input type="radio" name="selections[{{ $category['category_name'] }}]" value="{{ $menuName }}" required class="peer hidden">
                                                 <div class="px-6 py-3 bg-white border-2 border-gray-200 rounded-2xl text-sm font-bold text-gray-600 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-white transition-all duration-300">
-                                                    {{ $menu['name'] }}
+                                                    {{ $menuName }}
                                                 </div>
                                             </label>
                                         @else
                                             <div class="px-6 py-3 bg-gray-100 border-2 border-gray-200 rounded-2xl text-sm font-black text-gray-400 cursor-not-allowed">
-                                                {{ $menu['name'] }}
+                                                {{ $menuName }}
+                                                <input type="hidden" name="selections[{{ $category['category_name'] }}]" value="{{ $menuName }}">
                                             </div>
                                         @endif
                                     @endforeach
@@ -96,9 +101,6 @@
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal Pengiriman</label>
                         <input type="date" id="delivery_date_input" name="delivery_date" required min="{{ \Carbon\Carbon::now()->addDays(2)->format('Y-m-d') }}" class="w-full rounded-2xl border-gray-200 p-4" onchange="updateDeadlineInfo(this.value)">
-                        <div id="deadline_warning" class="hidden mt-3 p-4 bg-orange-50 border-l-4 border-orange-400 rounded-r-xl">
-                            <p class="text-xs text-orange-700"><strong>Penting:</strong> Bayar sebelum <span id="deadline_date" class="font-black underline"></span>.</p>
-                        </div>
                     </div>
                 </div>
 
@@ -107,43 +109,20 @@
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <label class="block text-xl font-black text-gray-800 mb-1">Kuantitas Pesanan</label>
-                            <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi/Box.</p>
+                            <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Box.</p>
                         </div>
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
-                            <input 
-                                type="number" 
-                                name="quantity" 
-                                min="{{ $package->min_order ?? 1 }}" 
-                                value="{{ $package->min_order ?? 1 }}" 
-                                required 
-                                class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary"
-                            >
+                            <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ $package->min_order ?? 1 }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary">
                             <span class="pr-4 text-gray-400 font-bold">Box</span>
                         </div>
                     </div>
                 </div>
 
                 <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-3xl shadow-2xl transition-all hover:-translate-y-1">
-                    <span class="flex items-center justify-center text-xl">Lanjutkan ke Pembayaran</span>
+                    Lanjutkan ke Pembayaran
                 </button>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-    function updateDeadlineInfo(dateString) {
-        const warningBox = document.getElementById('deadline_warning');
-        const deadlineSpan = document.getElementById('deadline_date');
-        if (dateString) {
-            let deliveryDate = new Date(dateString);
-            deliveryDate.setDate(deliveryDate.getDate() - 2);
-            const formattedDate = deliveryDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            deadlineSpan.innerText = formattedDate + " pukul 23:59 WIB";
-            warningBox.classList.remove('hidden');
-        } else {
-            warningBox.classList.add('hidden');
-        }
-    }
-</script>
-@endsection
+@endsection 
