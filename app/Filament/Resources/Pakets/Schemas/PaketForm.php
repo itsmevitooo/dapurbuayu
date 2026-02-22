@@ -2,81 +2,101 @@
 
 namespace App\Filament\Resources\Pakets\Schemas;
 
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select; // Import Select
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Toggle;
 
 class PaketForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
-            // 1. Tambahkan Select Category agar muncul di filter halaman paket
-            Select::make('category')
-                ->label('Kategori Layanan')
-                ->options([
-                    'nasi_box' => 'Nasi Box',
-                    'prasmanan' => 'Prasmanan',
-                    'tumpeng' => 'Tumpeng',
-                    'akikah' => 'Akikah',
-                ])
-                ->required()
-                ->native(false)
-                ->columnSpanFull(),
+        return $schema
+            ->components([
+                Grid::make(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Nama Paket')
+                            ->placeholder('Contoh: Paket A')
+                            ->required(),
 
-            TextInput::make('name')
-                ->label('Nama Paket')
-                ->required(),
+                        // INI SUDAH JADI OPTION BOX SESUAI GAMBAR
+                        Select::make('category')
+                            ->label('Kategori Paket')
+                            ->options([
+                                'nasi_box' => 'Nasi Box',
+                                'prasmanan' => 'Prasmanan',
+                                'tumpeng' => 'Tumpeng',
+                                'akikah' => 'Akikah',
+                            ])
+                            ->native(false) // Tampilan lebih modern
+                            ->required(),
+                    ]),
 
-            TextInput::make('min_order')
-                ->label('Minimal Order (Porsi/Unit)')
-                ->numeric()
-                ->default(1)
-                ->suffix('Porsi/Unit')
-                ->required(),
+                Grid::make(3)
+                    ->schema([
+                        TextInput::make('price')
+                            ->label('Harga')
+                            ->required()
+                            ->numeric()
+                            ->prefix('Rp'),
+                        TextInput::make('min_order')
+                            ->label('Min. Order')
+                            ->required()
+                            ->numeric()
+                            ->default(1),
+                        TextInput::make('total_orders')
+                            ->label('Total Terjual')
+                            ->numeric()
+                            ->default(0),
+                    ]),
 
-            TextInput::make('price')
-                ->label('Harga Satuan')
-                ->numeric()
-                ->prefix('Rp')
-                ->required(),
+                FileUpload::make('image')
+                    ->label('Foto Paket')
+                    ->image()
+                    ->directory('pakets'),
 
-            FileUpload::make('image')
-                ->label('Foto Paket')
-                ->image()
-                ->disk('public')
-                ->directory('pakets')
-                ->preserveFilenames()
-                ->required(),
+                Textarea::make('description')
+                    ->label('Deskripsi Singkat')
+                    ->columnSpanFull(),
 
-            // Repeater Bertingkat untuk Detail Menu
-            Repeater::make('items')
-                ->label('Pengaturan Kategori Menu')
-                ->schema([
-                    TextInput::make('category_name')
-                        ->label('Nama Kategori')
-                        ->placeholder('Contoh: Menu Utama atau Sayuran')
-                        ->required(),
-                    
-                    Toggle::make('is_selectable')
-                        ->label('Customer bisa pilih menu di kategori ini?')
-                        ->default(false),
+                // REPEATER GRUP MENU (Cara Januari yang Mas minta)
+                Repeater::make('items')
+                    ->label('Pengaturan Menu & Lauk')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('menu_category')
+                                    ->label('Kategori Menu (Misal: Nasi / Lauk Pilihan)')
+                                    ->options([
+                                        'Nasi' => 'Nasi',
+                                        'Lauk Utama' => 'Lauk Utama',
+                                        'Lauk Pilihan' => 'Lauk Pilihan',
+                                        'Sayuran' => 'Sayuran',
+                                        'Pelengkap' => 'Pelengkap',
+                                    ])
+                                    ->searchable()
+                                    ->createOptionUsing(fn (string $data) => $data)
+                                    ->required(),
 
-                    Repeater::make('menus')
-                        ->label('Daftar Menu')
-                        ->schema([
-                            TextInput::make('name')
-                                ->label('Nama Menu')
-                                ->required(),
-                        ])
-                        ->createItemButtonLabel('Tambah Menu')
-                ])
-                ->createItemButtonLabel('Tambah Kategori Baru')
-                ->itemLabel(fn (array $state): ?string => $state['category_name'] ?? null)
-                ->columnSpanFull(),
-        ]);
+                                Toggle::make('is_selectable')
+                                    ->label('Bisa Dipilih?')
+                                    ->default(false),
+                            ]),
+
+                        TagsInput::make('list_lauk')
+                            ->label('Isi Menu')
+                            ->placeholder('Ketik nama menu lalu Enter')
+                            ->required(),
+                    ])
+                    ->collapsible()
+                    ->defaultItems(1)
+                    ->createItemButtonLabel('Tambah Baris Kategori Menu')
+            ]);
     }
 }

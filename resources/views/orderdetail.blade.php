@@ -51,28 +51,65 @@
                 @csrf
                 <input type="hidden" name="package_id" value="{{ $package->id }}">
 
-                {{-- 1. Pilihan Menu (Revisi Menggunakan package_details) --}}
+                {{-- 1. Pilihan Menu --}}
                 <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Isi Menu Paket</h3>
                     
                     <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            @forelse($package->details as $detail)
-                                <div class="flex items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 group">
-                                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                                        </svg>
+                        <div class="space-y-6">
+                            @php
+                                // Pisahkan menu berdasarkan is_selectable
+                                $fixedMenus = $package->details->where('is_selectable', false);
+                                $optionalMenus = $package->details->where('is_selectable', true);
+                            @endphp
+
+                            {{-- Bagian Menu Tetap (Otomatis dapat) --}}
+                            @if($fixedMenus->count() > 0)
+                                <div>
+                                    <p class="text-xs font-black text-gray-400 uppercase mb-3 tracking-widest">Menu Utama (Tetap)</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        @foreach($fixedMenus as $detail)
+                                            <div class="flex items-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                </svg>
+                                                <span class="font-bold text-gray-700 text-sm">{{ $detail->name }}</span>
+                                                <input type="hidden" name="selections[]" value="{{ $detail->name }}">
+                                            </div>
+                                        @endforeach
                                     </div>
-                                    <span class="font-bold text-gray-700 uppercase text-sm">{{ $detail->name }}</span>
-                                    {{-- Hidden input supaya menu ikut terkirim --}}
-                                    <input type="hidden" name="selected_menus[]" value="{{ $detail->name }}">
                                 </div>
-                            @empty
-                                <div class="col-span-2 text-center py-4">
+                            @endif
+
+                            {{-- Bagian Menu Opsional (Bisa Dipilih) --}}
+                            @if($optionalMenus->count() > 0)
+                                <div class="pt-4 border-t border-gray-100">
+                                    <p class="text-xs font-black text-primary uppercase mb-3 tracking-widest">Pilih Lauk Tambahan / Opsional</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        @foreach($optionalMenus->groupBy('category') as $category => $items)
+                                            <div class="col-span-full">
+                                                <label class="text-sm font-bold text-gray-600 mb-2 block">{{ $category }}</label>
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    @foreach($items as $item)
+                                                        <label class="relative flex items-center p-4 bg-white rounded-2xl border-2 border-gray-100 cursor-pointer hover:border-primary transition-all group">
+                                                            <input type="checkbox" name="selections[]" value="{{ $item->name }}" class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                                                            <span class="ml-3 font-bold text-gray-700 group-hover:text-primary transition-colors text-sm">
+                                                                {{ $item->name }}
+                                                            </span>
+                                                        </label>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($package->details->count() == 0)
+                                <div class="text-center py-4">
                                     <p class="text-gray-400 italic">Menu belum diinput di database.</p>
                                 </div>
-                            @endforelse
+                            @endif
                         </div>
                     </div>
                 </div>

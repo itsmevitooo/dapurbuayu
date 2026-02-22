@@ -2,17 +2,30 @@
 
 namespace App\Models;
 
-// app/Models/PaketDetail.php
-namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 
 class PaketDetail extends Model
 {
-    // Menghubungkan model PaketDetail ke tabel package_details
+    // Mengacu pada tabel di database Mas
     protected $table = 'package_details';
 
-    protected $fillable = ['product_id', 'name'];
+    // Bersihkan fillable (jangan ada double 'name')
+    protected $fillable = [
+        'product_id', 
+        'category', 
+        'name', 
+        'is_selectable'
+    ];
+
+    /**
+     * SANGAT PENTING:
+     * Karena di Filament Mas pakai inputan yang bisa diisi banyak (tags/multiple),
+     * Laravel harus mengubah data JSON dari database menjadi Array PHP secara otomatis.
+     */
+    protected $casts = [
+        'name' => 'array', 
+        'is_selectable' => 'boolean',
+    ];
 
     public function paket()
     {
