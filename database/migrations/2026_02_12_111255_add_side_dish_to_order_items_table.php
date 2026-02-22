@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('order_items', function (Blueprint $table) {
-            $table->text('side_dish')->nullable(); // Untuk menyimpan daftar lauk
-        });
+        // Tambahkan pengecekan if !Schema::hasColumn agar tidak error duplicate
+        if (!Schema::hasColumn('order_items', 'side_dish')) {
+            Schema::table('order_items', function (Blueprint $table) {
+                $table->text('side_dish')->nullable(); // Untuk menyimpan daftar lauk
+            });
+        }
     }
 
     /**
@@ -22,7 +25,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('order_items', function (Blueprint $table) {
-            $table->text('side_dish')->nullable(); // Untuk menyimpan daftar lauk
+            // Di sini harusnya dropColumn, bukan menambah lagi
+            if (Schema::hasColumn('order_items', 'side_dish')) {
+                $table->dropColumn('side_dish');
+            }
         });
     }
 };

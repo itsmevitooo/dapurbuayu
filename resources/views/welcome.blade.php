@@ -128,14 +128,13 @@
                                 <div class="p-6 flex flex-col flex-grow font-inter bg-white">
                                     <h3 class="text-xl font-bold mb-3 text-gray-800 uppercase tracking-tight h-14 line-clamp-2">{{ $package->name }}</h3>
                                     <div class="flex-grow">
+                                        {{-- REVISI: Mengambil dari tabel package_details --}}
                                         <ul class="text-sm text-gray-600 mb-6 space-y-1 h-32 overflow-y-auto custom-scrollbar italic text-left">
-                                            @if(is_array($package->items))
-                                                @foreach($package->items as $category)
-                                                    @isset($category['menus'])
-                                                        @foreach($category['menus'] as $menu) <li>• {{ $menu['name'] }}</li> @endforeach
-                                                    @endisset
-                                                @endforeach
-                                            @endif
+                                            @forelse($package->details as $detail)
+                                                <li>• {{ $detail->name }}</li>
+                                            @empty
+                                                <li class="text-gray-400">Menu sedang disiapkan</li>
+                                            @endforelse
                                         </ul>
                                     </div>
                                     <div class="mt-auto pt-4 border-t border-gray-100 font-inter text-center">

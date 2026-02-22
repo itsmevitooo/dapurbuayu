@@ -51,41 +51,30 @@
                 @csrf
                 <input type="hidden" name="package_id" value="{{ $package->id }}">
 
-                {{-- 1. Pilihan Menu --}}
-                <div class="space-y-8">
-                    <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Sesuaikan Menu</h3>
-                    @if(!empty($package->items))
-                        @foreach($package->items as $category)
-                            <div class="animate-fade-in">
-                                <h4 class="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-4 flex items-center">
-                                    <span class="bg-primary w-2 h-2 rounded-full mr-3"></span>
-                                    {{ $category['category_name'] }}
-                                </h4>
-                                <div class="flex flex-wrap gap-3">
-                                    @foreach($category['menus'] as $menu)
-                                        @php 
-                                            // Pastikan kita mengambil nama menu dengan benar
-                                            $menuName = is_array($menu) ? $menu['name'] : $menu; 
-                                        @endphp
-                                        
-                                        @if($category['is_selectable'])
-                                            <label class="relative group cursor-pointer">
-                                                <input type="radio" name="selections[{{ $category['category_name'] }}]" value="{{ $menuName }}" required class="peer hidden">
-                                                <div class="px-6 py-3 bg-white border-2 border-gray-200 rounded-2xl text-sm font-bold text-gray-600 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-white transition-all duration-300">
-                                                    {{ $menuName }}
-                                                </div>
-                                            </label>
-                                        @else
-                                            <div class="px-6 py-3 bg-gray-100 border-2 border-gray-200 rounded-2xl text-sm font-black text-gray-400 cursor-not-allowed">
-                                                {{ $menuName }}
-                                                <input type="hidden" name="selections[{{ $category['category_name'] }}]" value="{{ $menuName }}">
-                                            </div>
-                                        @endif
-                                    @endforeach
+                {{-- 1. Pilihan Menu (Revisi Menggunakan package_details) --}}
+                <div class="space-y-6">
+                    <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Isi Menu Paket</h3>
+                    
+                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @forelse($package->details as $detail)
+                                <div class="flex items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 group">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="font-bold text-gray-700 uppercase text-sm">{{ $detail->name }}</span>
+                                    {{-- Hidden input supaya menu ikut terkirim --}}
+                                    <input type="hidden" name="selected_menus[]" value="{{ $detail->name }}">
                                 </div>
-                            </div>
-                        @endforeach
-                    @endif
+                            @empty
+                                <div class="col-span-2 text-center py-4">
+                                    <p class="text-gray-400 italic">Menu belum diinput di database.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
 
                 <hr class="border-gray-100">
@@ -100,7 +89,7 @@
                     <div><label class="block text-sm font-bold text-gray-700 mb-2">Alamat Lengkap</label><textarea name="address" rows="3" required class="w-full rounded-2xl border-gray-200 p-4" placeholder="Alamat detail..."></textarea></div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal Pengiriman</label>
-                        <input type="date" id="delivery_date_input" name="delivery_date" required min="{{ \Carbon\Carbon::now()->addDays(2)->format('Y-m-d') }}" class="w-full rounded-2xl border-gray-200 p-4" onchange="updateDeadlineInfo(this.value)">
+                        <input type="date" name="delivery_date" required min="{{ \Carbon\Carbon::now()->addDays(2)->format('Y-m-d') }}" class="w-full rounded-2xl border-gray-200 p-4">
                     </div>
                 </div>
 
@@ -125,4 +114,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

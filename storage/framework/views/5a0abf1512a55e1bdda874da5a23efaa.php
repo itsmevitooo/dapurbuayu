@@ -53,43 +53,29 @@
                 <input type="hidden" name="package_id" value="<?php echo e($package->id); ?>">
 
                 
-                <div class="space-y-8">
-                    <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Sesuaikan Menu</h3>
-                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($package->items)): ?>
-                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $package->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <div class="animate-fade-in">
-                                <h4 class="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-4 flex items-center">
-                                    <span class="bg-primary w-2 h-2 rounded-full mr-3"></span>
-                                    <?php echo e($category['category_name']); ?>
-
-                                </h4>
-                                <div class="flex flex-wrap gap-3">
-                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $category['menus']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php 
-                                            // Pastikan kita mengambil nama menu dengan benar
-                                            $menuName = is_array($menu) ? $menu['name'] : $menu; 
-                                        ?>
-                                        
-                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($category['is_selectable']): ?>
-                                            <label class="relative group cursor-pointer">
-                                                <input type="radio" name="selections[<?php echo e($category['category_name']); ?>]" value="<?php echo e($menuName); ?>" required class="peer hidden">
-                                                <div class="px-6 py-3 bg-white border-2 border-gray-200 rounded-2xl text-sm font-bold text-gray-600 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-white transition-all duration-300">
-                                                    <?php echo e($menuName); ?>
-
-                                                </div>
-                                            </label>
-                                        <?php else: ?>
-                                            <div class="px-6 py-3 bg-gray-100 border-2 border-gray-200 rounded-2xl text-sm font-black text-gray-400 cursor-not-allowed">
-                                                <?php echo e($menuName); ?>
-
-                                                <input type="hidden" name="selections[<?php echo e($category['category_name']); ?>]" value="<?php echo e($menuName); ?>">
-                                            </div>
-                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                <div class="space-y-6">
+                    <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Isi Menu Paket</h3>
+                    
+                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $package->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <div class="flex items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 group">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="font-bold text-gray-700 uppercase text-sm"><?php echo e($detail->name); ?></span>
+                                    
+                                    <input type="hidden" name="selected_menus[]" value="<?php echo e($detail->name); ?>">
                                 </div>
-                            </div>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
-                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <div class="col-span-2 text-center py-4">
+                                    <p class="text-gray-400 italic">Menu belum diinput di database.</p>
+                                </div>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                        </div>
+                    </div>
                 </div>
 
                 <hr class="border-gray-100">
@@ -104,7 +90,7 @@
                     <div><label class="block text-sm font-bold text-gray-700 mb-2">Alamat Lengkap</label><textarea name="address" rows="3" required class="w-full rounded-2xl border-gray-200 p-4" placeholder="Alamat detail..."></textarea></div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal Pengiriman</label>
-                        <input type="date" id="delivery_date_input" name="delivery_date" required min="<?php echo e(\Carbon\Carbon::now()->addDays(2)->format('Y-m-d')); ?>" class="w-full rounded-2xl border-gray-200 p-4" onchange="updateDeadlineInfo(this.value)">
+                        <input type="date" name="delivery_date" required min="<?php echo e(\Carbon\Carbon::now()->addDays(2)->format('Y-m-d')); ?>" class="w-full rounded-2xl border-gray-200 p-4">
                     </div>
                 </div>
 
@@ -129,5 +115,5 @@
         </div>
     </div>
 </div>
-<?php $__env->stopSection(); ?> 
+<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\dapurbuayu\resources\views/orderdetail.blade.php ENDPATH**/ ?>

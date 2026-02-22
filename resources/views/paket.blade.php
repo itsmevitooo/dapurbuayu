@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="max-w-[95%] mx-auto px-4 py-4">
-    {{-- Header Judul (Tanpa Animasi) --}}
+    {{-- Header Judul --}}
     <div class="text-center mb-10">
         <h2 class="text-6xl font-bold text-primary font-[Qwitcher_Grypen]">Menu Paket Kami</h2>
         <p class="text-gray-500 font-inter uppercase tracking-[0.3em] text-[10px] mt-2 font-bold">Pilih Kategori Hidangan Spesial Dapur Bu Ayu</p>
@@ -41,18 +41,14 @@
                     {{-- Nama Paket --}}
                     <h3 class="text-2xl font-bold mb-3 text-gray-800 uppercase italic">{{ $p->name }}</h3>
                     
-                    {{-- Daftar Menu / Lauk --}}
+                    {{-- REVISI: Mengambil Daftar Menu dari tabel package_details --}}
                     <div class="flex-grow">
                         <ul class="text-sm text-gray-600 mb-6 space-y-1">
-                            @if(is_array($p->items))
-                                @foreach($p->items as $categoryItem)
-                                    @isset($categoryItem['menus'])
-                                        @foreach($categoryItem['menus'] as $menu) 
-                                            <li>• {{ $menu['name'] }}</li> 
-                                        @endforeach
-                                    @endisset
-                                @endforeach
-                            @endif
+                            @forelse($p->details as $detail)
+                                <li>• {{ $detail->name }}</li>
+                            @empty
+                                <li class="text-gray-400 italic text-xs">Menu belum diinput</li>
+                            @endforelse
                         </ul>
                     </div>
 

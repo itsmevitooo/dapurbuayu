@@ -12,25 +12,24 @@ class PaketController extends Controller
      */
     public function index(Request $request)
     {
-        // Ambil kategori dari URL, default ke 'nasi_box'
+        // Default category adalah nasi_box jika tidak ada input
         $category = $request->query('category', 'nasi_box');
-
-        // Mengambil data dari model Paket
-        $pakets = Paket::where('category', $category)->get();
-
-        // REVISI: Hapus '.index' karena file Mas namanya paket.blade.php
+        
+        // Ambil paket beserta details-nya agar tidak error di blade
+        $pakets = Paket::with('details')->where('category', $category)->get();
+    
         return view('paket', compact('pakets', 'category'));
     }
-
+    
     /**
-     * Menampilkan detail paket
+     * Menampilkan detail satu paket
+     * Fungsi ini cuma boleh ada SATU di sini
      */
     public function show($id)
     {
-        $paket = Paket::findOrFail($id);
-
-        // REVISI: Jika file detail Mas nanti namanya paket_detail.blade.php, ganti kesana.
-        // Untuk sekarang saya asumsikan Mas akan buat file 'paket_detail.blade.php'
+        // Ambil data paket beserta detail isian menunya
+        $paket = Paket::with('details')->findOrFail($id);
+        
         return view('paket_detail', compact('paket'));
     }
 }
