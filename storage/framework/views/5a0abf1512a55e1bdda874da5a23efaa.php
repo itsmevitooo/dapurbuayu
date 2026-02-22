@@ -113,11 +113,11 @@
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <label class="block text-xl font-black text-gray-800 mb-1">Kuantitas Pesanan</label>
-                            <p class="text-xs text-gray-500 font-bold">Minimal: <?php echo e($package->min_order ?? 1); ?> Box.</p>
+                            <p class="text-xs text-gray-500 font-bold">Minimal: <?php echo e($package->min_order ?? 1); ?> Porsi.</p>
                         </div>
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
                             <input type="number" name="quantity" min="<?php echo e($package->min_order ?? 1); ?>" value="<?php echo e($package->min_order ?? 1); ?>" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary">
-                            <span class="pr-4 text-gray-400 font-bold">Box</span>
+                            <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
                         </div>
                     </div>
                 </div>
@@ -129,5 +129,5 @@
         </div>
     </div>
 </div>
-<?php $__env->stopSection(); ?>
+<?php $__env->stopSection(); ?> 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\dapurbuayu\resources\views/orderdetail.blade.php ENDPATH**/ ?>

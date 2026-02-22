@@ -109,11 +109,11 @@
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <label class="block text-xl font-black text-gray-800 mb-1">Kuantitas Pesanan</label>
-                            <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Box.</p>
+                            <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi.</p>
                         </div>
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
                             <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ $package->min_order ?? 1 }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary">
-                            <span class="pr-4 text-gray-400 font-bold">Box</span>
+                            <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
                         </div>
                     </div>
                 </div>
