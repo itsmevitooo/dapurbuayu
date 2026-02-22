@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Pakets\Schemas;
 
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Grid;
+// Sisanya ambil dari Forms karena di Schemas memang belum ada
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
@@ -19,13 +20,12 @@ class PaketForm
         return $schema
             ->components([
                 Grid::make(2)
-                    ->schema([
+                    ->components([
                         TextInput::make('name')
                             ->label('Nama Paket')
                             ->placeholder('Contoh: Paket A')
                             ->required(),
 
-                        // INI SUDAH JADI OPTION BOX SESUAI GAMBAR
                         Select::make('category')
                             ->label('Kategori Paket')
                             ->options([
@@ -34,12 +34,12 @@ class PaketForm
                                 'tumpeng' => 'Tumpeng',
                                 'akikah' => 'Akikah',
                             ])
-                            ->native(false) // Tampilan lebih modern
+                            ->native(false)
                             ->required(),
                     ]),
 
                 Grid::make(3)
-                    ->schema([
+                    ->components([
                         TextInput::make('price')
                             ->label('Harga')
                             ->required()
@@ -49,7 +49,7 @@ class PaketForm
                             ->label('Min. Order')
                             ->required()
                             ->numeric()
-                            ->default(1),
+                            ->default(25),
                         TextInput::make('total_orders')
                             ->label('Total Terjual')
                             ->numeric()
@@ -65,14 +65,15 @@ class PaketForm
                     ->label('Deskripsi Singkat')
                     ->columnSpanFull(),
 
-                // REPEATER GRUP MENU (Cara Januari yang Mas minta)
-                Repeater::make('items')
+                // Repeater harus di-import dari Forms
+                Repeater::make('details')
+                    ->relationship('details') 
                     ->label('Pengaturan Menu & Lauk')
-                    ->schema([
+                    ->schema([ // REPEATER di Forms tetap pakai fungsi ->schema()
                         Grid::make(2)
-                            ->schema([
-                                Select::make('menu_category')
-                                    ->label('Kategori Menu (Misal: Nasi / Lauk Pilihan)')
+                            ->components([
+                                Select::make('category')
+                                    ->label('Kategori Menu')
                                     ->options([
                                         'Nasi' => 'Nasi',
                                         'Lauk Utama' => 'Lauk Utama',
@@ -80,8 +81,6 @@ class PaketForm
                                         'Sayuran' => 'Sayuran',
                                         'Pelengkap' => 'Pelengkap',
                                     ])
-                                    ->searchable()
-                                    ->createOptionUsing(fn (string $data) => $data)
                                     ->required(),
 
                                 Toggle::make('is_selectable')
@@ -89,7 +88,7 @@ class PaketForm
                                     ->default(false),
                             ]),
 
-                        TagsInput::make('list_lauk')
+                        TagsInput::make('name')
                             ->label('Isi Menu')
                             ->placeholder('Ketik nama menu lalu Enter')
                             ->required(),
@@ -97,6 +96,7 @@ class PaketForm
                     ->collapsible()
                     ->defaultItems(1)
                     ->createItemButtonLabel('Tambah Baris Kategori Menu')
+                    ->columnSpanFull(),
             ]);
     }
 }

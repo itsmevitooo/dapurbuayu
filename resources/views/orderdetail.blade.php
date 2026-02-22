@@ -69,13 +69,18 @@
                                     <p class="text-xs font-black text-gray-400 uppercase mb-3 tracking-widest">Menu Utama (Tetap)</p>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         @foreach($fixedMenus as $detail)
-                                            <div class="flex items-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                                </svg>
-                                                <span class="font-bold text-gray-700 text-sm">{{ $detail->name }}</span>
-                                                <input type="hidden" name="selections[]" value="{{ $detail->name }}">
-                                            </div>
+                                            {{-- Tambahkan looping untuk array name --}}
+                                            @if(is_array($detail->name))
+                                                @foreach($detail->name as $menuItem)
+                                                    <div class="flex items-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="font-bold text-gray-700 text-sm">{{ $menuItem }}</span>
+                                                        <input type="hidden" name="selections[]" value="{{ $menuItem }}">
+                                                    </div>
+                                                @endforeach
+                                            @endif
                                         @endforeach
                                     </div>
                                 </div>
@@ -84,24 +89,41 @@
                             {{-- Bagian Menu Opsional (Bisa Dipilih) --}}
                             @if($optionalMenus->count() > 0)
                                 <div class="pt-4 border-t border-gray-100">
-                                    <p class="text-xs font-black text-primary uppercase mb-3 tracking-widest">Pilih Lauk Tambahan / Opsional</p>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        @foreach($optionalMenus->groupBy('category') as $category => $items)
-                                            <div class="col-span-full">
-                                                <label class="text-sm font-bold text-gray-600 mb-2 block">{{ $category }}</label>
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    @foreach($items as $item)
-                                                        <label class="relative flex items-center p-4 bg-white rounded-2xl border-2 border-gray-100 cursor-pointer hover:border-primary transition-all group">
-                                                            <input type="checkbox" name="selections[]" value="{{ $item->name }}" class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
-                                                            <span class="ml-3 font-bold text-gray-700 group-hover:text-primary transition-colors text-sm">
-                                                                {{ $item->name }}
-                                                            </span>
-                                                        </label>
-                                                    @endforeach
-                                                </div>
+                                    <p class="text-xs font-black text-primary uppercase mb-4 tracking-widest">Pilih Lauk (Pilih salah satu per kategori)</p>
+                                    
+                                    @foreach($optionalMenus->groupBy('category') as $category => $items)
+                                        <div class="mb-6 last:mb-0">
+                                            <label class="text-sm font-bold text-gray-500 mb-3 block uppercase italic tracking-tight">{{ $category }}</label>
+                                            
+                                            {{-- Flex wrap agar tombol tidak panjang dan lebarnya sesuai teks --}}
+                                            <div class="flex flex-wrap gap-3">
+                                                @foreach($items as $detail)
+                                                    @if(is_array($detail->name))
+                                                        @foreach($detail->name as $menuItem)
+                                                            <label class="relative cursor-pointer group">
+                                                                {{-- Gunakan type="radio" dan name berdasarkan kategori agar hanya bisa pilih satu --}}
+                                                                <input type="radio" 
+                                                                    name="selections[{{ $category }}]" 
+                                                                    value="{{ $menuItem }}" 
+                                                                    class="peer hidden" 
+                                                                    required>
+                                                                
+                                                                {{-- Desain Button: Tanpa lingkaran, lebar otomatis --}}
+                                                                <div class="inline-flex items-center px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl transition-all duration-200 
+                                                                    peer-checked:border-primary peer-checked:bg-yellow-50 peer-checked:shadow-md
+                                                                    group-hover:border-primary group-hover:bg-gray-50">
+                                                                    
+                                                                    <span class="font-bold text-gray-700 text-sm peer-checked:text-primary whitespace-nowrap">
+                                                                        {{ $menuItem }}
+                                                                    </span>
+                                                                </div>
+                                                            </label>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
                                             </div>
-                                        @endforeach
-                                    </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             @endif
 
