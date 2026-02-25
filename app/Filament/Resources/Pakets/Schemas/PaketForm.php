@@ -59,7 +59,9 @@ class PaketForm
                 FileUpload::make('image')
                     ->label('Foto Paket')
                     ->image()
-                    ->directory('pakets'),
+                    ->disk('public')
+                    ->directory('pakets')
+                    ->visibility('public'),
 
                 Textarea::make('description')
                     ->label('Deskripsi Singkat')

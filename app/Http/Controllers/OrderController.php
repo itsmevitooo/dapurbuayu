@@ -8,9 +8,20 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        // Set konfigurasi Midtrans
+        Config::$serverKey = config('services.midtrans.server_key');
+        Config::$isProduction = config('services.midtrans.is_production');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+    }
+
     public function showDetailForm($id)
     {
         $package = Paket::findOrFail($id);
@@ -25,12 +36,11 @@ class OrderController extends Controller
             'phone_number' => 'required|string|max:20',
             'address'      => 'required|string',
             'delivery_date'=> 'required|date',
-            'quantity'     => 'required|integer',
+            'quantity'     => 'required|integer|min:1',
         ]);
 
         $package = Paket::findOrFail($request->package_id);
         
-        // Perbaikan: Ambil hanya VALUE dari array selections (nama menunya saja)
         $selections = $request->input('selections', []);
         $menuArray = is_array($selections) ? array_values($selections) : [$selections];
 
@@ -44,7 +54,7 @@ class OrderController extends Controller
             'delivery_date'   => $request->delivery_date,
             'quantity'        => $request->quantity,
             'total_price'     => $package->price * $request->quantity,
-            'menu_selections' => $menuArray, // Simpan array yang sudah dibersihkan
+            'menu_selections' => $menuArray,
         ]]);
 
         return redirect()->route('order.payment');
@@ -86,7 +96,6 @@ class OrderController extends Controller
                 'order_status'     => 'DIPROSES',
             ]);
 
-            // Pastikan menu_selections digabung menjadi string untuk kolom side_dish
             $menuSelections = $orderData['menu_selections'] ?? [];
             $menuString = implode(', ', $menuSelections);
 
@@ -98,34 +107,57 @@ class OrderController extends Controller
                 'quantity'  => $orderData['quantity'],
                 'price'     => $orderData['package_price'],
                 'subtotal'  => $orderData['total_price'],
-                'side_dish' => $menuString, // Sekarang tidak akan null jika user memilih menu
+                'side_dish' => $menuString,
             ]);
 
             // 3. Update total order di tabel paket
             Paket::where('id', $orderData['package_id'])->increment('total_orders');
 
-            DB::commit();
+            // 4. Logika Payment Gateway (Midtrans)
+            if ($request->payment_method === 'TRANSFER') {
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $invoiceCode,
+                        'gross_amount' => (int) $orderData['total_price'],
+                    ],
+                    'customer_details' => [
+                        'first_name' => $orderData['full_name'],
+                        'phone' => $orderData['phone_number'],
+                    ],
+                    // Link redirect setelah bayar (opsional)
+                    'callbacks' => [
+                        'finish' => route('order.success'),
+                    ]
+                ];
 
-            if ($request->payment_method === 'COD') {
+                $snapToken = Snap::getSnapToken($params);
+                
+                // Simpan snap_token ke database agar bisa diakses di halaman Cek Order
+                $order->update(['snap_token' => $snapToken]);
+
+                DB::commit();
+                return response()->json([
+                    'method' => 'MIDTRANS',
+                    'snap_token' => $snapToken, 
+                    'invoice_code' => $invoiceCode
+                ]);
+
+            } else {
+                // Logika COD (WhatsApp)
                 $whatsappUrl = "https://wa.me/628123456789?text=" . urlencode(
-                    "Halo Dapur Bu Ayu, saya konfirmasi pesanan.\n\n" .
+                    "Halo Dapur Bu Ayu, saya konfirmasi pesanan COD.\n\n" .
                     "Invoice: " . $invoiceCode . "\n" .
                     "Nama: " . $orderData['full_name'] . "\n" .
                     "Menu: " . ($menuString ?: 'Standar') . "\n" .
                     "Total: Rp " . number_format($orderData['total_price'], 0, ',', '.')
                 );
                 
+                DB::commit();
                 session()->forget('order_data');
                 return response()->json([
                     'method' => 'COD',
                     'invoice_code' => $invoiceCode,
                     'redirect_url' => $whatsappUrl
-                ]);
-            } else {
-                return response()->json([
-                    'method' => 'MIDTRANS',
-                    'snap_token' => 'YOUR_SNAP_TOKEN', 
-                    'invoice_code' => $invoiceCode
                 ]);
             }
 
@@ -137,6 +169,7 @@ class OrderController extends Controller
 
     public function success()
     {
+        session()->forget('order_data');
         return view('paymentsuccess');
     }
 }

@@ -128,10 +128,20 @@
                                 <div class="p-6 flex flex-col flex-grow font-inter bg-white">
                                     <h3 class="text-xl font-bold mb-3 text-gray-800 uppercase tracking-tight h-14 line-clamp-2">{{ $package->name }}</h3>
                                     <div class="flex-grow">
-                                        {{-- REVISI: Mengambil dari tabel package_details --}}
                                         <ul class="text-sm text-gray-600 mb-6 space-y-1 h-32 overflow-y-auto custom-scrollbar italic text-left">
                                             @forelse($package->details as $detail)
-                                                <li>• {{ $detail->name }}</li>
+                                                @php
+                                                    // Ambil isi menu, jika JSON (array) maka di-decode, jika string buat jadi array
+                                                    $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true);
+                                                @endphp
+
+                                                @if(is_array($menuList))
+                                                    @foreach($menuList as $menuItem)
+                                                        <li>• {{ $menuItem }}</li>
+                                                    @endforeach
+                                                @else
+                                                    <li>• {{ $detail->name }}</li>
+                                                @endif
                                             @empty
                                                 <li class="text-gray-400">Menu sedang disiapkan</li>
                                             @endforelse

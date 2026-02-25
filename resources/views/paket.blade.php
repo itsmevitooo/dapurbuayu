@@ -41,11 +41,17 @@
                     {{-- Nama Paket --}}
                     <h3 class="text-2xl font-bold mb-3 text-gray-800 uppercase italic">{{ $p->name }}</h3>
                     
-                    {{-- REVISI: Mengambil Daftar Menu dari tabel package_details --}}
+                    {{-- FIX: Memastikan $detail->name adalah string sebelum ditampilkan --}}
                     <div class="flex-grow">
                         <ul class="text-sm text-gray-600 mb-6 space-y-1">
                             @forelse($p->details as $detail)
-                                <li>• {{ $detail->name }}</li>
+                                <li>• 
+                                    @if(is_array($detail->name))
+                                        {{ implode(', ', $detail->name) }}
+                                    @else
+                                        {{ $detail->name }}
+                                    @endif
+                                </li>
                             @empty
                                 <li class="text-gray-400 italic text-xs">Menu belum diinput</li>
                             @endforelse

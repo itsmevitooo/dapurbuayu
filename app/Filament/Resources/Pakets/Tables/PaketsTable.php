@@ -25,7 +25,9 @@ class PaketsTable
                 TextColumn::make('price')
                     ->money()
                     ->sortable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                ->disk('public')
+                ->visibility('public'),
                 TextColumn::make('total_orders')
                     ->numeric()
                     ->sortable(),
