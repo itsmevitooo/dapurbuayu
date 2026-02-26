@@ -59,16 +59,17 @@
                             </p>
                         </div>
                         
-                        <div class="flex flex-col items-end gap-3 text-right">
-                            <div class="flex flex-col gap-1">
+                        {{-- STATUS SECTION - RAPIH & SIMETRIS --}}
+                        <div class="flex flex-col items-end gap-4 text-right">
+                            <div class="flex flex-col gap-1.5">
                                 <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Status Pembayaran</p>
-                                <span class="px-5 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase {{ in_array(strtoupper($order->payment_status), ['PAID', 'LUNAS', 'SUCCESS']) ? 'bg-green-500 text-white' : 'bg-orange-400 text-white' }} print:border print:text-black">
+                                <span class="inline-block w-32 py-2.5 rounded-xl text-[10px] font-black tracking-widest uppercase text-center {{ in_array(strtoupper($order->payment_status), ['PAID', 'LUNAS', 'SUCCESS']) ? 'bg-green-500 text-white' : 'bg-orange-400 text-white' }} print:border print:text-black">
                                     {{ $order->payment_status }}
                                 </span>
                             </div>
-                            <div class="flex flex-col gap-1">
+                            <div class="flex flex-col gap-1.5">
                                 <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Status Pesanan</p>
-                                <span class="px-5 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase bg-gray-100 text-gray-600 border border-gray-200 print:text-black">
+                                <span class="inline-block w-32 py-2.5 rounded-xl text-[10px] font-black tracking-widest uppercase text-center bg-gray-100 text-gray-600 border border-gray-200 print:text-black">
                                     {{ $order->order_status }}
                                 </span>
                             </div>
@@ -109,7 +110,7 @@
                             </div>
 
                             <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto no-print">
-                                {{-- TOMBOL BAYAR (Muncul hanya jika status PENDING & ada Snap Token) --}}
+                                {{-- TOMBOL BAYAR --}}
                                 @if(strtoupper($order->payment_status) == 'PENDING' && $order->snap_token)
                                     <button id="pay-button" class="bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-bold py-4 px-10 rounded-2xl uppercase tracking-[0.2em] transition shadow-lg flex items-center justify-center gap-2">
                                         💳 Bayar Sekarang
