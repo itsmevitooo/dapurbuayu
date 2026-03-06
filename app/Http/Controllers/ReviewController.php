@@ -3,24 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
+use App\Models\Paket; // Nama Model tetap Paket
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
     public function index()
     {
-        // Mengambil semua review terbaru tanpa filter approval
-        $reviews = Review::latest()->get();
+        // Eager loading relasi 'product' dari Model Review
+        $reviews = Review::with('product')->latest()->get();
         return view('reviews', compact('reviews'));
     }
 
     public function store(Request $request)
     {
+        // VALIDASI: Cek ke tabel 'products' karena itu nama tabel di DB Mas
         $request->validate([
-            'name' => 'required|string|max:255',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string',
-            'image.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
+            'products_id' => 'required|exists:products,id', // Gunakan 'products' (nama tabel DB)
+            'name'        => 'required|string|max:255',
+            'rating'      => 'required|integer|min:1|max:5',
+            'comment'     => 'required|string',
+            'image.*'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
         ]);
 
         $imagePaths = [];
@@ -31,11 +34,11 @@ class ReviewController extends Controller
         }
 
         Review::create([
-            'name' => $request->name,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-            'image' => $imagePaths,
-            // 'is_approved' dihapus dari sini
+            'products_id' => $request->products_id,
+            'name'        => $request->name,
+            'rating'      => $request->rating,
+            'comment'     => $request->comment,
+            'image'       => $imagePaths,
         ]);
 
         return redirect()->back()->with('success', 'Review Anda telah berhasil diterbitkan!');

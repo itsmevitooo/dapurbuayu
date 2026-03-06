@@ -129,7 +129,6 @@
                                         <ul class="text-sm text-gray-600 mb-6 space-y-1 h-32 overflow-y-auto custom-scrollbar italic text-left">
                                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $package->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                                 <?php
-                                                    // Ambil isi menu, jika JSON (array) maka di-decode, jika string buat jadi array
                                                     $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true);
                                                 ?>
 
@@ -184,6 +183,15 @@
                                         <span class="text-lg"><?php echo e($i <= $review->rating ? '★' : '☆'); ?></span>
                                     <?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
+
+                                
+                                <div class="mb-3">
+                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">
+                                        📦 <?php echo e($review->product->name ?? 'Paket Katering'); ?>
+
+                                    </span>
+                                </div>
+
                                 <p class="italic text-gray-700 mb-4 flex-grow text-sm leading-relaxed">"<?php echo e(Str::limit($review->comment, 100)); ?>"</p>
                                 
                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($review->image): ?>
@@ -208,7 +216,7 @@
                             </div>
                         </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <div class="w-full py-10 text-center italic text-gray-400">Belum ada review.</div>
+                        <div class="w-full py-10 text-center italic text-gray-400">Belum ada ulasan.</div>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
                     <div class="swiper-button-next r-next"></div>
@@ -232,8 +240,20 @@
                     <div class="space-y-5 text-left font-inter">
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Nama Lengkap</label>
-                            <input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
+                            <input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400" placeholder="Masukkan nama Anda">
                         </div>
+
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label>
+                            <select name="products_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
+                                <option value="" disabled selected>Pilih menu paket...</option>
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($package->id); ?>"><?php echo e($package->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                            </select>
+                        </div>
+
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label>
                             <select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-orange-400 font-bold focus:ring-orange-400">

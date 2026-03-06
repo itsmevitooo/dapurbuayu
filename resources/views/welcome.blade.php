@@ -131,7 +131,6 @@
                                         <ul class="text-sm text-gray-600 mb-6 space-y-1 h-32 overflow-y-auto custom-scrollbar italic text-left">
                                             @forelse($package->details as $detail)
                                                 @php
-                                                    // Ambil isi menu, jika JSON (array) maka di-decode, jika string buat jadi array
                                                     $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true);
                                                 @endphp
 
@@ -186,6 +185,14 @@
                                         <span class="text-lg">{{ $i <= $review->rating ? '★' : '☆' }}</span>
                                     @endfor
                                 </div>
+
+                                {{-- REVISI: Menampilkan Nama Paket di Slider Home --}}
+                                <div class="mb-3">
+                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">
+                                        📦 {{ $review->product->name ?? 'Paket Katering' }}
+                                    </span>
+                                </div>
+
                                 <p class="italic text-gray-700 mb-4 flex-grow text-sm leading-relaxed">"{{ Str::limit($review->comment, 100) }}"</p>
                                 
                                 @if($review->image)
@@ -210,7 +217,7 @@
                             </div>
                         </div>
                         @empty
-                        <div class="w-full py-10 text-center italic text-gray-400">Belum ada review.</div>
+                        <div class="w-full py-10 text-center italic text-gray-400">Belum ada ulasan.</div>
                         @endforelse
                     </div>
                     <div class="swiper-button-next r-next"></div>
@@ -234,8 +241,20 @@
                     <div class="space-y-5 text-left font-inter">
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Nama Lengkap</label>
-                            <input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
+                            <input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400" placeholder="Masukkan nama Anda">
                         </div>
+
+                        {{-- REVISI: Select Produk diperkuat agar mengirim products_id yang valid --}}
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label>
+                            <select name="products_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
+                                <option value="" disabled selected>Pilih menu paket...</option>
+                                @foreach($packages as $package)
+                                    <option value="{{ $package->id }}">{{ $package->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label>
                             <select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-orange-400 font-bold focus:ring-orange-400">
