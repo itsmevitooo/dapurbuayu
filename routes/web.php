@@ -4,13 +4,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\CheckOrderController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\OrderController; 
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\GalleryController; // Pastikan ini di-import
 use Illuminate\Support\Facades\Route;
 
 // --- Halaman Utama & Umum ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/lokasi', [HomeController::class, 'location'])->name('location');
-Route::get('/galeri', [HomeController::class, 'gallery'])->name('gallery.index');
+
+// --- Mengarah ke Galeri
+Route::get('/galeri', [GalleryController::class, 'index'])->name('gallery.index');
 
 // --- Sistem Review ---
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
