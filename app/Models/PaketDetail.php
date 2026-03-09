@@ -3,32 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaketDetail extends Model
 {
-    // Mengacu pada tabel di database Mas
-    protected $table = 'package_details';
+    // Mengacu pada tabel paketdetail (tanpa underscore)
+    protected $table = 'paketdetail';
 
-    // Bersihkan fillable (jangan ada double 'name')
     protected $fillable = [
-        'product_id', 
+        'paket_id', // Sesuaikan dengan foreign key baru
         'category', 
         'name', 
         'is_selectable'
     ];
 
-    /**
-     * SANGAT PENTING:
-     * Karena di Filament Mas pakai inputan yang bisa diisi banyak (tags/multiple),
-     * Laravel harus mengubah data JSON dari database menjadi Array PHP secara otomatis.
-     */
     protected $casts = [
         'name' => 'array', 
         'is_selectable' => 'boolean',
     ];
 
-    public function paket()
+    public function paket(): BelongsTo
     {
-        return $this->belongsTo(Paket::class, 'product_id');
+        // Relasi balik ke model Paket menggunakan paket_id
+        return $this->belongsTo(Paket::class, 'paket_id');
     }
 }

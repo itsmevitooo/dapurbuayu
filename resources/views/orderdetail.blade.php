@@ -51,7 +51,20 @@
                 @csrf
                 <input type="hidden" name="package_id" value="{{ $package->id }}">
 
-                {{-- 1. Pilihan Menu --}}
+                {{-- 1. Deskripsi Paket --}}
+                <div class="space-y-6">
+                    <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Deskripsi Paket</h3>
+                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
+                        <p class="text-gray-700 font-bold leading-relaxed" style="font-family: inherit;">
+                            {{-- Menggunakan nl2br agar enter dari database terbaca --}}
+                            {!! nl2br(e($package->description)) !!}
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                {{-- 2. Pilihan Menu --}}
                 <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Isi Menu Paket</h3>
                     
@@ -69,7 +82,6 @@
                                     <p class="text-xs font-black text-gray-400 uppercase mb-3 tracking-widest">Menu Utama (Tetap)</p>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         @foreach($fixedMenus as $detail)
-                                            {{-- Tambahkan looping untuk array name --}}
                                             @if(is_array($detail->name))
                                                 @foreach($detail->name as $menuItem)
                                                     <div class="flex items-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
@@ -95,20 +107,17 @@
                                         <div class="mb-6 last:mb-0">
                                             <label class="text-sm font-bold text-gray-500 mb-3 block uppercase italic tracking-tight">{{ $category }}</label>
                                             
-                                            {{-- Flex wrap agar tombol tidak panjang dan lebarnya sesuai teks --}}
                                             <div class="flex flex-wrap gap-3">
                                                 @foreach($items as $detail)
                                                     @if(is_array($detail->name))
                                                         @foreach($detail->name as $menuItem)
                                                             <label class="relative cursor-pointer group">
-                                                                {{-- Gunakan type="radio" dan name berdasarkan kategori agar hanya bisa pilih satu --}}
                                                                 <input type="radio" 
                                                                     name="selections[{{ $category }}]" 
                                                                     value="{{ $menuItem }}" 
                                                                     class="peer hidden" 
                                                                     required>
                                                                 
-                                                                {{-- Desain Button: Tanpa lingkaran, lebar otomatis --}}
                                                                 <div class="inline-flex items-center px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl transition-all duration-200 
                                                                     peer-checked:border-primary peer-checked:bg-yellow-50 peer-checked:shadow-md
                                                                     group-hover:border-primary group-hover:bg-gray-50">
@@ -138,7 +147,7 @@
 
                 <hr class="border-gray-100">
 
-                {{-- 2. Data Pengiriman --}}
+                {{-- 3. Data Pengiriman --}}
                 <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Informasi Pengiriman</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -152,7 +161,7 @@
                     </div>
                 </div>
 
-                {{-- 3. Kuantitas --}}
+                {{-- 4. Kuantitas --}}
                 <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
@@ -160,7 +169,7 @@
                             <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi.</p>
                         </div>
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
-                            <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ $package->min_order ?? 1 }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary">
+                            <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ $package->min_order ?? 1 }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
                             <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
                         </div>
                     </div>

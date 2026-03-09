@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('content'); ?>
 <div class="max-w-6xl mx-auto px-4 py-8">
     <div class="text-center mb-10">
@@ -54,6 +52,20 @@
 
                 
                 <div class="space-y-6">
+                    <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Deskripsi Paket</h3>
+                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
+                        <p class="text-gray-700 font-bold leading-relaxed" style="font-family: inherit;">
+                            
+                            <?php echo nl2br(e($package->description)); ?>
+
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                
+                <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Isi Menu Paket</h3>
                     
                     <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
@@ -70,7 +82,6 @@
                                     <p class="text-xs font-black text-gray-400 uppercase mb-3 tracking-widest">Menu Utama (Tetap)</p>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $fixedMenus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            
                                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($detail->name)): ?>
                                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $detail->name; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <div class="flex items-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
@@ -96,19 +107,16 @@
                                         <div class="mb-6 last:mb-0">
                                             <label class="text-sm font-bold text-gray-500 mb-3 block uppercase italic tracking-tight"><?php echo e($category); ?></label>
                                             
-                                            
                                             <div class="flex flex-wrap gap-3">
                                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($detail->name)): ?>
                                                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $detail->name; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <label class="relative cursor-pointer group">
-                                                                
                                                                 <input type="radio" 
                                                                     name="selections[<?php echo e($category); ?>]" 
                                                                     value="<?php echo e($menuItem); ?>" 
                                                                     class="peer hidden" 
                                                                     required>
-                                                                
                                                                 
                                                                 <div class="inline-flex items-center px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl transition-all duration-200 
                                                                     peer-checked:border-primary peer-checked:bg-yellow-50 peer-checked:shadow-md
@@ -162,7 +170,7 @@
                             <p class="text-xs text-gray-500 font-bold">Minimal: <?php echo e($package->min_order ?? 1); ?> Porsi.</p>
                         </div>
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
-                            <input type="number" name="quantity" min="<?php echo e($package->min_order ?? 1); ?>" value="<?php echo e($package->min_order ?? 1); ?>" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary">
+                            <input type="number" name="quantity" min="<?php echo e($package->min_order ?? 1); ?>" value="<?php echo e($package->min_order ?? 1); ?>" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
                             <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
                         </div>
                     </div>

@@ -9,9 +9,8 @@ class Review extends Model
 {
     use HasFactory;
 
-    // REVISI: Tambahkan 'products_id' ke dalam array fillable
     protected $fillable = [
-        'products_id', // Ini yang tadi ketinggalan, Mas!
+        'paket_id', 
         'name', 
         'comment', 
         'rating', 

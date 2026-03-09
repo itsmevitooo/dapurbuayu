@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('content'); ?>
 <div class="max-w-[95%] mx-auto px-4 py-4">
     
