@@ -12,9 +12,11 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'paket_id',
+        'item_name', // WAJIB ADA DI SINI
         'quantity',
         'price',
         'subtotal',
+        'side_dish',
     ];
 
     protected $casts = [
@@ -26,10 +28,6 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
-    /**
-     * RELASI DIBERESIN DISINI
-     * Kita pakai Paket::class karena itu nama file model kamu!
-     */
     public function product()
     {
         return $this->belongsTo(Paket::class, 'paket_id');

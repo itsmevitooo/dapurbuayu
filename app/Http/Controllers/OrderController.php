@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Midtrans\Notification; // Tambahkan ini
+use Midtrans\Notification;
 
 class OrderController extends Controller
 {
@@ -32,7 +32,7 @@ class OrderController extends Controller
     public function processDetail(Request $request)
     {
         $request->validate([
-            'package_id'   => 'required|exists:products,id', 
+            'package_id'   => 'required|exists:paket,id', 
             'full_name'    => 'required|string|max:255',
             'phone_number' => 'required|string|max:20',
             'address'      => 'required|string',
@@ -106,7 +106,7 @@ class OrderController extends Controller
                 'quantity'  => $orderData['quantity'],
                 'price'     => $orderData['package_price'],
                 'subtotal'  => $totalHarga,
-                'side_dish' => implode(', ', $orderData['menu_selections'] ?? []),
+                'side_dish' => $orderData['menu_selections'] ?? [], 
             ]);
 
             Paket::where('id', $orderData['package_id'])->increment('total_orders');
@@ -131,7 +131,7 @@ class OrderController extends Controller
                 'method' => $request->payment_method,
                 'snap_token' => $snapToken,
                 'invoice_code' => $invoiceCode,
-                'redirect_url' => $isCOD ? "https://wa.me/628123456789?text=Konfirmasi..." : ""
+                'redirect_url' => $isCOD ? "https://wa.me/628123456789?text=Halo Admin, saya memesan paket katering {$orderData['package_name']} dengan Invoice: {$invoiceCode}" : ""
             ]);
 
         } catch (\Exception $e) {
@@ -140,37 +140,23 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * CALLBACK VERSI ANTI-GAGAL: STATUS JADI LUNAS
-     */
     public function callback()
     {
         try {
             $notification = new Notification();
             $orderId = $notification->order_id;
             $transactionStatus = $notification->transaction_status;
-            $fraudStatus = $notification->fraud_status;
-
-            Log::info("Callback Midtrans Diterima untuk Order: " . $orderId);
 
             $order = Order::where('invoice_code', $orderId)->first();
 
             if ($order) {
-                if ($transactionStatus == 'capture') {
-                    if ($fraudStatus == 'challenge') {
-                        $order->update(['payment_status' => 'PENDING']);
-                    } else if ($fraudStatus == 'accept') {
-                        $order->update(['payment_status' => 'LUNAS']);
-                    }
-                } else if ($transactionStatus == 'settlement') {
+                if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
                     $order->update(['payment_status' => 'LUNAS']);
                 } else if ($transactionStatus == 'cancel' || $transactionStatus == 'deny' || $transactionStatus == 'expire') {
                     $order->update(['payment_status' => 'EXPIRED']);
                 } else if ($transactionStatus == 'pending') {
                     $order->update(['payment_status' => 'PENDING']);
                 }
-
-                Log::info("Status Order {$orderId} sekarang: " . $order->payment_status);
                 return response()->json(['status' => 'OK']);
             }
         } catch (\Exception $e) {

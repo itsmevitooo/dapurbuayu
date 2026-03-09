@@ -59,7 +59,7 @@
                             </p>
                         </div>
                         
-                        {{-- STATUS SECTION - RAPIH & SIMETRIS --}}
+                        {{-- STATUS SECTION --}}
                         <div class="flex flex-col items-end gap-4 text-right">
                             <div class="flex flex-col gap-1.5">
                                 <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Status Pembayaran</p>
@@ -86,7 +86,17 @@
                                         <p class="font-black text-gray-800 text-2xl uppercase tracking-tight">
                                             {{ $item->item_name }}
                                         </p>
-                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Menu: <span class="italic text-gray-400">{{ $item->side_dish ?? 'Standar' }}</span></p>
+                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">
+                                            Menu: 
+                                            <span class="italic text-gray-400">
+                                                {{-- REVISI DI SINI: Mengatasi error Array to String conversion --}}
+                                                @if(is_array($item->side_dish))
+                                                    {{ implode(', ', $item->side_dish) }}
+                                                @else
+                                                    {{ $item->side_dish ?? 'Standar' }}
+                                                @endif
+                                            </span>
+                                        </p>
                                     </div>
 
                                     <div class="text-right ml-4">
@@ -155,9 +165,9 @@
             </script>
             @endif
 
-        @elseif (session('error'))
+        @elseif (session('error') || request()->has('invoice_code'))
             <div class="text-center p-10 bg-red-50 rounded-[2rem] border border-red-100 mt-8 no-print">
-                <p class="text-red-600 font-bold">⚠️ {{ session('error') }}</p>
+                <p class="text-red-600 font-bold">⚠️ {{ session('error') ?? 'Pesanan tidak ditemukan. Periksa kembali kode invoice Anda.' }}</p>
             </div>
         @endif
     </div>

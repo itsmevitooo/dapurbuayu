@@ -15,31 +15,48 @@ class OrderForm
         return $schema
             ->components([
                 TextInput::make('invoice_code')
-                    ->required()
-                    ->disabled() // Opsional: biasanya kode invoice tidak diedit manual
+                    ->label('Kode Invoice')
+                    ->disabled() 
                     ->dehydrated(), 
+
                 TextInput::make('full_name')
+                    ->label('Nama Lengkap')
                     ->required(),
+
                 TextInput::make('phone_number')
+                    ->label('No. Telepon')
                     ->tel()
                     ->required(),
+
                 Textarea::make('address')
+                    ->label('Alamat Pengiriman')
                     ->required()
                     ->columnSpanFull(),
+
                 DatePicker::make('delivery_date')
+                    ->label('Tanggal Pengiriman')
                     ->required(),
-                TextInput::make('event_location'),
+
                 TextInput::make('total_price')
+                    ->label('Total Harga')
                     ->required()
                     ->numeric()
                     ->prefix('Rp'),
+
                 TextInput::make('payment_method')
-                    ->required()
-                    ->disabled(), // Biasanya diisi otomatis oleh sistem
-                TextInput::make('payment_status')
-                    ->required()
-                    ->default('PENDING'),
-                // Mengubah menjadi Select Dropdown
+                    ->label('Metode Pembayaran')
+                    ->disabled()
+                    ->dehydrated(),
+
+                Select::make('payment_status')
+                    ->label('Status Pembayaran')
+                    ->options([
+                        'PENDING' => 'PENDING',
+                        'LUNAS' => 'LUNAS',
+                        'EXPIRED' => 'EXPIRED',
+                    ])
+                    ->native(false),
+
                 Select::make('order_status')
                     ->label('Status Pesanan')
                     ->options([

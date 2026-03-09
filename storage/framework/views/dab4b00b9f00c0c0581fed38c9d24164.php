@@ -7,6 +7,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Qwitcher_Grypen:wght@400;700&display=swap');
         [x-cloak] { display: none !important; }
 
+        /* Fix Swiper Container */
+        .swiper { 
+            width: 100%; 
+            padding: 20px 10px 50px 10px !important;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .swiper-button-next, .swiper-button-prev {
             color: #EAB308 !important;
             background: white;
@@ -19,10 +27,9 @@
             transition: all 0.3s ease;
         }
         
-        .p-next, .r-next { right: 10px !important; }
-        .p-prev, .r-prev { left: 10px !important; }
+        .p-next, .r-next { right: 0px !important; }
+        .p-prev, .r-prev { left: 0px !important; }
         .swiper-pagination-bullet-active { background: #EAB308 !important; }
-        .swiper { width: 100%; padding: 20px 50px 40px 50px !important; }
 
         .ribbon-wrapper {
             width: 85px; height: 88px; overflow: hidden;
@@ -43,12 +50,17 @@
             font-size: 10px; font-weight: bold; backdrop-filter: blur(4px);
         }
 
-        .package-slider .swiper-slide { height: auto !important; display: flex; }
+        /* Memastikan Slide memiliki tinggi yang seragam */
+        .swiper-slide { 
+            height: auto !important; 
+            display: flex !important; 
+        }
+
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #EAB308; border-radius: 10px; }
 
         @media (max-width: 768px) {
-            .swiper { padding: 15px 15px 45px 15px !important; }
+            .swiper { padding: 15px 5px 45px 5px !important; }
         }
     </style>
 <?php $__env->stopPush(); ?>
@@ -110,11 +122,11 @@
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Pilihan paket yang paling banyak dipesan pelanggan kami</p>
             </div>
 
-            <div class="relative px-2 md:px-4">
+            <div class="max-w-7xl mx-auto px-4 relative">
                 <div class="swiper package-slider">
                     <div class="swiper-wrapper">
                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <div class="swiper-slide h-auto">
+                        <div class="swiper-slide">
                             <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col h-full relative group w-full">
                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($index < 3): ?>
                                 <div class="ribbon-wrapper"><div class="ribbon">Best Seller</div></div>
@@ -124,9 +136,9 @@
                                     <img src="<?php echo e(asset('storage/' . $package->image)); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 </div>
                                 <div class="p-6 flex flex-col flex-grow font-inter bg-white">
-                                    <h3 class="text-xl font-bold mb-3 text-gray-800 uppercase tracking-tight h-14 line-clamp-2"><?php echo e($package->name); ?></h3>
+                                    <h3 class="text-lg font-bold mb-3 text-gray-800 uppercase tracking-tight h-14 line-clamp-2"><?php echo e($package->name); ?></h3>
                                     <div class="flex-grow">
-                                        <ul class="text-sm text-gray-600 mb-6 space-y-1 h-32 overflow-y-auto custom-scrollbar italic text-left">
+                                        <ul class="text-xs text-gray-600 mb-6 space-y-1 h-32 overflow-y-auto custom-scrollbar italic text-left">
                                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $package->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                                 <?php
                                                     $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true);
@@ -145,16 +157,20 @@
                                         </ul>
                                     </div>
                                     <div class="mt-auto pt-4 border-t border-gray-100 font-inter text-center">
-                                        <p class="text-2xl font-black text-primary mb-4 italic">Rp <?php echo e(number_format($package->price, 0, ',', '.')); ?></p>
+                                        <p class="text-xl font-black text-primary mb-4 italic">Rp <?php echo e(number_format($package->price, 0, ',', '.')); ?></p>
                                         <a href="<?php echo e(route('paket.detail', $package->id)); ?>" class="block w-full bg-primary text-white font-bold py-3 rounded-full uppercase text-[10px] tracking-widest hover:bg-yellow-600 shadow-md">Pilih Paket</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <p class="text-center w-full py-10 italic">Belum ada paket.</p>
+                        <div class="swiper-slide">
+                            <p class="text-center w-full py-10 italic">Belum ada paket.</p>
+                        </div>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
+                    
+                    
                     <div class="swiper-button-next p-next"></div>
                     <div class="swiper-button-prev p-prev"></div>
                     <div class="swiper-pagination"></div>
@@ -172,11 +188,11 @@
                 </div>
             </div>
             
-            <div class="relative px-2 md:px-4">
+            <div class="max-w-7xl mx-auto relative px-2">
                 <div class="swiper review-slider">
                     <div class="swiper-wrapper">
                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $reviews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $review): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <div class="swiper-slide h-auto">
+                        <div class="swiper-slide">
                             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-primary flex flex-col h-full w-full font-inter">
                                 <div class="flex text-yellow-400 mb-3">
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php for($i = 1; $i <= 5; $i++): ?>
@@ -184,7 +200,6 @@
                                     <?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
 
-                                
                                 <div class="mb-3">
                                     <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">
                                         📦 <?php echo e($review->product->name ?? 'Paket Katering'); ?>
@@ -216,7 +231,7 @@
                             </div>
                         </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <div class="w-full py-10 text-center italic text-gray-400">Belum ada ulasan.</div>
+                        <div class="swiper-slide text-center py-10 italic text-gray-400">Belum ada ulasan.</div>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
                     <div class="swiper-button-next r-next"></div>
@@ -243,7 +258,6 @@
                             <input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400" placeholder="Masukkan nama Anda">
                         </div>
 
-                        
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label>
                             <select name="products_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
@@ -276,7 +290,7 @@
                     <div class="flex items-center justify-end gap-6 pt-4">
                         <button @click="openReview = false" type="button" class="text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-gray-600">Batal</button>
                         <button type="submit" class="bg-orange-400 hover:bg-orange-500 text-white font-bold py-3 px-10 rounded-full text-xs uppercase tracking-widest shadow-lg transform transition active:scale-95">
-                            Kirim Review
+                            Kirimi Review
                         </button>
                     </div>
                 </form>
@@ -286,17 +300,43 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Paket Slider - Dikunci ke 3 slides di Desktop
             new Swiper('.package-slider', {
-                slidesPerView: 1, spaceBetween: 25,
-                navigation: { nextEl: '.p-next', prevEl: '.p-prev' },
-                pagination: { el: '.package-slider .swiper-pagination', clickable: true },
-                breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+                slidesPerView: 1,
+                spaceBetween: 30,
+                loop: false, // Disetel false agar tidak bingung jika slide sedikit
+                centeredSlides: false,
+                navigation: { 
+                    nextEl: '.p-next', 
+                    prevEl: '.p-prev' 
+                },
+                pagination: { 
+                    el: '.package-slider .swiper-pagination', 
+                    clickable: true 
+                },
+                breakpoints: { 
+                    768: { 
+                        slidesPerView: 2,
+                        spaceBetween: 20
+                    }, 
+                    1024: { 
+                        slidesPerView: 3, // Mengunci 3 card
+                        spaceBetween: 30
+                    } 
+                }
             });
+
+            // Review Slider
             new Swiper('.review-slider', {
-                slidesPerView: 1, spaceBetween: 20, autoplay: { delay: 4000 },
+                slidesPerView: 1,
+                spaceBetween: 20,
+                autoplay: { delay: 4000 },
                 navigation: { nextEl: '.r-next', prevEl: '.r-prev' },
                 pagination: { el: '.review-slider .swiper-pagination', clickable: true },
-                breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+                breakpoints: { 
+                    768: { slidesPerView: 2 }, 
+                    1024: { slidesPerView: 3 } 
+                }
             });
         });
     </script>
