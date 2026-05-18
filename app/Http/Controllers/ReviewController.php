@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
-use App\Models\Paket; // Nama Model tetap Paket
+use App\Models\Paket;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -17,13 +17,13 @@ class ReviewController extends Controller
 
     public function store(Request $request)
     {
-        // VALIDASI: Cek ke tabel 'products' karena itu nama tabel di DB Mas
+        // VALIDASI: Diubah menggunakan paket_id dan dicek ke tabel paket
         $request->validate([
-            'products_id' => 'required|exists:products,id', // Gunakan 'products' (nama tabel DB)
-            'name'        => 'required|string|max:255',
-            'rating'      => 'required|integer|min:1|max:5',
-            'comment'     => 'required|string',
-            'image.*'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
+            'paket_id' => 'required|exists:paket,id', 
+            'name'     => 'required|string|max:255',
+            'rating'   => 'required|integer|min:1|max:5',
+            'comment'  => 'required|string',
+            'image.*'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
         ]);
 
         $imagePaths = [];
@@ -34,11 +34,11 @@ class ReviewController extends Controller
         }
 
         Review::create([
-            'products_id' => $request->products_id,
-            'name'        => $request->name,
-            'rating'      => $request->rating,
-            'comment'     => $request->comment,
-            'image'       => $imagePaths,
+            'paket_id' => $request->paket_id, // <-- Sinkron menggunakan paket_id
+            'name'     => $request->name,
+            'rating'   => $request->rating,
+            'comment'  => $request->comment,
+            'image'    => $imagePaths,
         ]);
 
         return redirect()->back()->with('success', 'Review Anda telah berhasil diterbitkan!');

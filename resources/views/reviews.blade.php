@@ -19,7 +19,7 @@
                     @endfor
                 </div>
 
-                {{-- REVISI: Menampilkan Nama Paket --}}
+                {{-- Menampilkan Nama Paket lewat relasi product --}}
                 <div class="mb-4">
                     <span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-yellow-200">
                         📦 {{ $review->product->name ?? 'Paket Katering' }}

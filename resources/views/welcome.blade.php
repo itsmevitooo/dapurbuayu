@@ -17,16 +17,24 @@
             margin-right: auto;
         }
 
+        /* Tombol Navigasi Swiper */
         .swiper-button-next, .swiper-button-prev {
             color: #EAB308 !important;
             background: white;
-            width: 40px; height: 40px;
+            width: 40px; 
+            height: 40px;
             border-radius: 50%;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             z-index: 50;
             top: 50%;
             transform: translateY(-50%);
             transition: all 0.3s ease;
+        }
+
+        /* Mengecilkan ukuran tanda panah agar pas di dalam lingkaran */
+        .swiper-button-next::after, .swiper-button-prev::after {
+            font-size: 16px !important; 
+            font-weight: bold;
         }
         
         .p-next, .r-next { right: 0px !important; }
@@ -70,12 +78,27 @@
 @section('content')
     <div x-data="{ openReview: false }">
         
+        {{-- Ambil data settings.json untuk konfigurasi Banner Dinamis --}}
+        @php
+            $settingsPath = storage_path('app/settings.json');
+            $globalSettings = file_exists($settingsPath) ? json_decode(file_get_contents($settingsPath), true) : [];
+            
+            // Fallback asset default jika admin belum upload di Filament
+            $bannerUrl = !empty($globalSettings['banner_image']) 
+                ? asset('storage/' . $globalSettings['banner_image']) 
+                : asset('storage/banner.png');
+        @endphp
+
         {{-- 1. Banner Utama --}}
-        <section class="relative h-120 bg-cover bg-center rounded-lg shadow-xl mb-12" style="background-image: url('{{ asset('storage/banner.png') }}');">
+        <section class="relative h-120 bg-cover bg-center rounded-lg shadow-xl mb-12" style="background-image: url('{{ $bannerUrl }}');">
             <div class="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
-            <div class="relative flex flex-col items-center justify-center h-full text-center">
-                <h1 class="text-6xl md:text-8xl font-bold font-[Qwitcher_Grypen] mb-2 text-primary">Selamat Datang</h1>
-                <p class="text-xs md:text-sm font-bold uppercase tracking-[0.3em] mb-8 font-inter text-white">Pesan katering terbaik untuk acara Anda.</p>
+            <div class="relative flex flex-col items-center justify-center h-full text-center p-4">
+                <h1 class="text-6xl md:text-8xl font-bold font-[Qwitcher_Grypen] mb-2 text-primary">
+                    {{ $globalSettings['banner_title'] ?? 'Selamat Datang' }}
+                </h1>
+                <p class="text-xs md:text-sm font-bold uppercase tracking-[0.3em] mb-8 font-inter text-white">
+                    {{ $globalSettings['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.' }}
+                </p>
                 <a href="#packages" class="bg-primary hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 uppercase text-xs tracking-widest">Order Sekarang</a>
             </div>
         </section>
@@ -208,7 +231,7 @@
                                     </span>
                                 </div>
 
-                                <p class="italic text-gray-700 mb-4 flex-grow text-sm leading-relaxed">"{{ Str::limit($review->comment, 100) }}"</p>
+                                <p class="italic text-gray-700 mb-4 flex-grow text-sm line-clamp-4 leading-relaxed">"{{ Str::limit($review->comment, 100) }}"</p>
                                 
                                 @if($review->image)
                                     @php
@@ -261,7 +284,8 @@
 
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label>
-                            <select name="products_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
+                            {{-- DI SINI PERUBAHANNYA: name diganti menjadi paket_id --}}
+                            <select name="paket_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
                                 <option value="" disabled selected>Pilih menu paket...</option>
                                 @foreach($packages as $package)
                                     <option value="{{ $package->id }}">{{ $package->name }}</option>
@@ -291,7 +315,7 @@
                     <div class="flex items-center justify-end gap-6 pt-4">
                         <button @click="openReview = false" type="button" class="text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-gray-600">Batal</button>
                         <button type="submit" class="bg-orange-400 hover:bg-orange-500 text-white font-bold py-3 px-10 rounded-full text-xs uppercase tracking-widest shadow-lg transform transition active:scale-95">
-                            Kirimi Review
+                            Kirim Review
                         </button>
                     </div>
                 </form>
@@ -301,11 +325,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Paket Slider - Dikunci ke 3 slides di Desktop
+            // Paket Slider
             new Swiper('.package-slider', {
                 slidesPerView: 1,
                 spaceBetween: 30,
-                loop: false, // Disetel false agar tidak bingung jika slide sedikit
+                loop: false,
                 centeredSlides: false,
                 navigation: { 
                     nextEl: '.p-next', 
@@ -321,7 +345,7 @@
                         spaceBetween: 20
                     }, 
                     1024: { 
-                        slidesPerView: 3, // Mengunci 3 card
+                        slidesPerView: 3,
                         spaceBetween: 30
                     } 
                 }

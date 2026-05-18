@@ -6,9 +6,10 @@ use Filament\Pages\Page;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker; // Kalender picker yang Mas mau
-use Filament\Forms\Components\Repeater;   // Solusi agar DatePicker bisa dipilih berkali-kali
+use Filament\Forms\Components\DatePicker; 
+use Filament\Forms\Components\Repeater;   
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\FileUpload; // Tetap di namespace Forms untuk upload file
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema; 
@@ -19,7 +20,6 @@ class ManageSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    // Strict Typing Navigasi Filament v4
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static string | null $title = 'Pengaturan Operasional';
     protected static string | null $navigationLabel = 'Pengaturan';
@@ -37,7 +37,6 @@ class ManageSettings extends Page implements HasForms
         $holidaysPath = storage_path('app/holidays.json');
         $holidaysData = file_exists($holidaysPath) ? json_decode(file_get_contents($holidaysPath), true) : [];
 
-        // Memetakan ulang format array json datar ke format array berpasangan yang dibutuhkan Repeater
         $datesForRepeater = [];
         if (is_array($holidaysData)) {
             foreach ($holidaysData as $date) {
@@ -46,6 +45,9 @@ class ManageSettings extends Page implements HasForms
         }
 
         $this->form->fill([
+            'banner_image'    => $settingsData['banner_image'] ?? '',
+            'banner_title'    => $settingsData['banner_title'] ?? 'Selamat Datang',
+            'banner_subtitle' => $settingsData['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.',
             'whatsapp_number' => $settingsData['whatsapp_number'] ?? '',
             'instagram_url'   => $settingsData['instagram_url'] ?? '',
             'facebook_url'    => $settingsData['facebook_url'] ?? '',
@@ -62,6 +64,26 @@ class ManageSettings extends Page implements HasForms
     {
         return $form
             ->components([
+                // Tambahan Section Pengaturan Banner Utama (Arsitektur v4)
+                Section::make('Pengaturan Banner Utama (Hero Section)')
+                    ->description('Sesuaikan tampilan banner promosi terdepan pada halaman beranda.')
+                    ->schema([
+                        FileUpload::make('banner_image')
+                            ->label('Gambar Background Banner')
+                            ->image()
+                            ->directory('banners')
+                            ->visibility('public')
+                            ->columnSpan('full'),
+                        TextInput::make('banner_title')
+                            ->label('Judul Utama Banner (Font Estetik)')
+                            ->placeholder('Contoh: Selamat Datang')
+                            ->required(),
+                        TextInput::make('banner_subtitle')
+                            ->label('Sub-Judul Banner')
+                            ->placeholder('Contoh: Pesan katering terbaik untuk acara Anda.')
+                            ->required(),
+                    ])->columns(2),
+
                 Section::make('Informasi Kontak & Sosial Media')
                     ->description('Atur kontak operasional Dapur Bu Ayu yang akan muncul di halaman depan.')
                     ->schema([
@@ -76,7 +98,6 @@ class ManageSettings extends Page implements HasForms
                             ->label('Link Facebook')
                             ->placeholder('Contoh: https://facebook.com/dapurbuayu'),
                         
-                        // FIX LAYOUT: columnSpan('full') membuat baris baru yang melebar rata kanan-kiri
                         Textarea::make('google_maps_url')
                             ->label('Link Embed Google Maps')
                             ->placeholder('Masukkan kode link/iframe dari Google Maps')
@@ -103,7 +124,7 @@ class ManageSettings extends Page implements HasForms
                             ])
                             ->addActionLabel('Tambah Tanggal Libur Baru')
                             ->columns(1)
-                            ->grid(3), // Menyusun box input kalender berjejer ke samping (maksimal 3 kolom) agar rapi
+                            ->grid(3),
                     ]),
             ])
             ->statePath('data');
@@ -124,6 +145,9 @@ class ManageSettings extends Page implements HasForms
         $formData = $this->form->getState();
 
         $settingsData = [
+            'banner_image'    => $formData['banner_image'] ?? '',
+            'banner_title'    => $formData['banner_title'] ?? 'Selamat Datang',
+            'banner_subtitle' => $formData['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.',
             'whatsapp_number' => $formData['whatsapp_number'],
             'instagram_url'   => $formData['instagram_url'],
             'facebook_url'    => $formData['facebook_url'],
@@ -132,12 +156,11 @@ class ManageSettings extends Page implements HasForms
         ];
         file_put_contents(storage_path('app/settings.json'), json_encode($settingsData, JSON_PRETTY_PRINT));
 
-        // Format ulang data dari Repeater kembali menjadi array string tanggal biasa untuk holidays.json
         $holidaysData = [];
         if (isset($formData['dates']) && is_array($formData['dates'])) {
             foreach ($formData['dates'] as $item) {
                 if (!empty($item['date'])) {
-                    $holidaysData[] = substr($item['date'], 0, 10); // Ambil format YYYY-MM-DD saja
+                    $holidaysData[] = substr($item['date'], 0, 10);
                 }
             }
         }
