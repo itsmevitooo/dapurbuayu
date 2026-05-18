@@ -23,12 +23,25 @@ class OrderController extends Controller
         Config::$is3ds = true;
     }
 
+    // 1. Ambil data tanggal libur dari holidays.json dan kirim ke View Detail/Form Order
     public function showDetailForm($id)
     {
         $package = Paket::findOrFail($id);
-        return view('orderdetail', compact('package'));
+        
+        // FIX: Membaca langsung file holidays.json hasil simpanan Filament Page kamu
+        $holidaysPath = storage_path('app/holidays.json');
+        $tanggalLibur = file_exists($holidaysPath) ? json_decode(file_get_contents($holidaysPath), true) : [];
+
+        // Memastikan output berupa array bersih
+        if (!is_array($tanggalLibur)) {
+            $tanggalLibur = [];
+        }
+
+        // Kirim variabel $tanggalLibur langsung ke view
+        return view('orderdetail', compact('package', 'tanggalLibur'));
     }
 
+    // 2. Validasi sisi backend mendeteksi kecocokan tanggal di holidays.json
     public function processDetail(Request $request)
     {
         $request->validate([
@@ -39,6 +52,28 @@ class OrderController extends Controller
             'delivery_date'=> 'required|date',
             'quantity'     => 'required|integer|min:1',
         ]);
+
+        // FIX: Ambil validasi pembanding dari file holidays.json di Back-end
+        $holidaysPath = storage_path('app/holidays.json');
+        $tanggalLibur = file_exists($holidaysPath) ? json_decode(file_get_contents($holidaysPath), true) : [];
+        
+        if (!is_array($tanggalLibur)) {
+            $tanggalLibur = [];
+        }
+
+        try {
+            $inputDeliveryDate = Carbon::parse($request->delivery_date)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['delivery_date' => 'Format tanggal tidak valid.']);
+        }
+
+        if (in_array($inputDeliveryDate, $tanggalLibur)) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['delivery_date' => 'Maaf, tanggal yang Anda pilih adalah hari libur atau slot catering kami sudah penuh.']);
+        }
 
         $package = Paket::findOrFail($request->package_id);
         $selections = $request->input('selections', []);
@@ -51,7 +86,7 @@ class OrderController extends Controller
             'full_name'       => $request->full_name,
             'phone_number'    => $request->phone_number,
             'address'         => $request->address,
-            'delivery_date'   => $request->delivery_date,
+            'delivery_date'   => $inputDeliveryDate, 
             'quantity'        => $request->quantity,
             'total_price'     => $package->price * $request->quantity,
             'menu_selections' => $menuArray,
