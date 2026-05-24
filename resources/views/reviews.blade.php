@@ -1,7 +1,11 @@
 @extends('layouts.app') 
 
 @section('content')
-<div class="container mx-auto px-4 py-12">
+<!-- Tambahkan CDN Alpine.js -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+{{-- Inisialisasi state Alpine.js pada container utama --}}
+<div x-data="{ openModal: false, imgModalSrc: '' }" class="container mx-auto px-4 py-12">
     <div class="text-center mb-12">
         <h1 class="text-6xl font-bold text-primary font-[Qwitcher_Grypen]">Review Pengguna</h1>
         <p class="text-gray-500 font-inter uppercase tracking-[0.3em] text-[10px] mt-2 font-bold">Apa Kata Mereka Tentang Dapur Bu Ayu</p>
@@ -36,8 +40,10 @@
                     <div class="flex flex-wrap gap-2 mb-6">
                         @foreach($images as $img)
                             @if($img)
-                            <div class="w-20 h-20 overflow-hidden rounded-xl border border-gray-100 shadow-sm">
-                                <img src="{{ asset('storage/' . ltrim($img, '/')) }}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                            {{-- Tambahkan cursor-pointer dan trigger click untuk mengisi modal --}}
+                            <div class="w-20 h-20 overflow-hidden rounded-xl border border-gray-100 shadow-sm cursor-pointer"
+                                 @click="openModal = true; imgModalSrc = '{{ asset('storage/' . ltrim($img, '/')) }}'">
+                                <img src="{{ asset('storage/' . ltrim($img, '/')) }}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
                             </div>
                             @endif
                         @endforeach
@@ -58,5 +64,31 @@
             </div>
         @endforelse
     </div>
+
+    {{-- --- LIGHTBOX MODAL LAYER --- --}}
+    <div x-show="openModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+         @click="openModal = false"
+         x-cloak>
+         
+        <button class="absolute top-5 right-5 text-white text-4xl font-normal hover:text-gray-300 transition" @click="openModal = false">
+            &times;
+        </button>
+
+        <div class="max-w-5xl max-h-[85vh] p-2" @click.stop>
+            <img :src="imgModalSrc" 
+                 class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain mx-auto">
+        </div>
+    </div>
 </div>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 @endsection

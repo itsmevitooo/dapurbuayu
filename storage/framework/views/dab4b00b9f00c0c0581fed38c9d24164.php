@@ -7,7 +7,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Qwitcher_Grypen:wght@400;700&display=swap');
         [x-cloak] { display: none !important; }
 
-        /* Fix Swiper Container */
+        .btn-hover-anim {
+            transition: all 0.3s ease;
+        }
+        .btn-hover-anim:hover {
+            transform: scale(1.05);
+        }
+
         .swiper { 
             width: 100%; 
             padding: 20px 10px 50px 10px !important;
@@ -15,7 +21,6 @@
             margin-right: auto;
         }
 
-        /* Tombol Navigasi Swiper */
         .swiper-button-next, .swiper-button-prev {
             color: #EAB308 !important;
             background: white;
@@ -28,8 +33,11 @@
             transform: translateY(-50%);
             transition: all 0.3s ease;
         }
+        .swiper-button-next:hover, .swiper-button-prev:hover {
+            transform: translateY(-50%) scale(1.1);
+            background: #fff;
+        }
 
-        /* Mengecilkan ukuran tanda panah agar pas di dalam lingkaran */
         .swiper-button-next::after, .swiper-button-prev::after {
             font-size: 16px !important; 
             font-weight: bold;
@@ -58,11 +66,7 @@
             font-size: 10px; font-weight: bold; backdrop-filter: blur(4px);
         }
 
-        /* Memastikan Slide memiliki tinggi yang seragam */
-        .swiper-slide { 
-            height: auto !important; 
-            display: flex !important; 
-        }
+        .swiper-slide { height: auto !important; display: flex !important; }
 
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #EAB308; border-radius: 10px; }
@@ -76,15 +80,10 @@
 <?php $__env->startSection('content'); ?>
     <div x-data="{ openReview: false }">
         
-        
         <?php
             $settingsPath = storage_path('app/settings.json');
             $globalSettings = file_exists($settingsPath) ? json_decode(file_get_contents($settingsPath), true) : [];
-            
-            // Fallback asset default jika admin belum upload di Filament
-            $bannerUrl = !empty($globalSettings['banner_image']) 
-                ? asset('storage/' . $globalSettings['banner_image']) 
-                : asset('storage/banner.png');
+            $bannerUrl = !empty($globalSettings['banner_image']) ? asset('storage/' . $globalSettings['banner_image']) : asset('storage/banner.png');
         ?>
 
         
@@ -99,7 +98,7 @@
                     <?php echo e($globalSettings['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.'); ?>
 
                 </p>
-                <a href="#packages" class="bg-primary hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 uppercase text-xs tracking-widest">Order Sekarang</a>
+                <a href="#packages" class="bg-primary hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 uppercase text-xs tracking-widest btn-hover-anim">Order Sekarang</a>
             </div>
         </section>
 
@@ -107,13 +106,11 @@
         <section class="mb-20 px-4 py-16 bg-primary rounded-3xl shadow-inner relative overflow-hidden">
             <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-white/20 rounded-full"></div>
             <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-48 h-48 bg-black/5 rounded-full"></div>
-
             <div class="relative z-10">
                 <div class="text-center mb-12">
                     <h2 class="text-5xl font-bold text-white font-[Qwitcher_Grypen]">Kenapa Memilih Kami?</h2>
                     <div class="h-1.5 w-24 bg-white mx-auto mt-2 rounded-full"></div>
                 </div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     <div class="text-center p-8 bg-white rounded-3xl shadow-xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
@@ -146,7 +143,6 @@
                 <h2 class="text-6xl font-bold text-primary font-[Qwitcher_Grypen]">Menu Terlaris</h2>
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Pilihan paket yang paling banyak dipesan pelanggan kami</p>
             </div>
-
             <div class="max-w-7xl mx-auto px-4 relative">
                 <div class="swiper package-slider">
                     <div class="swiper-wrapper">
@@ -165,14 +161,9 @@
                                     <div class="flex-grow">
                                         <ul class="text-xs text-gray-600 mb-6 space-y-1 h-32 overflow-y-auto custom-scrollbar italic text-left">
                                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $package->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
-                                                <?php
-                                                    $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true);
-                                                ?>
-
+                                                <?php $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true); ?>
                                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($menuList)): ?>
-                                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $menuList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <li>• <?php echo e($menuItem); ?></li>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $menuList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><li>• <?php echo e($menuItem); ?></li><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                                 <?php else: ?>
                                                     <li>• <?php echo e($detail->name); ?></li>
                                                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
@@ -183,19 +174,16 @@
                                     </div>
                                     <div class="mt-auto pt-4 border-t border-gray-100 font-inter text-center">
                                         <p class="text-xl font-black text-primary mb-4 italic">Rp <?php echo e(number_format($package->price, 0, ',', '.')); ?></p>
-                                        <a href="<?php echo e(route('paket.detail', $package->id)); ?>" class="block w-full bg-primary text-white font-bold py-3 rounded-full uppercase text-[10px] tracking-widest hover:bg-yellow-600 shadow-md">Pilih Paket</a>
+                                        
+                                        <a href="<?php echo e(route('paket.detail', $package->id)); ?>" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full uppercase text-[10px] tracking-widest hover:bg-slate-900 shadow-md btn-hover-anim">Pilih Paket</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <div class="swiper-slide">
-                            <p class="text-center w-full py-10 italic">Belum ada paket.</p>
-                        </div>
+                        <div class="swiper-slide"><p class="text-center w-full py-10 italic">Belum ada paket.</p></div>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
-                    
-                    
                     <div class="swiper-button-next p-next"></div>
                     <div class="swiper-button-prev p-prev"></div>
                     <div class="swiper-pagination"></div>
@@ -208,11 +196,11 @@
             <div class="flex flex-col md:flex-row justify-between items-end border-b-4 border-primary pb-4 mb-8 gap-4">
                 <h2 class="text-5xl font-bold text-primary font-[Qwitcher_Grypen]">Review Pelanggan</h2>
                 <div class="flex items-center gap-3 w-full md:w-auto">
-                    <a href="<?php echo e(url('/reviews')); ?>" class="flex-1 md:flex-none text-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition border border-gray-200">Lihat Semua</a>
-                    <button @click="openReview = true" class="flex-[2] md:flex-none bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest shadow-md transition">+ Tambah Review</button>
+                    <a href="<?php echo e(url('/reviews')); ?>" class="flex-1 md:flex-none text-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition border border-gray-200 btn-hover-anim">Lihat Semua</a>
+                    
+                    <button @click="openReview = true" class="flex-[2] md:flex-none bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest shadow-md transition btn-hover-anim">+ Tambah Review</button>
                 </div>
             </div>
-            
             <div class="max-w-7xl mx-auto relative px-2">
                 <div class="swiper review-slider">
                     <div class="swiper-wrapper">
@@ -220,35 +208,22 @@
                         <div class="swiper-slide">
                             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-primary flex flex-col h-full w-full font-inter">
                                 <div class="flex text-yellow-400 mb-3">
-                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php for($i = 1; $i <= 5; $i++): ?>
-                                        <span class="text-lg"><?php echo e($i <= $review->rating ? '★' : '☆'); ?></span>
-                                    <?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php for($i = 1; $i <= 5; $i++): ?><span class="text-lg"><?php echo e($i <= $review->rating ? '★' : '☆'); ?></span><?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
-
                                 <div class="mb-3">
-                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">
-                                        📦 <?php echo e($review->product->name ?? 'Paket Katering'); ?>
-
-                                    </span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">📦 <?php echo e($review->product->name ?? 'Paket Katering'); ?></span>
                                 </div>
-
                                 <p class="italic text-gray-700 mb-4 flex-grow text-sm line-clamp-4 leading-relaxed">"<?php echo e(Str::limit($review->comment, 100)); ?>"</p>
-                                
                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($review->image): ?>
-                                    <?php
-                                        $imgs = is_array($review->image) ? $review->image : json_decode($review->image, true);
-                                    ?>
+                                    <?php $imgs = is_array($review->image) ? $review->image : json_decode($review->image, true); ?>
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($imgs)): ?>
                                         <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
                                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = array_slice((array)$imgs, 0, 3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <img src="<?php echo e(asset('storage/' . ltrim($img, '/'))); ?>" 
-                                                     class="w-12 h-12 object-cover rounded-lg border border-gray-100 shadow-sm flex-shrink-0"
-                                                     onerror="this.src='https://placehold.co/100x100?text=Error'">
+                                                <img src="<?php echo e(asset('storage/' . ltrim($img, '/'))); ?>" class="w-12 h-12 object-cover rounded-lg border border-gray-100 shadow-sm flex-shrink-0" onerror="this.src='https://placehold.co/100x100?text=Error'">
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                         </div>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
-
                                 <div class="flex items-center gap-2 pt-4 border-t border-gray-50 mt-auto">
                                     <div class="w-2 h-2 rounded-full bg-primary"></div>
                                     <small class="font-bold text-gray-600 uppercase tracking-widest text-[9px]"><?php echo e($review->name); ?></small>
@@ -273,51 +248,19 @@
                 <button @click="openReview = false" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
-
                 <form action="<?php echo e(route('reviews.store')); ?>" method="POST" enctype="multipart/form-data" class="space-y-6">
                     <?php echo csrf_field(); ?>
-                    <h3 class="text-3xl font-extrabold text-orange-400 font-inter uppercase tracking-tight">Kirim Ulasan</h3>
+                    <h3 class="text-3xl font-extrabold text-primary font-inter uppercase tracking-tight">Kirim Ulasan</h3>
                     <div class="space-y-5 text-left font-inter">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Nama Lengkap</label>
-                            <input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400" placeholder="Masukkan nama Anda">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label>
-                            
-                            <select name="paket_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-orange-400 focus:border-orange-400">
-                                <option value="" disabled selected>Pilih menu paket...</option>
-                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($package->id); ?>"><?php echo e($package->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label>
-                            <select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-orange-400 font-bold focus:ring-orange-400">
-                                <option value="5">★★★★★ (Sempurna)</option>
-                                <option value="4">★★★★ (Bagus)</option>
-                                <option value="3">★★★ (Cukup)</option>
-                                <option value="2">★★ (Kurang)</option>
-                                <option value="1">★ (Buruk)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Ulasan Anda</label>
-                            <textarea name="comment" rows="4" required class="w-full border-gray-200 rounded-xl p-3" placeholder="Ceritakan pengalaman Anda..."></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Foto Masakan (Opsional)</label>
-                            <input type="file" name="image[]" multiple class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:bg-orange-50 file:text-orange-400 file:font-bold hover:file:bg-orange-100 cursor-pointer">
-                        </div>
+                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Nama Lengkap</label><input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Masukkan nama Anda"></div>
+                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label><select name="paket_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500"><option value="" disabled selected>Pilih menu paket...</option><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($package->id); ?>"><?php echo e($package->name); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?></select></div>
+                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label><select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-yellow-500 font-bold focus:ring-yellow-500"><option value="5">★★★★★ (Sempurna)</option><option value="4">★★★★ (Bagus)</option><option value="3">★★★ (Cukup)</option><option value="2">★★ (Kurang)</option><option value="1">★ (Buruk)</option></select></div>
+                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Ulasan Anda</label><textarea name="comment" rows="4" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Ceritakan pengalaman Anda..."></textarea></div>
+                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Foto Masakan (Opsional)</label><input type="file" name="image[]" multiple class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:bg-yellow-50 file:text-yellow-600 file:font-bold hover:file:bg-yellow-100 cursor-pointer"></div>
                     </div>
                     <div class="flex items-center justify-end gap-6 pt-4">
                         <button @click="openReview = false" type="button" class="text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-gray-600">Batal</button>
-                        <button type="submit" class="bg-orange-400 hover:bg-orange-500 text-white font-bold py-3 px-10 rounded-full text-xs uppercase tracking-widest shadow-lg transform transition active:scale-95">
-                            Kirim Review
-                        </button>
+                        <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-10 rounded-full text-xs uppercase tracking-widest shadow-lg transform transition active:scale-95 btn-hover-anim">Kirim Review</button>
                     </div>
                 </form>
             </div>
@@ -326,44 +269,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Paket Slider
-            new Swiper('.package-slider', {
-                slidesPerView: 1,
-                spaceBetween: 30,
-                loop: false,
-                centeredSlides: false,
-                navigation: { 
-                    nextEl: '.p-next', 
-                    prevEl: '.p-prev' 
-                },
-                pagination: { 
-                    el: '.package-slider .swiper-pagination', 
-                    clickable: true 
-                },
-                breakpoints: { 
-                    768: { 
-                        slidesPerView: 2,
-                        spaceBetween: 20
-                    }, 
-                    1024: { 
-                        slidesPerView: 3,
-                        spaceBetween: 30
-                    } 
-                }
-            });
-
-            // Review Slider
-            new Swiper('.review-slider', {
-                slidesPerView: 1,
-                spaceBetween: 20,
-                autoplay: { delay: 4000 },
-                navigation: { nextEl: '.r-next', prevEl: '.r-prev' },
-                pagination: { el: '.review-slider .swiper-pagination', clickable: true },
-                breakpoints: { 
-                    768: { slidesPerView: 2 }, 
-                    1024: { slidesPerView: 3 } 
-                }
-            });
+            new Swiper('.package-slider', { slidesPerView: 1, spaceBetween: 30, loop: false, navigation: { nextEl: '.p-next', prevEl: '.p-prev' }, pagination: { el: '.package-slider .swiper-pagination', clickable: true }, breakpoints: { 768: { slidesPerView: 2, spaceBetween: 20 }, 1024: { slidesPerView: 3, spaceBetween: 30 } } });
+            new Swiper('.review-slider', { slidesPerView: 1, spaceBetween: 20, autoplay: { delay: 4000 }, navigation: { nextEl: '.r-next', prevEl: '.r-prev' }, pagination: { el: '.review-slider .swiper-pagination', clickable: true }, breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } } });
         });
     </script>
 <?php $__env->stopSection(); ?>
