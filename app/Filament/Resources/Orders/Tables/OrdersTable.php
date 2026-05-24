@@ -28,6 +28,11 @@ class OrdersTable
                     ->label('No Telp.')
                     ->searchable(),
 
+                TextColumn::make('address')
+                    ->label('Alamat')
+                    ->searchable()
+                    ->wrap(), // Biar alamat panjang otomatis turun ke bawah (tidak memanjang merusak layout)
+
                 TextColumn::make('delivery_date')
                     ->label('Tgl Kirim')
                     ->date()
