@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Pakets\Schemas;
 
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Grid;
-// Sisanya ambil dari Forms karena di Schemas memang belum ada
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
@@ -67,11 +66,10 @@ class PaketForm
                     ->label('Deskripsi Singkat')
                     ->columnSpanFull(),
 
-                // Repeater harus di-import dari Forms
                 Repeater::make('details')
                     ->relationship('details') 
                     ->label('Pengaturan Menu & Lauk')
-                    ->schema([ // REPEATER di Forms tetap pakai fungsi ->schema()
+                    ->schema([ 
                         Grid::make(2)
                             ->components([
                                 Select::make('category')

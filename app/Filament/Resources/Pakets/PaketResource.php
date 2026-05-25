@@ -8,17 +8,28 @@ use App\Filament\Resources\Pakets\Pages\ListPakets;
 use App\Filament\Resources\Pakets\Schemas\PaketForm;
 use App\Filament\Resources\Pakets\Tables\PaketsTable;
 use App\Models\Paket;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PaketResource extends Resource
 {
     protected static ?string $model = Paket::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string
+    {
+        return 'heroicon-o-cake';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Pesanan dan Makanan';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 1;
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -34,9 +45,7 @@ class PaketResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

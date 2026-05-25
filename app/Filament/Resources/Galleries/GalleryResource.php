@@ -8,17 +8,28 @@ use App\Filament\Resources\Galleries\Pages\ListGalleries;
 use App\Filament\Resources\Galleries\Schemas\GalleryForm;
 use App\Filament\Resources\Galleries\Tables\GalleriesTable;
 use App\Models\Gallery;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class GalleryResource extends Resource
 {
     protected static ?string $model = Gallery::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string
+    {
+        return 'heroicon-o-photo';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Dokumentasi';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 2;
+    }
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -34,9 +45,7 @@ class GalleryResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -1,7 +1,6 @@
  
 
 <?php $__env->startSection('content'); ?>
-<!-- Tambahkan CDN Alpine.js -->
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 
@@ -33,23 +32,16 @@
 
                 <p class="text-gray-600 italic mb-6 text-sm flex-grow">"<?php echo e($review->comment); ?>"</p>
 
-                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($review->image): ?>
-                    <?php
-                        $images = is_array($review->image) ? $review->image : json_decode($review->image, true);
-                    ?>
-                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($images)): ?>
+                
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($review->gallery->isNotEmpty()): ?>
                     <div class="flex flex-wrap gap-2 mb-6">
-                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($img): ?>
-                            
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $review->gallery; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="w-20 h-20 overflow-hidden rounded-xl border border-gray-100 shadow-sm cursor-pointer"
-                                 @click="openModal = true; imgModalSrc = '<?php echo e(asset('storage/' . ltrim($img, '/'))); ?>'">
-                                <img src="<?php echo e(asset('storage/' . ltrim($img, '/'))); ?>" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                                 @click="openModal = true; imgModalSrc = '<?php echo e(asset('storage/' . $foto->image)); ?>'">
+                                <img src="<?php echo e(asset('storage/' . $foto->image)); ?>" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
                             </div>
-                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
-                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
                 <div class="border-t border-gray-50 pt-4 mt-auto">
@@ -68,30 +60,12 @@
     </div>
 
     
-    <div x-show="openModal" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-         @click="openModal = false"
-         x-cloak>
-         
-        <button class="absolute top-5 right-5 text-white text-4xl font-normal hover:text-gray-300 transition" @click="openModal = false">
-            &times;
-        </button>
-
+    <div x-show="openModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" @click="openModal = false" x-cloak>
+        <button class="absolute top-5 right-5 text-white text-4xl font-normal hover:text-gray-300 transition" @click="openModal = false">&times;</button>
         <div class="max-w-5xl max-h-[85vh] p-2" @click.stop>
-            <img :src="imgModalSrc" 
-                 class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain mx-auto">
+            <img :src="imgModalSrc" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain mx-auto">
         </div>
     </div>
 </div>
-
-<style>
-    [x-cloak] { display: none !important; }
-</style>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\dapurbuayu\resources\views/reviews.blade.php ENDPATH**/ ?>

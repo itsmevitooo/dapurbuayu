@@ -20,6 +20,16 @@ class OrderResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Pesanan dan Makanan';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 1;
+    }
+
     protected static ?string $recordTitleAttribute = 'invoice_code';
 
     public static function form(Schema $schema): Schema
@@ -34,9 +44,7 @@ class OrderResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

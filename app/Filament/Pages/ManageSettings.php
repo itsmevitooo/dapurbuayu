@@ -9,12 +9,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker; 
 use Filament\Forms\Components\Repeater;   
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload; // Tetap di namespace Forms untuk upload file
+use Filament\Forms\Components\FileUpload; 
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema; 
 use Filament\Schemas\Components\Section;
 use BackedEnum;
+use Illuminate\Support\Facades\Storage;
 
 class ManageSettings extends Page implements HasForms
 {
@@ -24,6 +25,16 @@ class ManageSettings extends Page implements HasForms
     protected static string | null $title = 'Pengaturan Operasional';
     protected static string | null $navigationLabel = 'Pengaturan';
     protected static string | null $slug = 'pengaturan-operasional';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Pengaturan';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 3;
+    }
 
     protected string $view = 'filament.pages.manage-settings';
 
@@ -57,14 +68,10 @@ class ManageSettings extends Page implements HasForms
         ]);
     }
 
-    /**
-     * Integrasi Skema & Layout Component Filament v4
-     */
     public function form(Schema $form): Schema
     {
         return $form
             ->components([
-                // Tambahan Section Pengaturan Banner Utama (Arsitektur v4)
                 Section::make('Pengaturan Banner Utama (Hero Section)')
                     ->description('Sesuaikan tampilan banner promosi terdepan pada halaman beranda.')
                     ->schema([
@@ -72,6 +79,7 @@ class ManageSettings extends Page implements HasForms
                             ->label('Gambar Background Banner')
                             ->image()
                             ->directory('banners')
+                            ->disk('public')
                             ->visibility('public')
                             ->columnSpan('full'),
                         TextInput::make('banner_title')
@@ -143,6 +151,12 @@ class ManageSettings extends Page implements HasForms
     public function submit(): void
     {
         $formData = $this->form->getState();
+        $oldSettings = json_decode(file_get_contents(storage_path('app/settings.json')), true) ?? [];
+
+        // Logika hapus banner sampah
+        if (!empty($oldSettings['banner_image']) && ($oldSettings['banner_image'] !== ($formData['banner_image'] ?? ''))) {
+            Storage::disk('public')->delete($oldSettings['banner_image']);
+        }
 
         $settingsData = [
             'banner_image'    => $formData['banner_image'] ?? '',

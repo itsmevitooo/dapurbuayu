@@ -1,7 +1,6 @@
 @extends('layouts.app') 
 
 @section('content')
-<!-- Tambahkan CDN Alpine.js -->
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 {{-- Inisialisasi state Alpine.js pada container utama --}}
@@ -23,7 +22,7 @@
                     @endfor
                 </div>
 
-                {{-- Menampilkan Nama Paket lewat relasi product --}}
+                {{-- Nama Paket --}}
                 <div class="mb-4">
                     <span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-yellow-200">
                         📦 {{ $review->product->name ?? 'Paket Katering' }}
@@ -32,23 +31,16 @@
 
                 <p class="text-gray-600 italic mb-6 text-sm flex-grow">"{{ $review->comment }}"</p>
 
-                @if($review->image)
-                    @php
-                        $images = is_array($review->image) ? $review->image : json_decode($review->image, true);
-                    @endphp
-                    @if(!empty($images))
+                {{-- PERUBAHAN: Mengakses relasi gallery --}}
+                @if($review->gallery->isNotEmpty())
                     <div class="flex flex-wrap gap-2 mb-6">
-                        @foreach($images as $img)
-                            @if($img)
-                            {{-- Tambahkan cursor-pointer dan trigger click untuk mengisi modal --}}
+                        @foreach($review->gallery as $foto)
                             <div class="w-20 h-20 overflow-hidden rounded-xl border border-gray-100 shadow-sm cursor-pointer"
-                                 @click="openModal = true; imgModalSrc = '{{ asset('storage/' . ltrim($img, '/')) }}'">
-                                <img src="{{ asset('storage/' . ltrim($img, '/')) }}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                                 @click="openModal = true; imgModalSrc = '{{ asset('storage/' . $foto->image) }}'">
+                                <img src="{{ asset('storage/' . $foto->image) }}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
                             </div>
-                            @endif
                         @endforeach
                     </div>
-                    @endif
                 @endif
 
                 <div class="border-t border-gray-50 pt-4 mt-auto">
@@ -66,29 +58,11 @@
     </div>
 
     {{-- --- LIGHTBOX MODAL LAYER --- --}}
-    <div x-show="openModal" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-         @click="openModal = false"
-         x-cloak>
-         
-        <button class="absolute top-5 right-5 text-white text-4xl font-normal hover:text-gray-300 transition" @click="openModal = false">
-            &times;
-        </button>
-
+    <div x-show="openModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" @click="openModal = false" x-cloak>
+        <button class="absolute top-5 right-5 text-white text-4xl font-normal hover:text-gray-300 transition" @click="openModal = false">&times;</button>
         <div class="max-w-5xl max-h-[85vh] p-2" @click.stop>
-            <img :src="imgModalSrc" 
-                 class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain mx-auto">
+            <img :src="imgModalSrc" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain mx-auto">
         </div>
     </div>
 </div>
-
-<style>
-    [x-cloak] { display: none !important; }
-</style>
 @endsection

@@ -10,17 +10,28 @@ use App\Filament\Resources\Reviews\Schemas\ReviewForm;
 use App\Filament\Resources\Reviews\Schemas\ReviewInfolist;
 use App\Filament\Resources\Reviews\Tables\ReviewsTable;
 use App\Models\Review;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ReviewResource extends Resource
 {
     protected static ?string $model = Review::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string
+    {
+        return 'heroicon-o-chat-bubble-left-right';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Dokumentasi';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 2;
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -41,9 +52,7 @@ class ReviewResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
-    use HasFactory;
+    // Menggunakan nama tabel yang benar: 'galleries'
+    protected $table = 'galleries'; 
+    
+    protected $fillable = ['review_id', 'image', 'category', 'title'];
 
-    protected $fillable = [
-        'title',
-        'image',
-        'category',
-        'description',
-        'review_id', 
-    ];
+    public function review()
+    {
+        return $this->belongsTo(Review::class, 'review_id');
+    }
 }
