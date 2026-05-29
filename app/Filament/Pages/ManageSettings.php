@@ -10,6 +10,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;   
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload; 
+use Filament\Forms\Components\RichEditor; // Tambahkan ini
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema; 
@@ -64,6 +65,8 @@ class ManageSettings extends Page implements HasForms
             'facebook_url'    => $settingsData['facebook_url'] ?? '',
             'google_maps_url' => $settingsData['google_maps_url'] ?? '',
             'alamat_toko'     => $settingsData['alamat_toko'] ?? '',
+            'terms_content'   => $settingsData['terms_content'] ?? '',
+            'privacy_content' => $settingsData['privacy_content'] ?? '',
             'dates'           => $datesForRepeater,
         ]);
     }
@@ -118,6 +121,17 @@ class ManageSettings extends Page implements HasForms
                             ->columnSpan('full'),
                     ])->columns(2),
 
+                Section::make('Konten Legal (Footer)')
+                    ->description('Atur isi Syarat & Ketentuan serta Kebijakan Privasi.')
+                    ->schema([
+                        RichEditor::make('terms_content')
+                            ->label('Syarat & Ketentuan')
+                            ->columnSpanFull(),
+                        RichEditor::make('privacy_content')
+                            ->label('Kebijakan Privasi')
+                            ->columnSpanFull(),
+                    ]),
+
                 Section::make('Manajemen Tanggal Libur / Tutup Slot')
                     ->description('Gunakan tombol tambah untuk memunculkan kalender pilihan tanggal libur baru.')
                     ->schema([
@@ -126,7 +140,6 @@ class ManageSettings extends Page implements HasForms
                             ->schema([
                                 DatePicker::make('date')
                                     ->label('Pilih Tanggal')
-                                    ->placeholder('Klik untuk memunculkan kalender...')
                                     ->displayFormat('Y-m-d')
                                     ->required(),
                             ])
@@ -153,7 +166,6 @@ class ManageSettings extends Page implements HasForms
         $formData = $this->form->getState();
         $oldSettings = json_decode(file_get_contents(storage_path('app/settings.json')), true) ?? [];
 
-        // Logika hapus banner sampah
         if (!empty($oldSettings['banner_image']) && ($oldSettings['banner_image'] !== ($formData['banner_image'] ?? ''))) {
             Storage::disk('public')->delete($oldSettings['banner_image']);
         }
@@ -167,7 +179,10 @@ class ManageSettings extends Page implements HasForms
             'facebook_url'    => $formData['facebook_url'],
             'google_maps_url' => $formData['google_maps_url'],
             'alamat_toko'     => $formData['alamat_toko'],
+            'terms_content'   => $formData['terms_content'],
+            'privacy_content' => $formData['privacy_content'],
         ];
+        
         file_put_contents(storage_path('app/settings.json'), json_encode($settingsData, JSON_PRETTY_PRINT));
 
         $holidaysData = [];

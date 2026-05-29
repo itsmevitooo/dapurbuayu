@@ -5,14 +5,20 @@ use App\Http\Controllers\PaketController;
 use App\Http\Controllers\CheckOrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\GalleryController; // Pastikan ini di-import
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\TermsController;
+use App\Http\Controllers\PrivacyController;
 use Illuminate\Support\Facades\Route;
 
 // --- Halaman Utama & Umum ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/lokasi', [HomeController::class, 'location'])->name('location');
 
-// --- Mengarah ke Galeri
+// --- Halaman Legal (Syarat & Ketentuan / Privasi) ---
+Route::get('/syarat-ketentuan', [TermsController::class, 'index'])->name('terms');
+Route::get('/kebijakan-privasi', [PrivacyController::class, 'index'])->name('privacy');
+
+// --- Mengarah ke Galeri ---
 Route::get('/galeri', [GalleryController::class, 'index'])->name('gallery.index');
 
 // --- Sistem Review ---

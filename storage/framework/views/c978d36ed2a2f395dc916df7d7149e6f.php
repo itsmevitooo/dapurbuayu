@@ -47,64 +47,29 @@
     
             <div class="hidden w-full md:flex md:items-center md:justify-end md:flex-1" id="navbar-default">
                 <ul class="font-inter font-bold uppercase text-[12px] tracking-widest flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-2xl bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-transparent">
-                    <li>
-                        <a href="<?php echo e(route('home')); ?>" 
-                           class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('home') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">
-                            Home
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo e(route('paket.index')); ?>" 
-                           class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('paket.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">
-                            Paket
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo e(route('check_order.index')); ?>" 
-                           class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('check_order.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">
-                            Cek Order
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo e(route('reviews.index')); ?>" 
-                           class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('reviews.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">
-                            Review
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo e(route('gallery.index')); ?>" 
-                           class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('gallery.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">
-                            Gallery
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo e(route('location')); ?>" 
-                           class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('location') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">
-                            Lokasi
-                        </a>
-                    </li>
+                    <li><a href="<?php echo e(route('home')); ?>" class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('home') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">Home</a></li>
+                    <li><a href="<?php echo e(route('paket.index')); ?>" class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('paket.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">Paket</a></li>
+                    <li><a href="<?php echo e(route('check_order.index')); ?>" class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('check_order.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">Cek Order</a></li>
+                    <li><a href="<?php echo e(route('reviews.index')); ?>" class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('reviews.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">Review</a></li>
+                    <li><a href="<?php echo e(route('gallery.index')); ?>" class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('gallery.*') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">Gallery</a></li>
+                    <li><a href="<?php echo e(route('location')); ?>" class="block py-2 px-3 transition duration-300 md:p-0 <?php echo e(request()->routeIs('location') ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'); ?>">Lokasi</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    
     <div class="h-24"></div>
 
     <main class="min-h-screen">
         <?php echo $__env->yieldContent('content'); ?>
     </main>
 
-    
     <?php
         $settingsPath = storage_path('app/settings.json');
         $settings = file_exists($settingsPath) ? json_decode(file_get_contents($settingsPath), true) : [];
-        
         $waNumber = !empty($settings['whatsapp_number']) ? $settings['whatsapp_number'] : '6285711398972';
-        
         $igUrl = !empty($settings['instagram_url']) ? $settings['instagram_url'] : 'https://instagram.com/itsmevitooo';
         $fbUrl = !empty($settings['facebook_url']) ? $settings['facebook_url'] : 'https://facebook.com';
-        
         $mapsUrl = !empty($settings['google_maps_url']) ? $settings['google_maps_url'] : 'https://maps.google.com';
         $alamat = !empty($settings['alamat_toko']) ? $settings['alamat_toko'] : "Perumahan Bunga Pratama Sawangan \nBlok L-1, Bedahan, Kec. Sawangan, \nKota Depok, Jawa Barat 16519";
     ?>
@@ -113,80 +78,58 @@
         <div class="max-w-7xl mx-auto px-6">
             
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 text-left">
                 
                 
-                <div class="flex flex-col">
+                <div class="lg:col-span-2 flex flex-col mb-6 lg:mb-0">
                     <div class="text-5xl font-bold text-primary font-[Qwitcher_Grypen]">Dapur Bu Ayu</div>
                     <p class="text-gray-400 text-sm italic mt-2">"Hidangan sempurna, membawa bahagia."</p>
                 </div>
     
                 
                 <div class="flex flex-col space-y-4">
-                    <h3 class="text-lg font-bold uppercase tracking-widest border-b border-gray-700 pb-2">Follow Us</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-widest border-b border-gray-700 pb-2">Follow Us</h3>
                     <div class="flex flex-row items-center space-x-5 pt-1">
-                        
-                        
-                        <a href="<?php echo e($igUrl); ?>" target="_blank" class="text-gray-400 hover:text-primary transition-all duration-300 transform hover:scale-110" title="Instagram Dapur Bu Ayu">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                            </svg>
-                        </a>
-
-                        
-                        <a href="<?php echo e($fbUrl); ?>" target="_blank" class="text-gray-400 hover:text-primary transition-all duration-300 transform hover:scale-110" title="Facebook Dapur Bu Ayu">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                            </svg>
-                        </a>
-                        
+                        <a href="<?php echo e($igUrl); ?>" target="_blank" class="text-gray-400 hover:text-primary transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+                        <a href="<?php echo e($fbUrl); ?>" target="_blank" class="text-gray-400 hover:text-primary transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
                     </div>
                 </div>
     
                 
                 <div class="flex flex-col space-y-4">
-                    <h3 class="text-lg font-bold uppercase tracking-widest border-b border-gray-700 pb-2">Admin</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-widest border-b border-gray-700 pb-2">Admin</h3>
                     <div class="flex items-center space-x-3 group">
-                        <a href="https://wa.me/<?php echo e($waNumber); ?>" target="_blank" class="text-gray-400 group-hover:text-primary transition">
-                            <i data-lucide="message-circle"></i>
-                        </a>
-                        <a href="https://wa.me/<?php echo e($waNumber); ?>" target="_blank" class="text-sm font-bold text-gray-400 hover:text-white transition">
-                            <?php echo e(substr($waNumber, 0, 4) . '-' . substr($waNumber, 4, 4) . '-' . substr($waNumber, 8)); ?>
-
-                        </a>
+                        <a href="https://wa.me/<?php echo e($waNumber); ?>" target="_blank" class="text-gray-400 group-hover:text-primary transition"><i data-lucide="message-circle" class="w-5 h-5"></i></a>
+                        <a href="https://wa.me/<?php echo e($waNumber); ?>" target="_blank" class="text-xs font-bold text-gray-400 hover:text-white transition"><?php echo e(substr($waNumber, 0, 4) . '-' . substr($waNumber, 4, 4) . '-' . substr($waNumber, 8)); ?></a>
                     </div>
                 </div>
     
                 
                 <div class="flex flex-col space-y-4">
-                    <h3 class="text-lg font-bold uppercase tracking-widest border-b border-gray-700 pb-2">Lokasi</h3>
-                    <a href="<?php echo e($mapsUrl); ?>" target="_blank" class="flex items-start space-x-3 group text-left">
-                        <div class="text-gray-400 group-hover:text-primary transition shrink-0">
-                            <i data-lucide="map-pin"></i>
-                        </div>
-                        <p class="text-gray-400 text-sm leading-relaxed group-hover:text-white transition/whitespaces">
-                            <?php echo nl2br(e($alamat)); ?>
-
-                        </p>
+                    <h3 class="text-sm font-bold uppercase tracking-widest border-b border-gray-700 pb-2">Lokasi</h3>
+                    <a href="<?php echo e($mapsUrl); ?>" target="_blank" class="flex items-start space-x-2 group text-left">
+                        <div class="text-gray-400 group-hover:text-primary transition shrink-0"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+                        <p class="text-gray-400 text-xs leading-relaxed group-hover:text-white transition"><?php echo nl2br(e($alamat)); ?></p>
                     </a>
+                </div>
+
+                
+                <div class="flex flex-col space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-widest border-b border-gray-700 pb-2">Informasi</h3>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="<?php echo e(route('terms')); ?>" class="hover:text-primary transition">Syarat & Ketentuan</a></li>
+                        <li><a href="<?php echo e(route('privacy')); ?>" class="hover:text-primary transition">Kebijakan Privasi</a></li>
+                    </ul>
                 </div>
             </div>
     
-            
             <div class="mt-10 border-t border-gray-800 pt-8 text-center text-xs text-gray-600 uppercase tracking-widest">
                 © <?php echo e(date('Y')); ?> Dapur Bu Ayu. All Rights Reserved.
             </div>
-    
         </div>
     </footer>
 
     <?php echo $__env->yieldPushContent('scripts'); ?>
-
-    <script>
-        lucide.createIcons();
-    </script>
-
+    <script> lucide.createIcons(); </script>
 </body>
 </html><?php /**PATH C:\laragon\www\dapurbuayu\resources\views/layouts/app.blade.php ENDPATH**/ ?>
