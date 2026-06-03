@@ -23,7 +23,7 @@ class PaketsTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('price')
-                    ->money()
+                    ->money('IDR', locale: 'id_ID')
                     ->sortable(),
                 ImageColumn::make('image')
                     ->disk('public')
