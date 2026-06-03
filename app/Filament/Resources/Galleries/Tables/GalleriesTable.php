@@ -21,6 +21,11 @@ class GalleriesTable
                     ->disk('public'),
                 TextColumn::make('category')
                     ->searchable(),
+                TextColumn::make('description') 
+                    ->limit(50)
+                    ->searchable(),
+                TextColumn::make('uploaded_by') 
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

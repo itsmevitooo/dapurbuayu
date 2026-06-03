@@ -6,11 +6,11 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Schema; // Pastikan import ini ada
+use Filament\Forms\Components\Hidden;
+use Filament\Schemas\Schema;
 
 class GalleryForm
 {
-    // Tambahkan method ini agar sesuai dengan pemanggilan di Resource Anda
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
@@ -18,8 +18,8 @@ class GalleryForm
             
             FileUpload::make('image')
                 ->image()
-                ->disk('public') 
-                ->directory('gallery') // Sesuai dengan folder Anda
+                ->disk('public')
+                ->directory('gallery')
                 ->visibility('public')
                 ->required(),
 
@@ -32,6 +32,10 @@ class GalleryForm
                 ->required(),
             
             Textarea::make('description')->columnSpanFull(),
+
+            // Menyimpan nama admin secara otomatis
+            Hidden::make('uploaded_by')
+                ->default(auth()->user()->name),
         ]);
     }
 }

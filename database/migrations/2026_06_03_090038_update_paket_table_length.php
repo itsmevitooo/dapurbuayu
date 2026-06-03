@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('paket', function (Blueprint $table) {
+            // Optimasi panjang field
+            $table->string('name', 100)->change();
+            $table->string('category', 50)->change();
+            $table->string('image', 150)->change();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('paket', function (Blueprint $table) {
+            $table->string('name', 255)->change();
+            $table->string('category', 255)->change();
+            $table->string('image', 255)->change();
+        });
+    }
+};

@@ -9,7 +9,7 @@ class Gallery extends Model
     // Menggunakan nama tabel yang benar: 'galleries'
     protected $table = 'galleries'; 
     
-    protected $fillable = ['review_id', 'image', 'category', 'title'];
+    protected $fillable = ['review_id', 'image', 'category', 'title', 'description', 'uploaded_by'];
 
     public function review()
     {
