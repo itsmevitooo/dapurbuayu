@@ -18,6 +18,12 @@ class ReviewResource extends Resource
 {
     protected static ?string $model = Review::class;
 
+    // Menghilangkan tombol New Review
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function getNavigationIcon(): string
     {
         return 'heroicon-o-chat-bubble-left-right';
@@ -59,6 +65,8 @@ class ReviewResource extends Resource
     {
         return [
             'index' => ListReviews::route('/'),
+            // Anda bisa membiarkan rute create di sini, namun karena canCreate mengembalikan false,
+            // tombolnya tidak akan muncul di UI.
             'create' => CreateReview::route('/create'),
             'view' => ViewReview::route('/{record}'),
             'edit' => EditReview::route('/{record}/edit'),
