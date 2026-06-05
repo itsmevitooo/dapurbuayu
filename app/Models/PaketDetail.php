@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaketDetail extends Model
 {
-    // Mengacu pada tabel paketdetail (tanpa underscore)
     protected $table = 'paketdetail';
 
     protected $fillable = [
-        'paket_id', // Sesuaikan dengan foreign key baru
+        'paket_id',
         'category', 
         'name', 
         'is_selectable'
@@ -24,7 +23,6 @@ class PaketDetail extends Model
 
     public function paket(): BelongsTo
     {
-        // Relasi balik ke model Paket menggunakan paket_id
         return $this->belongsTo(Paket::class, 'paket_id');
     }
 }

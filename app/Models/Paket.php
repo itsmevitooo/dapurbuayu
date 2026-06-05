@@ -46,13 +46,11 @@ class Paket extends Model
 
     public function details(): HasMany
     {
-        // Hubungkan ke PaketDetail menggunakan foreign key baru: paket_id
         return $this->hasMany(PaketDetail::class, 'paket_id');
     }
 
     public function reviews(): HasMany
     {
-        // Menggunakan paket_id hasil migrasi nanti
         return $this->hasMany(Review::class, 'paket_id');
     }
 }
