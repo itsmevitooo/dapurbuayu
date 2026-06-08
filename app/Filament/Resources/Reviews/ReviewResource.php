@@ -65,10 +65,7 @@ class ReviewResource extends Resource
     {
         return [
             'index' => ListReviews::route('/'),
-            // Anda bisa membiarkan rute create di sini, namun karena canCreate mengembalikan false,
-            // tombolnya tidak akan muncul di UI.
             'create' => CreateReview::route('/create'),
-            'view' => ViewReview::route('/{record}'),
             'edit' => EditReview::route('/{record}/edit'),
         ];
     }
