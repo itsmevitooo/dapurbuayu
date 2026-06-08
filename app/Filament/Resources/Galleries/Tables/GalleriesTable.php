@@ -16,16 +16,28 @@ class GalleriesTable
         return $table
             ->columns([
                 TextColumn::make('title')
+                    ->label('Judul')
                     ->searchable(),
                 ImageColumn::make('image')
+                    ->label('Gambar')
                     ->disk('public'),
                 TextColumn::make('category')
+                    ->label('Kategori')
                     ->searchable(),
-                TextColumn::make('description') 
+                
+                // Menarik deskripsi: Jika ada data relasi, pakai itu. Jika tidak, pakai kolom manual
+                TextColumn::make('description')
+                    ->label('Deskripsi')
+                    ->getStateUsing(fn ($record) => $record->review?->comment ?? $record->description)
                     ->limit(50)
                     ->searchable(),
-                TextColumn::make('uploaded_by') 
+                
+                // Menarik nama: Jika ada data relasi, pakai itu. Jika tidak, pakai kolom manual
+                TextColumn::make('uploaded_by')
+                    ->label('Diupload Oleh')
+                    ->getStateUsing(fn ($record) => $record->review?->name ?? $record->uploaded_by)
                     ->searchable(),
+                
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

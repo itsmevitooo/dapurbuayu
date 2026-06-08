@@ -18,8 +18,6 @@ class ListOrders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
-
             Action::make('exportExcel')
                 ->label('Export Excel')
                 ->icon('heroicon-o-document-arrow-down')

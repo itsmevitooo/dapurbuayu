@@ -16,19 +16,25 @@ class PaketsTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Nama Paket'),
                 TextColumn::make('category')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Kategori'),
                 TextColumn::make('min_order')
+                    ->label('Minimal Porsi')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('price')
+                    ->label ('Harga')
                     ->money('IDR', locale: 'id_ID')
                     ->sortable(),
                 ImageColumn::make('image')
+                    ->label('Gambar')    
                     ->disk('public')
                     ->visibility('public'),
                 TextColumn::make('total_orders')
+                    ->label('Total Pesanan')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
