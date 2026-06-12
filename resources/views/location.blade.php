@@ -8,24 +8,19 @@
 <div class="container mx-auto py-10 px-4">
     <div class="text-center mb-10 py-4">
         <h2 class="text-6xl font-bold text-primary font-[Qwitcher_Grypen]">Lokasi Kami</h2>
-        <p class="text-gray-500 font-inter uppercase tracking-[0.3em] text-[10px] mt-2 font-bold">
-            Kunjungi dapur utama kami.
-        </p>
     </div>
     
     <div class="bg-white p-8 rounded-xl shadow-2xl max-w-4xl mx-auto mb-20">
         <h3 class="text-2xl font-semibold text-primary mb-4 font-inter">Dapur Bu Ayu Pusat</h3>
         
-        {{-- Alamat dari Admin --}}
+        {{-- Hanya menampilkan Alamat Fisik Toko --}}
         <p class="text-gray-700 mb-6 font-inter">{{ $data['alamat_toko'] ?? 'Alamat belum diatur' }}</p>
         
         <div class="w-full h-96 bg-gray-100 rounded-lg mb-6 overflow-hidden border border-gray-200">
             @if(!empty($data['google_maps_embed_url']))
                 <iframe src="{{ $data['google_maps_embed_url'] }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             @else
-                <div class="flex items-center justify-center h-full text-gray-400">
-                    Peta tidak ditemukan. Periksa kembali link embed di admin.
-                </div>
+                <div class="flex items-center justify-center h-full text-gray-400">Peta belum diatur.</div>
             @endif
         </div>
         

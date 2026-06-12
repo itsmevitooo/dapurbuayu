@@ -121,9 +121,10 @@ class ManageSettings extends Page implements HasForms
                             ->placeholder('Masukkan kode link/iframe dari Google Maps')
                             ->rows(2)
                             ->columnSpan('full'),
-                        TextInput::make('location_caption')
-                            ->label('Caption Lokasi')
-                            ->placeholder('Contoh: Kunjungi dapur utama kami.')
+                        Textarea::make('alamat_toko')
+                            ->label('Alamat Fisik Toko')
+                            ->placeholder('Masukkan alamat lengkap toko...')
+                            ->rows(2)
                             ->columnSpan('full'),
                     ])->columns(2),
 
