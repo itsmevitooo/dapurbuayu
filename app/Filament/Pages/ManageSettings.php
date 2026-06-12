@@ -10,7 +10,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;   
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload; 
-use Filament\Forms\Components\RichEditor; // Tambahkan ini
+use Filament\Forms\Components\RichEditor;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema; 
@@ -57,17 +57,19 @@ class ManageSettings extends Page implements HasForms
         }
 
         $this->form->fill([
-            'banner_image'    => $settingsData['banner_image'] ?? '',
-            'banner_title'    => $settingsData['banner_title'] ?? 'Selamat Datang',
-            'banner_subtitle' => $settingsData['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.',
-            'whatsapp_number' => $settingsData['whatsapp_number'] ?? '',
-            'instagram_url'   => $settingsData['instagram_url'] ?? '',
-            'facebook_url'    => $settingsData['facebook_url'] ?? '',
-            'google_maps_url' => $settingsData['google_maps_url'] ?? '',
-            'alamat_toko'     => $settingsData['alamat_toko'] ?? '',
-            'terms_content'   => $settingsData['terms_content'] ?? '',
-            'privacy_content' => $settingsData['privacy_content'] ?? '',
-            'dates'           => $datesForRepeater,
+            'banner_image'          => $settingsData['banner_image'] ?? '',
+            'banner_title'          => $settingsData['banner_title'] ?? 'Selamat Datang',
+            'banner_subtitle'       => $settingsData['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.',
+            'whatsapp_number'       => $settingsData['whatsapp_number'] ?? '',
+            'instagram_url'         => $settingsData['instagram_url'] ?? '',
+            'facebook_url'          => $settingsData['facebook_url'] ?? '',
+            'google_maps_url'       => $settingsData['google_maps_url'] ?? '',
+            'google_maps_embed_url' => $settingsData['google_maps_embed_url'] ?? '',
+            'alamat_toko'           => $settingsData['alamat_toko'] ?? '',
+            'location_caption'      => $settingsData['location_caption'] ?? 'Kunjungi dapur utama kami.',
+            'terms_content'         => $settingsData['terms_content'] ?? '',
+            'privacy_content'       => $settingsData['privacy_content'] ?? '',
+            'dates'                 => $datesForRepeater,
         ]);
     }
 
@@ -110,14 +112,18 @@ class ManageSettings extends Page implements HasForms
                             ->placeholder('Contoh: https://facebook.com/dapurbuayu'),
                         
                         Textarea::make('google_maps_url')
+                            ->label('Link Direct Google Maps')
+                            ->placeholder('Masukkan link share dari Google Maps')
+                            ->rows(2)
+                            ->columnSpan('full'),
+                        Textarea::make('google_maps_embed_url')
                             ->label('Link Embed Google Maps')
                             ->placeholder('Masukkan kode link/iframe dari Google Maps')
-                            ->rows(3)
-                            ->columnSpan('full'),
-                        Textarea::make('alamat_toko')
-                            ->label('Alamat Fisik Toko')
-                            ->placeholder('Masukkan alamat lengkap toko...')
                             ->rows(2)
+                            ->columnSpan('full'),
+                        TextInput::make('location_caption')
+                            ->label('Caption Lokasi')
+                            ->placeholder('Contoh: Kunjungi dapur utama kami.')
                             ->columnSpan('full'),
                     ])->columns(2),
 
@@ -145,7 +151,8 @@ class ManageSettings extends Page implements HasForms
                             ])
                             ->addActionLabel('Tambah Tanggal Libur Baru')
                             ->columns(1)
-                            ->grid(3),
+                            ->grid(3)
+                            ->columnSpanFull(),
                     ]),
             ])
             ->statePath('data');
@@ -171,16 +178,18 @@ class ManageSettings extends Page implements HasForms
         }
 
         $settingsData = [
-            'banner_image'    => $formData['banner_image'] ?? '',
-            'banner_title'    => $formData['banner_title'] ?? 'Selamat Datang',
-            'banner_subtitle' => $formData['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.',
-            'whatsapp_number' => $formData['whatsapp_number'],
-            'instagram_url'   => $formData['instagram_url'],
-            'facebook_url'    => $formData['facebook_url'],
-            'google_maps_url' => $formData['google_maps_url'],
-            'alamat_toko'     => $formData['alamat_toko'],
-            'terms_content'   => $formData['terms_content'],
-            'privacy_content' => $formData['privacy_content'],
+            'banner_image'          => $formData['banner_image'] ?? '',
+            'banner_title'          => $formData['banner_title'] ?? 'Selamat Datang',
+            'banner_subtitle'       => $formData['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.',
+            'whatsapp_number'       => $formData['whatsapp_number'],
+            'instagram_url'         => $formData['instagram_url'],
+            'facebook_url'          => $formData['facebook_url'],
+            'google_maps_url'       => $formData['google_maps_url'],
+            'google_maps_embed_url' => $formData['google_maps_embed_url'],
+            'alamat_toko'           => $formData['alamat_toko'],
+            'location_caption'      => $formData['location_caption'],
+            'terms_content'         => $formData['terms_content'],
+            'privacy_content'       => $formData['privacy_content'],
         ];
         
         file_put_contents(storage_path('app/settings.json'), json_encode($settingsData, JSON_PRETTY_PRINT));

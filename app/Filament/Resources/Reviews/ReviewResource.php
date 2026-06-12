@@ -18,7 +18,6 @@ class ReviewResource extends Resource
 {
     protected static ?string $model = Review::class;
 
-    // Menghilangkan tombol New Review
     public static function canCreate(): bool
     {
         return false;
