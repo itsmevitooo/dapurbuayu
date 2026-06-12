@@ -44,7 +44,12 @@ class ManageSettings extends Page implements HasForms
     public function mount(): void
     {
         $settingsPath = storage_path('app/settings.json');
-        $settingsData = file_exists($settingsPath) ? json_decode(file_get_contents($settingsPath), true) : [];
+        
+        if (!file_exists($settingsPath)) {
+            file_put_contents($settingsPath, json_encode([]));
+        }
+
+        $settingsData = json_decode(file_get_contents($settingsPath), true) ?? [];
 
         $holidaysPath = storage_path('app/holidays.json');
         $holidaysData = file_exists($holidaysPath) ? json_decode(file_get_contents($holidaysPath), true) : [];
@@ -66,7 +71,6 @@ class ManageSettings extends Page implements HasForms
             'google_maps_url'       => $settingsData['google_maps_url'] ?? '',
             'google_maps_embed_url' => $settingsData['google_maps_embed_url'] ?? '',
             'alamat_toko'           => $settingsData['alamat_toko'] ?? '',
-            'location_caption'      => $settingsData['location_caption'] ?? 'Kunjungi dapur utama kami.',
             'terms_content'         => $settingsData['terms_content'] ?? '',
             'privacy_content'       => $settingsData['privacy_content'] ?? '',
             'dates'                 => $datesForRepeater,
@@ -86,7 +90,8 @@ class ManageSettings extends Page implements HasForms
                             ->directory('banners')
                             ->disk('public')
                             ->visibility('public')
-                            ->columnSpan('full'),
+                            ->columnSpan('full')
+                            ->required(),
                         TextInput::make('banner_title')
                             ->label('Judul Utama Banner (Font Estetik)')
                             ->placeholder('Contoh: Selamat Datang')
@@ -106,26 +111,31 @@ class ManageSettings extends Page implements HasForms
                             ->required(),
                         TextInput::make('instagram_url')
                             ->label('Link Instagram')
-                            ->placeholder('Contoh: https://instagram.com/dapurbuayu'),
+                            ->placeholder('Contoh: https://instagram.com/dapurbuayu')
+                            ->required(),
                         TextInput::make('facebook_url')
                             ->label('Link Facebook')
-                            ->placeholder('Contoh: https://facebook.com/dapurbuayu'),
+                            ->placeholder('Contoh: https://facebook.com/dapurbuayu')
+                            ->required(),
                         
                         Textarea::make('google_maps_url')
                             ->label('Link Direct Google Maps')
                             ->placeholder('Masukkan link share dari Google Maps')
                             ->rows(2)
-                            ->columnSpan('full'),
+                            ->columnSpan('full')
+                            ->required(),
                         Textarea::make('google_maps_embed_url')
                             ->label('Link Embed Google Maps')
                             ->placeholder('Masukkan kode link/iframe dari Google Maps')
                             ->rows(2)
-                            ->columnSpan('full'),
+                            ->columnSpan('full')
+                            ->required(),
                         Textarea::make('alamat_toko')
                             ->label('Alamat Fisik Toko')
                             ->placeholder('Masukkan alamat lengkap toko...')
                             ->rows(2)
-                            ->columnSpan('full'),
+                            ->columnSpan('full')
+                            ->required(),
                     ])->columns(2),
 
                 Section::make('Konten Legal (Footer)')
@@ -133,10 +143,12 @@ class ManageSettings extends Page implements HasForms
                     ->schema([
                         RichEditor::make('terms_content')
                             ->label('Syarat & Ketentuan')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->required(),
                         RichEditor::make('privacy_content')
                             ->label('Kebijakan Privasi')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->required(),
                     ]),
 
                 Section::make('Manajemen Tanggal Libur / Tutup Slot')
@@ -147,8 +159,7 @@ class ManageSettings extends Page implements HasForms
                             ->schema([
                                 DatePicker::make('date')
                                     ->label('Pilih Tanggal')
-                                    ->displayFormat('Y-m-d')
-                                    ->required(),
+                                    ->displayFormat('Y-m-d'), // Hapus required agar opsional
                             ])
                             ->addActionLabel('Tambah Tanggal Libur Baru')
                             ->columns(1)
@@ -180,17 +191,16 @@ class ManageSettings extends Page implements HasForms
 
         $settingsData = [
             'banner_image'          => $formData['banner_image'] ?? '',
-            'banner_title'          => $formData['banner_title'] ?? 'Selamat Datang',
-            'banner_subtitle'       => $formData['banner_subtitle'] ?? 'Pesan katering terbaik untuk acara Anda.',
-            'whatsapp_number'       => $formData['whatsapp_number'],
-            'instagram_url'         => $formData['instagram_url'],
-            'facebook_url'          => $formData['facebook_url'],
-            'google_maps_url'       => $formData['google_maps_url'],
-            'google_maps_embed_url' => $formData['google_maps_embed_url'],
-            'alamat_toko'           => $formData['alamat_toko'],
-            'location_caption'      => $formData['location_caption'],
-            'terms_content'         => $formData['terms_content'],
-            'privacy_content'       => $formData['privacy_content'],
+            'banner_title'          => $formData['banner_title'] ?? '',
+            'banner_subtitle'       => $formData['banner_subtitle'] ?? '',
+            'whatsapp_number'       => $formData['whatsapp_number'] ?? '',
+            'instagram_url'         => $formData['instagram_url'] ?? '',
+            'facebook_url'          => $formData['facebook_url'] ?? '',
+            'google_maps_url'       => $formData['google_maps_url'] ?? '',
+            'google_maps_embed_url' => $formData['google_maps_embed_url'] ?? '',
+            'alamat_toko'           => $formData['alamat_toko'] ?? '',
+            'terms_content'         => $formData['terms_content'] ?? '',
+            'privacy_content'       => $formData['privacy_content'] ?? '',
         ];
         
         file_put_contents(storage_path('app/settings.json'), json_encode($settingsData, JSON_PRETTY_PRINT));
