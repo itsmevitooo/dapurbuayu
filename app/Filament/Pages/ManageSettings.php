@@ -107,17 +107,13 @@ class ManageSettings extends Page implements HasForms
                     ->schema([
                         TextInput::make('whatsapp_number')
                             ->label('Nomor WhatsApp')
-                            ->placeholder('Contoh: 6285711398972')
-                            ->required(),
+                            ->placeholder('Contoh: 6285711398972'),
                         TextInput::make('instagram_url')
                             ->label('Link Instagram')
-                            ->placeholder('Contoh: https://instagram.com/dapurbuayu')
-                            ->required(),
+                            ->placeholder('Contoh: https://instagram.com/dapurbuayu'),
                         TextInput::make('facebook_url')
                             ->label('Link Facebook')
-                            ->placeholder('Contoh: https://facebook.com/dapurbuayu')
-                            ->required(),
-                        
+                            ->placeholder('Contoh: https://facebook.com/dapurbuayu'),
                         Textarea::make('google_maps_url')
                             ->label('Link Direct Google Maps')
                             ->placeholder('Masukkan link share dari Google Maps')
