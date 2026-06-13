@@ -6,7 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
 
 class OrdersTable
@@ -18,7 +17,7 @@ class OrdersTable
                 TextColumn::make('invoice_code')
                     ->label('Invoice')
                     ->searchable()
-                    ->copyable(), // Admin bisa klik untuk copy kode invoice
+                    ->copyable(),
 
                 TextColumn::make('full_name')
                     ->label('Nama Lengkap')
@@ -31,11 +30,11 @@ class OrdersTable
                 TextColumn::make('address')
                     ->label('Alamat')
                     ->searchable()
-                    ->wrap(), // Biar alamat panjang otomatis turun ke bawah (tidak memanjang merusak layout)
+                    ->wrap(),
 
                 TextColumn::make('delivery_date')
-                    ->label('Tgl Kirim')
-                    ->date()
+                    ->label('Tgl & Jam Kirim')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
                 TextColumn::make('total_price')
@@ -47,21 +46,25 @@ class OrdersTable
                     ->label('Bayar')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'LUNAS' => 'success',
-                        'PENDING' => 'warning',
-                        'EXPIRED' => 'danger',
-                        default => 'gray',
+                        'LUNAS'      => 'success',
+                        'PENDING'    => 'warning',
+                        'EXPIRED'    => 'danger',
+                        'DIBATALKAN' => 'danger',
+                        default      => 'gray',
                     }),
 
-                SelectColumn::make('order_status')
+                // DIUBAH MENJADI TextColumn DENGAN BADGE AGAR BISA BERWARNA
+                TextColumn::make('order_status')
                     ->label('Status Pesanan')
-                    ->options([
-                        'DIPROSES' => 'DIPROSES',
-                        'TELAH SELESAI' => 'TELAH SELESAI',
-                    ])
-                    ->selectablePlaceholder(false),
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'DIPROSES'      => 'warning',
+                        'TELAH SELESAI' => 'success',
+                        'DIBATALKAN'    => 'danger', // Merah
+                        default         => 'gray',
+                    }),
             ])
-            ->defaultSort('created_at', 'desc') // Pesanan terbaru selalu di atas
+            ->defaultSort('created_at', 'desc')
             ->actions([
                 EditAction::make(),
             ])

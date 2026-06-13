@@ -1,10 +1,8 @@
 @extends('layouts.app')
 
 @push('styles')
-{{-- Load Flatpickr Style --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
-    /* Kustomisasi tipis agar flatpickr senada dengan tema rounded-2xl */
     .flatpickr-calendar {
         border-radius: 1rem !important;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
@@ -22,14 +20,10 @@
     </div>
     
     <div class="bg-white shadow-2xl rounded-3xl overflow-hidden lg:flex min-h-[600px] border border-gray-100">
-        
-        {{-- Sisi Kiri: Informasi Paket --}}
+        {{-- Sisi Kiri --}}
         <div class="lg:w-1/3 p-8 bg-gray-50 border-r border-gray-100 flex flex-col">
             <div class="sticky top-8">
-                <h3 class="text-4xl font-black mb-6 text-gray-800 italic uppercase tracking-tighter">
-                    {{ $package->name }}
-                </h3>
-                
+                <h3 class="text-4xl font-black mb-6 text-gray-800 italic uppercase tracking-tighter">{{ $package->name }}</h3>
                 <div class="w-full h-64 overflow-hidden rounded-lg bg-gray-100 mb-6">
                     @if($package->image)
                         <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-full h-full object-cover">
@@ -40,7 +34,6 @@
                         </div>
                     @endif
                 </div>
-        
                 <div class="space-y-4">
                     <div class="bg-primary p-6 rounded-3xl text-white shadow-lg shadow-yellow-200">
                         <p class="text-xs uppercase font-black tracking-widest opacity-80 mb-1">Harga Satuan</p>
@@ -51,7 +44,7 @@
             </div>
         </div>
 
-        {{-- Sisi Kanan: Form --}}
+        {{-- Sisi Kanan --}}
         <div class="lg:w-2/3 p-8 lg:p-12">
             @if ($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl">
@@ -65,30 +58,25 @@
                 @csrf
                 <input type="hidden" name="package_id" value="{{ $package->id }}">
 
-                {{-- 1. Deskripsi Paket --}}
+                {{-- Deskripsi --}}
                 <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Deskripsi Paket</h3>
                     <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
-                        <p class="text-gray-700 font-bold leading-relaxed" style="font-family: inherit;">
-                            {!! nl2br(e($package->description)) !!}
-                        </p>
+                        <p class="text-gray-700 font-bold leading-relaxed">{!! nl2br(e($package->description)) !!}</p>
                     </div>
                 </div>
 
                 <hr class="border-gray-100">
 
-                {{-- 2. Pilihan Menu --}}
+                {{-- Menu --}}
                 <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Isi Menu Paket</h3>
-                    
                     <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-6">
                         <div class="space-y-6">
                             @php
                                 $fixedMenus = $package->details->where('is_selectable', false);
                                 $optionalMenus = $package->details->where('is_selectable', true);
                             @endphp
-
-                            {{-- Bagian Menu Tetap --}}
                             @if($fixedMenus->count() > 0)
                                 <div>
                                     <p class="text-xs font-black text-gray-400 uppercase mb-3 tracking-widest">Menu Utama (Tetap)</p>
@@ -97,9 +85,7 @@
                                             @if(is_array($detail->name))
                                                 @foreach($detail->name as $menuItem)
                                                     <div class="flex items-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                                        </svg>
+                                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
                                                         <span class="font-bold text-gray-700 text-sm">{{ $menuItem }}</span>
                                                         <input type="hidden" name="selections[]" value="{{ $menuItem }}">
                                                     </div>
@@ -110,33 +96,20 @@
                                 </div>
                             @endif
 
-                            {{-- Bagian Menu Opsional --}}
                             @if($optionalMenus->count() > 0)
                                 <div class="pt-4 border-t border-gray-100">
                                     <p class="text-xs font-black text-primary uppercase mb-4 tracking-widest">Pilih Lauk (Pilih salah satu per kategori)</p>
-                                    
                                     @foreach($optionalMenus->groupBy('category') as $category => $items)
                                         <div class="mb-6 last:mb-0">
                                             <label class="text-sm font-bold text-gray-500 mb-3 block uppercase italic tracking-tight">{{ $category }}</label>
-                                            
                                             <div class="flex flex-wrap gap-3">
                                                 @foreach($items as $detail)
                                                     @if(is_array($detail->name))
                                                         @foreach($detail->name as $menuItem)
                                                             <label class="relative cursor-pointer group">
-                                                                <input type="radio" 
-                                                                    name="selections[{{ $category }}]" 
-                                                                    value="{{ $menuItem }}" 
-                                                                    class="peer hidden" 
-                                                                    required>
-                                                                
-                                                                <div class="inline-flex items-center px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl transition-all duration-200 
-                                                                    peer-checked:border-primary peer-checked:bg-yellow-50 peer-checked:shadow-md
-                                                                    group-hover:border-primary group-hover:bg-gray-50">
-                                                                    
-                                                                    <span class="font-bold text-gray-700 text-sm peer-checked:text-primary whitespace-nowrap">
-                                                                        {{ $menuItem }}
-                                                                    </span>
+                                                                <input type="radio" name="selections[{{ $category }}]" value="{{ $menuItem }}" class="peer hidden" required>
+                                                                <div class="inline-flex items-center px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl peer-checked:border-primary peer-checked:bg-yellow-50 peer-checked:shadow-md group-hover:border-primary group-hover:bg-gray-50">
+                                                                    <span class="font-bold text-gray-700 text-sm peer-checked:text-primary whitespace-nowrap">{{ $menuItem }}</span>
                                                                 </div>
                                                             </label>
                                                         @endforeach
@@ -147,19 +120,13 @@
                                     @endforeach
                                 </div>
                             @endif
-
-                            @if($package->details->count() == 0)
-                                <div class="text-center py-4">
-                                    <p class="text-gray-400 italic">Menu belum diinput di database.</p>
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </div>
 
                 <hr class="border-gray-100">
 
-                {{-- 3. Data Pengiriman --}}
+                {{-- Pengiriman --}}
                 <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Informasi Pengiriman</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -168,13 +135,12 @@
                     </div>
                     <div><label class="block text-sm font-bold text-gray-700 mb-2">Alamat Lengkap</label><textarea name="address" rows="3" required class="w-full rounded-2xl border-gray-200 p-4" placeholder="Alamat detail..."></textarea></div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal Pengiriman</label>
-                        {{-- Input utama yang diikat oleh Flatpickr --}}
-                        <input type="text" id="delivery_date" name="delivery_date" required class="w-full rounded-2xl border-gray-200 p-4 bg-white cursor-pointer" placeholder="Klik untuk memilih tanggal...">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal & Jam Pengiriman</label>
+                        <input type="text" id="delivery_date" name="delivery_date" required class="w-full rounded-2xl border-gray-200 p-4 bg-white cursor-pointer" placeholder="Klik untuk pilih tanggal & jam...">
                     </div>
                 </div>
 
-                {{-- 4. Kuantitas --}}
+                {{-- Kuantitas --}}
                 <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
@@ -198,22 +164,22 @@
 @endsection
 
 @push('scripts')
-{{-- Load Flatpickr Script --}}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Parsing variabel $tanggalLibur dari controller ke format Array JS
         const disabledDates = @json($tanggalLibur ?? []);
-
         flatpickr("#delivery_date", {
-            dateFormat: "Y-m-d", // Format data kirim ke server (sesuai validasi laravel)
-            altInput: true,      // Mengaktifkan tampilan tanggal yang lebih rapi bagi user
-            altFormat: "d F Y",  // Hasil tampilan ke user: 20 Mei 2026
-            altInputClass: "w-full rounded-2xl border-gray-200 p-4 bg-white cursor-pointer", // Memastikan input tiruan bawa style Tailwind
-            minDate: new Date().fp_incr(2), // H+2 dari hari ini
-            disable: disabledDates, // Array tanggal libur disuntikkan ke sini
-            locale: {
-                firstDayOfWeek: 1
+            enableTime: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i",
+            altInput: true,
+            altFormat: "d F Y, H:i",
+            minDate: new Date().fp_incr(2),
+            disable: disabledDates,
+            locale: { 
+                firstDayOfWeek: 1,
+                weekdays: { shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'], longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] },
+                months: { shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'], longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] }
             }
         });
     });

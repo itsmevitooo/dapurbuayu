@@ -23,25 +23,15 @@ class OrderController extends Controller
         Config::$is3ds = true;
     }
 
-    // 1. Ambil data tanggal libur dari holidays.json dan kirim ke View Detail/Form Order
     public function showDetailForm($id)
     {
         $package = Paket::findOrFail($id);
-        
-        // FIX: Membaca langsung file holidays.json hasil simpanan Filament Page kamu
         $holidaysPath = storage_path('app/holidays.json');
         $tanggalLibur = file_exists($holidaysPath) ? json_decode(file_get_contents($holidaysPath), true) : [];
-
-        // Memastikan output berupa array bersih
-        if (!is_array($tanggalLibur)) {
-            $tanggalLibur = [];
-        }
-
-        // Kirim variabel $tanggalLibur langsung ke view
+        if (!is_array($tanggalLibur)) $tanggalLibur = [];
         return view('orderdetail', compact('package', 'tanggalLibur'));
     }
 
-    // 2. Validasi sisi backend mendeteksi kecocokan tanggal di holidays.json
     public function processDetail(Request $request)
     {
         $request->validate([
@@ -49,36 +39,28 @@ class OrderController extends Controller
             'full_name'    => 'required|string|max:255',
             'phone_number' => 'required|string|max:20',
             'address'      => 'required|string',
-            'delivery_date'=> 'required|date',
+            'delivery_date'=> 'required', 
             'quantity'     => 'required|integer|min:1',
         ]);
-
-        // FIX: Ambil validasi pembanding dari file holidays.json di Back-end
+    
         $holidaysPath = storage_path('app/holidays.json');
         $tanggalLibur = file_exists($holidaysPath) ? json_decode(file_get_contents($holidaysPath), true) : [];
         
-        if (!is_array($tanggalLibur)) {
-            $tanggalLibur = [];
-        }
-
         try {
-            $inputDeliveryDate = Carbon::parse($request->delivery_date)->format('Y-m-d');
+            $inputDate = Carbon::parse($request->delivery_date);
+            $fullDateTime = $inputDate->format('Y-m-d H:i:s');
+            $dateOnly = $inputDate->format('Y-m-d');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['delivery_date' => 'Format tanggal tidak valid.']);
+            return redirect()->back()->withErrors(['delivery_date' => 'Format tidak valid.']);
         }
-
-        if (in_array($inputDeliveryDate, $tanggalLibur)) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['delivery_date' => 'Maaf, tanggal yang Anda pilih adalah hari libur atau slot catering kami sudah penuh.']);
+    
+        if (in_array($dateOnly, (array)$tanggalLibur)) {
+            return redirect()->back()->withErrors(['delivery_date' => 'Maaf, tanggal tersebut libur.']);
         }
-
+    
         $package = Paket::findOrFail($request->package_id);
         $selections = $request->input('selections', []);
-        $menuArray = is_array($selections) ? array_values($selections) : [$selections];
-
+    
         session(['order_data' => [
             'package_id'      => $package->id,
             'package_name'    => $package->name,
@@ -86,50 +68,35 @@ class OrderController extends Controller
             'full_name'       => $request->full_name,
             'phone_number'    => $request->phone_number,
             'address'         => $request->address,
-            'delivery_date'   => $inputDeliveryDate, 
+            'delivery_date'   => $fullDateTime, 
             'quantity'        => $request->quantity,
             'total_price'     => $package->price * $request->quantity,
-            'menu_selections' => $menuArray,
+            'menu_selections' => is_array($selections) ? array_values($selections) : [$selections],
         ]]);
-
+    
         return redirect()->route('order.payment');
-    }
-
-    public function showPayment()
-    {
-        $orderData = session('order_data');
-        if (!$orderData) {
-            return redirect()->route('home')->with('error', 'Sesi pesanan hilang.');
-        }
-        return view('payment', compact('orderData'));
     }
 
     public function processPayment(Request $request)
     {
         $orderData = session('order_data');
-        if (!$orderData) {
-            return response()->json(['error' => 'Sesi pesanan hilang'], 400);
-        }
+        if (!$orderData) return response()->json(['error' => 'Sesi hilang'], 400);
 
         DB::beginTransaction();
         try {
             $invoiceCode = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
-            $deliveryDate = Carbon::parse($orderData['delivery_date']);
-            $paymentDeadline = $deliveryDate->copy()->subDays(2)->endOfDay();
-            $totalHarga = (int) $orderData['total_price'];
-
-            $isCOD = ($request->payment_method === 'COD');
-            $nominalBayarMidtrans = $isCOD ? ($totalHarga * 0.5) : $totalHarga;
-
+            // Menghitung H-2 dari delivery date sebagai batas waktu bayar
+            $deadline = Carbon::parse($orderData['delivery_date'])->subDays(2)->endOfDay();
+            
             $order = Order::create([
                 'invoice_code'     => $invoiceCode,
                 'full_name'        => $orderData['full_name'],
                 'phone_number'     => $orderData['phone_number'],
-                'total_price'      => $totalHarga, 
+                'total_price'      => $orderData['total_price'],
                 'payment_method'   => $request->payment_method,
                 'address'          => $orderData['address'],
                 'delivery_date'    => $orderData['delivery_date'],
-                'payment_deadline' => $paymentDeadline,
+                'payment_deadline' => $deadline, // DEADLINE DISIMPAN
                 'payment_status'   => 'PENDING',
                 'order_status'     => 'DIPROSES',
             ]);
@@ -140,41 +107,28 @@ class OrderController extends Controller
                 'item_name' => $orderData['package_name'], 
                 'quantity'  => $orderData['quantity'],
                 'price'     => $orderData['package_price'],
-                'subtotal'  => $totalHarga,
+                'subtotal'  => $orderData['total_price'],
                 'side_dish' => $orderData['menu_selections'] ?? [], 
             ]);
 
             Paket::where('id', $orderData['package_id'])->increment('total_orders');
 
             $params = [
-                'transaction_details' => [
-                    'order_id' => $invoiceCode,
-                    'gross_amount' => (int) $nominalBayarMidtrans, 
-                ],
-                'customer_details' => [
-                    'first_name' => $orderData['full_name'],
-                    'phone' => $orderData['phone_number'],
-                ],
+                'transaction_details' => ['order_id' => $invoiceCode, 'gross_amount' => (int) $orderData['total_price']],
+                'customer_details' => ['first_name' => $orderData['full_name'], 'phone' => $orderData['phone_number']],
             ];
 
             $snapToken = Snap::getSnapToken($params);
             $order->update(['snap_token' => $snapToken]);
 
             DB::commit();
-
-            return response()->json([
-                'method' => $request->payment_method,
-                'snap_token' => $snapToken,
-                'invoice_code' => $invoiceCode,
-                'redirect_url' => $isCOD ? "https://wa.me/628123456789?text=Halo Admin, saya memesan paket katering {$orderData['package_name']} dengan Invoice: {$invoiceCode}" : ""
-            ]);
+            return response()->json(['snap_token' => $snapToken, 'invoice_code' => $invoiceCode]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
     public function callback()
     {
         try {

@@ -1,33 +1,30 @@
 <?php
 
 use App\Models\Order;
-use Illuminate\Foundation\Console\ClosureCommand;
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 Artisan::command('inspire', function () {
-    /** @var ClosureCommand $this */
-    $this->comment(Inspiring::quote());
+    $this->comment(\Illuminate\Foundation\Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
 /**
  * Automasi Pembatalan Pesanan:
- * Mengecek pesanan yang statusnya PENDING dan sudah memasuki H-2 acara.
- * Jika belum dibayar pada H-2, maka otomatis CANCELLED.
+ * Jika payment_deadline (H-2 dari delivery) sudah lewat dan masih PENDING, maka DITOLAK.
  */
 Schedule::call(function () {
-    // Mencari order yang masih PENDING
-    // Dan delivery_date sudah kurang dari atau sama dengan (Hari ini + 2 hari)
+    $now = Carbon::now();
+
     $affectedRows = Order::where('payment_status', 'PENDING')
-        ->whereDate('delivery_date', '<=', Carbon::now()->addDays(2))
+        ->where('payment_deadline', '<', $now)
         ->update([
-            'payment_status' => 'CANCELLED',
-            'order_status' => 'DITOLAK'
+            'payment_status' => 'DIBATALKAN',
+            'order_status'   => 'DITOLAK'
         ]);
 
     if ($affectedRows > 0) {
-        \Log::info("Automasi: Berhasil membatalkan $affectedRows pesanan yang melewati batas H-2.");
+        Log::info("Automasi: Berhasil membatalkan $affectedRows pesanan karena melewati payment_deadline.");
     }
-})->everyMinute(); // Mengecek setiap menit
+})->everyMinute();
