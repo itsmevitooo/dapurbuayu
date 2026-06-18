@@ -140,10 +140,12 @@ class ManageSettings extends Page implements HasForms
                         RichEditor::make('terms_content')
                             ->label('Syarat & Ketentuan')
                             ->columnSpanFull()
+                            ->extraAttributes(['style' => 'height: 350px; overflow-y: auto;'])
                             ->required(),
                         RichEditor::make('privacy_content')
                             ->label('Kebijakan Privasi')
                             ->columnSpanFull()
+                            ->extraAttributes(['style' => 'height: 350px; overflow-y: auto;'])
                             ->required(),
                     ]),
 
@@ -155,7 +157,7 @@ class ManageSettings extends Page implements HasForms
                             ->schema([
                                 DatePicker::make('date')
                                     ->label('Pilih Tanggal')
-                                    ->displayFormat('Y-m-d'), // Hapus required agar opsional
+                                    ->displayFormat('Y-m-d'),
                             ])
                             ->addActionLabel('Tambah Tanggal Libur Baru')
                             ->columns(1)

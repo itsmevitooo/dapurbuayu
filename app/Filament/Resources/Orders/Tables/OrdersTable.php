@@ -18,16 +18,11 @@ class OrdersTable
                     ->label('Invoice')
                     ->searchable()
                     ->copyable(),
-                    
+
                 TextColumn::make('paket_dipilih')
                     ->label('Paket yang Dipilih')
                     ->getStateUsing(fn ($record) => $record->items->pluck('item_name')->implode(', '))
                     ->wrap(),
-
-                TextColumn::make('payment_method')
-                    ->label('Pembayaran')
-                    ->badge()
-                    ->color('info'),
 
                 TextColumn::make('full_name')
                     ->label('Nama Lengkap')
@@ -51,6 +46,11 @@ class OrdersTable
                     ->label('Total')
                     ->money('IDR', locale: 'id_ID')
                     ->sortable(),
+
+                TextColumn::make('payment_method')
+                    ->label('Pembayaran')
+                    ->badge()
+                    ->color('info'),
 
                 TextColumn::make('payment_status')
                     ->label('Bayar')
