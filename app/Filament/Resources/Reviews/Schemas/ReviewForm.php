@@ -12,9 +12,18 @@ class ReviewForm
     public static function configure($form)
     {
         return $form->schema([
-            TextInput::make('name')->required(),
-            TextInput::make('rating')->required()->numeric()->minValue(1)->maxValue(5)->default(5),
-            Textarea::make('comment')->required()->columnSpanFull(),
+            TextInput::make('name')
+            ->required()
+            ->label('Nama'),
+            TextInput::make('rating')
+            ->required()
+            ->numeric()
+            ->minValue(1)
+            ->maxValue(5)->default(5),
+            Textarea::make('comment')
+            ->required()
+            ->label('Komentar')
+            ->columnSpanFull(),
             Repeater::make('gallery')
                 ->relationship('gallery')
                 ->schema([
