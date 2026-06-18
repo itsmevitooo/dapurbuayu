@@ -18,6 +18,16 @@ class OrdersTable
                     ->label('Invoice')
                     ->searchable()
                     ->copyable(),
+                    
+                TextColumn::make('paket_dipilih')
+                    ->label('Paket yang Dipilih')
+                    ->getStateUsing(fn ($record) => $record->items->pluck('item_name')->implode(', '))
+                    ->wrap(),
+
+                TextColumn::make('payment_method')
+                    ->label('Pembayaran')
+                    ->badge()
+                    ->color('info'),
 
                 TextColumn::make('full_name')
                     ->label('Nama Lengkap')
@@ -53,14 +63,13 @@ class OrdersTable
                         default      => 'gray',
                     }),
 
-                // DIUBAH MENJADI TextColumn DENGAN BADGE AGAR BISA BERWARNA
                 TextColumn::make('order_status')
                     ->label('Status Pesanan')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'DIPROSES'      => 'warning',
                         'TELAH SELESAI' => 'success',
-                        'DIBATALKAN'    => 'danger', // Merah
+                        'DIBATALKAN'    => 'danger',
                         default         => 'gray',
                     }),
             ])

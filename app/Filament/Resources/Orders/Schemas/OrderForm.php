@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
-// PENTING: Ubah import DatePicker menjadi DateTimePicker
 use Filament\Forms\Components\DateTimePicker; 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Schema; 
 
 class OrderForm
 {
@@ -15,6 +15,23 @@ class OrderForm
     {
         return $schema
             ->components([
+                // Kita gunakan Placeholder dengan styling CSS agar terlihat seperti TextInput
+                Placeholder::make('detail_paket')
+                    ->label('Paket yang Dipilih')
+                    ->content(fn ($record) => $record?->items->pluck('item_name')->implode(', '))
+                    ->extraAttributes([
+                        'style' => 'border: 1px solid #4a4a4a; padding: 10px; border-radius: 8px; background-color: #1f1f1f;'
+                    ]),
+                
+                Placeholder::make('detail_lauk')
+                    ->label('Lauk yang Dipilih')
+                    ->content(fn ($record) => $record?->items->map(fn($item) => 
+                        is_array($item->side_dish) ? implode(', ', $item->side_dish) : $item->side_dish
+                    )->implode(', '))
+                    ->extraAttributes([
+                        'style' => 'border: 1px solid #4a4a4a; padding: 10px; border-radius: 8px; background-color: #1f1f1f;'
+                    ]),
+
                 TextInput::make('invoice_code')
                     ->label('Kode Invoice')
                     ->disabled() 
@@ -34,11 +51,10 @@ class OrderForm
                     ->required()
                     ->columnSpanFull(),
 
-                // UBAH BAGIAN INI MENJADI DateTimePicker
                 DateTimePicker::make('delivery_date')
                     ->label('Tanggal & Jam Pengiriman')
                     ->required()
-                    ->seconds(false) // Membuang detik agar rapi
+                    ->seconds(false)
                     ->displayFormat('d/m/Y H:i')
                     ->format('Y-m-d H:i:s'),
 
