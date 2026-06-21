@@ -188,6 +188,11 @@
                     <div class="swiper-button-prev p-prev"></div>
                     <div class="swiper-pagination"></div>
                 </div>
+
+                
+                <div class="text-center mt-8">
+                    <a href="<?php echo e(route('paket.index')); ?>" class="inline-block bg-primary hover:bg-yellow-600 text-white font-bold py-3.5 px-10 rounded-full shadow-lg transition duration-300 uppercase text-xs tracking-widest btn-hover-anim">Lihat Semua Paket</a>
+                </div>
             </div>
         </section>
 

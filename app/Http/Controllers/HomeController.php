@@ -18,17 +18,24 @@ class HomeController extends Controller
     }
 
     /**
+     * Menambahkan fungsi index halaman paket untuk tombol Lihat Semua Paket
+     */
+    public function paketIndex()
+    {
+        $packages = Paket::all();
+        return view('paket', compact('packages')); // Pastikan file paket.blade.php Anda ada
+    }
+
+    /**
      * FUNGSI GALLERY YANG HILANG
      */
     public function gallery()
     {
         // 1. Ambil foto dari tabel Galleries (Jika ada)
-        // Jika belum buat model/migration Gallery, abaikan baris ini atau buat dulu
         $manualGalleries = class_exists('\App\Models\Gallery') ? \App\Models\Gallery::all() : collect();
 
         // 2. Ambil foto dari tabel Reviews (Yang ada gambarnya)
         $reviewPhotos = Review::whereNotNull('image')->get()->map(function($item) {
-            // Karena image di review berbentuk array, kita ambil index pertama
             $img = is_array($item->image) ? ($item->image[0] ?? null) : $item->image;
             return (object)[
                 'title' => 'Review dari ' . $item->name,

@@ -27,6 +27,10 @@ Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store
 
 // --- Katalog & Detail Order ---
 Route::get('/paket', [PaketController::class, 'index'])->name('paket.index');
+
+// Opsional: Ditambahkan agar route('paket') tidak error saat memanggil paket.index
+Route::get('/paket', [PaketController::class, 'index'])->name('paket.index'); 
+
 Route::get('/paket/detail/{id}', [OrderController::class, 'showDetailForm'])->name('paket.detail');
 
 // --- Proses Transaksi ---

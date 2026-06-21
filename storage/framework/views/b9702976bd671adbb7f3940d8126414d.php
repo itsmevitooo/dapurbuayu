@@ -38,7 +38,8 @@
                 <div class="relative flex-grow">
                     <input type="text" name="invoice_code" placeholder="Masukkan kode invoice (INV-XXXX)..." class="w-full px-8 py-5 rounded-2xl border-none bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary outline-none transition text-lg font-medium shadow-inner" value="<?php echo e(request('invoice_code')); ?>" required>
                 </div>
-                <button type="submit" class="bg-gray-900 hover:bg-primary text-white px-12 py-5 rounded-2xl font-bold uppercase text-xs tracking-[0.2em] transition-all active:scale-95">
+                
+                <button type="submit" class="bg-gray-900 hover:bg-[#f0ad4e] text-white px-12 py-5 rounded-2xl font-bold uppercase text-xs tracking-[0.2em] transition-all duration-300 active:scale-95">
                     Cek Sekarang
                 </button>
             </form>
@@ -90,7 +91,6 @@
                                         <p class="text-[10px] text-gray-500 mt-1 font-medium">
                                             Menu: 
                                             <span class="italic text-gray-400">
-                                                
                                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($item->side_dish)): ?>
                                                     <?php echo e(implode(', ', $item->side_dish)); ?>
 
