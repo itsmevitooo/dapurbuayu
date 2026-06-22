@@ -35,12 +35,19 @@ class OrderController extends Controller
     public function processDetail(Request $request)
     {
         $request->validate([
-            'package_id'   => 'required|exists:paket,id', 
-            'full_name'    => 'required|string|max:255',
-            'phone_number' => 'required|string|max:20',
-            'address'      => 'required|string',
-            'delivery_date'=> 'required', 
-            'quantity'     => 'required|integer|min:1',
+            'package_id'    => 'required|exists:paket,id', 
+            'full_name'     => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
+            'phone_number'  => 'required|string|max:20|regex:/^[0-9]+$/',
+            'address'       => 'required|string',
+            'delivery_date' => 'required', 
+            'quantity'      => 'required|integer|min:1',
+        ], [
+            'full_name.required'     => 'Kolom tidak boleh kosong.',
+            'full_name.regex'        => 'Wajib menggunakan huruf pada kolom nama.',
+            'phone_number.required'  => 'Kolom tidak boleh kosong.',
+            'phone_number.regex'     => 'Masukkan angka pada nomor telepon.',
+            'address.required'       => 'Kolom tidak boleh kosong.',
+            'delivery_date.required' => 'Kolom tidak boleh kosong.',
         ]);
     
         $holidaysPath = storage_path('app/holidays.json');
@@ -77,6 +84,17 @@ class OrderController extends Controller
         return redirect()->route('order.payment');
     }
 
+    public function showPayment()
+    {
+        $orderData = session('order_data');
+        
+        if (!$orderData) {
+            return redirect()->route('home')->with('error', 'Sesi pemesanan Anda telah kedaluwarsa.');
+        }
+
+        return view('payment', compact('orderData'));
+    }
+
     public function processPayment(Request $request)
     {
         $orderData = session('order_data');
@@ -85,7 +103,6 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             $invoiceCode = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
-            // Menghitung H-2 dari delivery date sebagai batas waktu bayar
             $deadline = Carbon::parse($orderData['delivery_date'])->subDays(2)->endOfDay();
             
             $order = Order::create([
@@ -96,7 +113,7 @@ class OrderController extends Controller
                 'payment_method'   => $request->payment_method,
                 'address'          => $orderData['address'],
                 'delivery_date'    => $orderData['delivery_date'],
-                'payment_deadline' => $deadline, // DEADLINE DISIMPAN
+                'payment_deadline' => $deadline,
                 'payment_status'   => 'PENDING',
                 'order_status'     => 'DIPROSES',
             ]);
@@ -129,6 +146,7 @@ class OrderController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
     public function callback()
     {
         try {

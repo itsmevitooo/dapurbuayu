@@ -46,14 +46,6 @@
 
         {{-- Sisi Kanan --}}
         <div class="lg:w-2/3 p-8 lg:p-12">
-            @if ($errors->any())
-                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl">
-                    <ul class="list-disc list-inside text-sm text-red-600 font-bold">
-                        @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <form action="{{ route('order.process_detail') }}" method="POST" class="space-y-10">
                 @csrf
                 <input type="hidden" name="package_id" value="{{ $package->id }}">
@@ -129,14 +121,39 @@
                 {{-- Pengiriman --}}
                 <div class="space-y-6">
                     <h3 class="text-xl font-black text-gray-800 uppercase tracking-wider italic">Informasi Pengiriman</h3>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div><label class="block text-sm font-bold text-gray-700 mb-2">Nama Penerima</label><input type="text" name="full_name" required class="w-full rounded-2xl border-gray-200 p-4" placeholder="Nama lengkap"></div>
-                        <div><label class="block text-sm font-bold text-gray-700 mb-2">No. WhatsApp</label><input type="tel" name="phone_number" required class="w-full rounded-2xl border-gray-200 p-4" placeholder="0812xxxx"></div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Nama Penerima</label>
+                            <input type="text" name="full_name" value="{{ old('full_name') }}" required class="w-full rounded-2xl @error('full_name') border-red-500 border-2 @else border-gray-200 @enderror p-4" placeholder="Nama lengkap">
+                            @error('full_name')
+                                <p class="text-red-600 text-xs font-black mt-2 ml-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">No. WhatsApp</label>
+                            <input type="tel" name="phone_number" value="{{ old('phone_number') }}" required class="w-full rounded-2xl @error('phone_number') border-red-500 border-2 @else border-gray-200 @enderror p-4" placeholder="0812xxxx">
+                            @error('phone_number')
+                                <p class="text-red-600 text-xs font-black mt-2 ml-1">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                    <div><label class="block text-sm font-bold text-gray-700 mb-2">Alamat Lengkap</label><textarea name="address" rows="3" required class="w-full rounded-2xl border-gray-200 p-4" placeholder="Alamat detail..."></textarea></div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Alamat Lengkap</label>
+                        <textarea name="address" rows="3" required class="w-full rounded-2xl @error('address') border-red-500 border-2 @else border-gray-200 @enderror p-4" placeholder="Alamat detail...">{{ old('address') }}</textarea>
+                        @error('address')
+                            <p class="text-red-600 text-xs font-black mt-2 ml-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal & Jam Pengiriman</label>
-                        <input type="text" id="delivery_date" name="delivery_date" required class="w-full rounded-2xl border-gray-200 p-4 bg-white cursor-pointer" placeholder="Klik untuk pilih tanggal & jam...">
+                        <input type="text" id="delivery_date" name="delivery_date" value="{{ old('delivery_date') }}" required class="w-full rounded-2xl @error('delivery_date') border-red-500 border-2 @else border-gray-200 @enderror p-4 bg-white cursor-pointer" placeholder="Klik untuk pilih tanggal & jam...">
+                        @error('delivery_date')
+                            <p class="text-red-600 text-xs font-black mt-2 ml-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -148,7 +165,7 @@
                             <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi.</p>
                         </div>
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
-                            <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ $package->min_order ?? 1 }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
+                            <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ old('quantity', $package->min_order ?? 1) }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
                             <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
                         </div>
                     </div>
