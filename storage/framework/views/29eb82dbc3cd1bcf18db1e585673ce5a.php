@@ -1,7 +1,7 @@
-    @extends('layouts.app')
+    
 
-    @push('styles')
-        {{-- Pastikan Swiper CSS sudah ter-load dengan baik --}}
+    <?php $__env->startPush('styles'); ?>
+        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
@@ -95,98 +95,102 @@
                 background: #64748b;
             }
         </style>
-    @endpush
+    <?php $__env->stopPush(); ?>
 
-    @section('content')
-    {{-- Kontainer disetel sejajar dengan style padding halaman review --}}
+    <?php $__env->startSection('content'); ?>
+    
     <div class="container mx-auto px-4 py-12 max-w-[95%]">
-        {{-- Header Judul --}}
+        
         <div class="text-center mb-12">
             <h2 class="text-6xl font-bold text-primary font-[Qwitcher_Grypen]">Menu Paket Kami</h2>
             <div class="h-1.5 w-24 bg-primary mx-auto mt-4 rounded-full"></div>
             <p class="text-gray-500 font-inter uppercase tracking-[0.3em] text-[10px] mt-6 font-bold">Pilih Kategori Hidangan Spesial Dapur Bu Ayu</p>
         </div>
 
-        {{-- Tab Navigasi Kategori --}}
+        
         <div class="flex flex-wrap justify-center gap-3 mb-16">
-            @php
+            <?php
                 $categories = [
                     'nasi_box' => 'Nasi Box',
                     'prasmanan' => 'Prasmanan',
                     'tumpeng' => 'Tumpeng',
                     'akikah' => 'Akikah'
                 ];
-            @endphp
+            ?>
 
-            @foreach($categories as $key => $label)
-                <a href="{{ route('paket.index', ['category' => $key]) }}" 
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <a href="<?php echo e(route('paket.index', ['category' => $key])); ?>" 
                 class="px-8 py-3 rounded-full border-2 duration-300 font-bold uppercase text-[11px] tracking-widest font-inter btn-hover-anim
-                {{ $category == $key 
+                <?php echo e($category == $key 
                     ? 'bg-primary border-primary text-white shadow-lg' 
-                    : 'border-gray-200 text-gray-400 hover:border-primary hover:text-primary bg-white' }}">
-                    {{ $label }}
+                    : 'border-gray-200 text-gray-400 hover:border-primary hover:text-primary bg-white'); ?>">
+                    <?php echo e($label); ?>
+
                 </a>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </div>
 
-        {{-- Tampilan Slider (Hanya Tampil di HP/Tablet, disembunyikan via md:hidden) --}}
+        
         <div class="md:hidden relative px-4">
             <div class="swiper swiper-paket">
                 <div class="swiper-wrapper">
-                    @forelse($pakets as $p)
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $pakets; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <div class="swiper-slide">
                             <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col w-full h-full justify-between">
                                 <div>
                                     <div class="h-48 overflow-hidden">
-                                        <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover" alt="{{ $p->name }}">
+                                        <img src="<?php echo e(asset('storage/' . $p->image)); ?>" class="w-full h-full object-cover" alt="<?php echo e($p->name); ?>">
                                     </div>
                                     <div class="p-6 flex flex-col font-inter">
-                                        <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
+                                        <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2"><?php echo e($p->name); ?></h3>
                                         
-                                        {{-- Deskripsi Ditampilkan Normal Dengan Enter dan Ukuran Proporsional --}}
-                                        @if(!empty($p->description))
+                                        
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($p->description)): ?>
                                             <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed">
-                                                {!! nl2br(e($p->description)) !!}
+                                                <?php echo nl2br(e($p->description)); ?>
+
                                             </p>
-                                        @endif
+                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
                                         <div>
                                             <ul class="text-sm text-gray-600 space-y-1.5 h-28 overflow-y-auto custom-scrollbar italic text-left border-t border-gray-50 pt-3 mt-2">
-                                                @forelse($p->details as $detail)
+                                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $p->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                                     <li class="flex items-start">
                                                         <span class="mr-2 text-primary">•</span>
                                                         <span>
-                                                            @if(is_array($detail->name))
-                                                                {{ implode(', ', $detail->name) }}
-                                                            @else
-                                                                {{ $detail->name }}
-                                                            @endif
+                                                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($detail->name)): ?>
+                                                                <?php echo e(implode(', ', $detail->name)); ?>
+
+                                                            <?php else: ?>
+                                                                <?php echo e($detail->name); ?>
+
+                                                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                                         </span>
                                                     </li>
-                                                @empty
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
                                                     <li class="text-gray-400 italic text-xs">Menu belum diinput</li>
-                                                @endforelse
+                                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- Bagian Harga & Tombol Disematkan Rapat Di Dalam Card --}}
+                                
                                 <div class="p-6 border-t border-gray-50 mt-auto">
-                                    <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp {{ number_format($p->price, 0, ',', '.') }}</p>
-                                    <a href="{{ route('paket.detail', $p->id) }}" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
+                                    <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp <?php echo e(number_format($p->price, 0, ',', '.')); ?></p>
+                                    <a href="<?php echo e(route('paket.detail', $p->id)); ?>" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
                                         Pilih Paket
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    @empty
-                        {{-- Teks polos saat kosong, tanpa layout card --}}
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        
                         <div class="w-full text-center py-20">
                             <h3 class="text-2xl font-bold text-gray-400 font-inter tracking-widest uppercase">Belum Ada Paket</h3>
                             <p class="text-gray-400 text-sm mt-2 font-inter">Kami sedang menyiapkan menu terbaik untuk kategori ini.</p>
                         </div>
-                    @endforelse
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 </div>
                 <div class="swiper-button-next pk-next"></div>
                 <div class="swiper-button-prev pk-prev"></div>
@@ -194,67 +198,70 @@
             </div>
         </div>
 
-        {{-- Tampilan Desktop (Disembunyikan pada layar kecil via hidden md:flex) --}}
+        
         <div class="hidden md:flex w-full py-4">
             <div class="pc-kartu-tengah">
-                @forelse($pakets as $p)
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $pakets; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col h-full group justify-between">
                         <div>
                             <div class="h-48 overflow-hidden">
-                                <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="{{ $p->name }}">
+                                <img src="<?php echo e(asset('storage/' . $p->image)); ?>" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="<?php echo e($p->name); ?>">
                             </div>
                             
                             <div class="p-6 pb-2 flex flex-col font-inter">
-                                {{-- Judul Paket Rata Tengah --}}
-                                <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
                                 
-                                {{-- Deskripsi Ditampilkan Mengikuti Enter --}}
-                                @if(!empty($p->description))
+                                <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2"><?php echo e($p->name); ?></h3>
+                                
+                                
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($p->description)): ?>
                                     <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed">
-                                        {!! nl2br(e($p->description)) !!}
+                                        <?php echo nl2br(e($p->description)); ?>
+
                                     </p>
-                                @endif
+                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 
                                 <div>
                                     <ul class="text-sm text-gray-600 space-y-1.5 h-28 overflow-y-auto custom-scrollbar italic text-left border-t border-gray-50 pt-3 mt-2">
-                                        @forelse($p->details as $detail)
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $p->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                             <li class="flex items-start">
                                                 <span class="mr-2 text-primary">•</span>
                                                 <span>
-                                                    @if(is_array($detail->name))
-                                                        {{ implode(', ', $detail->name) }}
-                                                    @else
-                                                        {{ $detail->name }}
-                                                    @endif
+                                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($detail->name)): ?>
+                                                        <?php echo e(implode(', ', $detail->name)); ?>
+
+                                                    <?php else: ?>
+                                                        <?php echo e($detail->name); ?>
+
+                                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                                 </span>
                                             </li>
-                                        @empty
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
                                             <li class="text-gray-400 italic text-xs">Menu belum diinput</li>
-                                        @endforelse
+                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Bagian Harga & Tombol Rapat Kebawah Sesuai Referensi Style --}}
+                        
                         <div class="p-6 border-t border-gray-50 mt-auto">
-                            <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp {{ number_format($p->price, 0, ',', '.') }}</p>
-                            <a href="{{ route('paket.detail', $p->id) }}" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
+                            <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp <?php echo e(number_format($p->price, 0, ',', '.')); ?></p>
+                            <a href="<?php echo e(route('paket.detail', $p->id)); ?>" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
                                 Pilih Paket
                             </a>
                         </div>
                     </div>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <div class="w-full text-center py-20">
                         <h3 class="text-2xl font-bold text-gray-400 font-inter tracking-widest uppercase">Belum Ada Paket</h3>
                         <p class="text-gray-400 text-sm mt-2 font-inter">Kami sedang menyiapkan menu terbaik untuk kategori ini.</p>
                     </div>
-                @endforelse
+                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </div>
         </div>
     </div>
 
-    @push('scripts')
+    <?php $__env->startPush('scripts'); ?>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Inisialisasi Swiper khusus halaman paket mobile
@@ -276,5 +283,6 @@
                 });
             });
         </script>
-    @endpush
-    @endsection
+    <?php $__env->stopPush(); ?>
+    <?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\dapurbuayu\resources\views/paket.blade.php ENDPATH**/ ?>
