@@ -8,12 +8,12 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Qwitcher_Grypen:wght@400;700&display=swap');
         
-        /* Konsistensi Animasi Hover */
+        /* --- Hapus Animasi Hover --- */
         .btn-hover-anim {
-            transition: all 0.3s ease !important;
+            transition: none !important;
         }
         .btn-hover-anim:hover {
-            transform: scale(1.05);
+            transform: none;
         }
 
         /* Styling Swiper Khusus Mobile */
@@ -36,10 +36,10 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             z-index: 50;
             top: 40% !important;
-            transition: all 0.3s ease;
+            transition: none;
         }
         .swiper-button-next:hover, .swiper-button-prev:hover {
-            transform: scale(1.1);
+            transform: none;
             background: #fff;
         }
         .swiper-button-next::after, .swiper-button-prev::after {
@@ -52,6 +52,46 @@
 
         @media (max-width: 768px) {
             .swiper-paket { padding: 15px 5px 45px 5px !important; }
+        }
+        
+        /* Kustom Flexbox Center agar satu baris persis memuat 3 card dengan lebar yang konsisten */
+        .pc-kartu-tengah {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2.5rem; /* Jarak antar card */
+            max-width: 1250px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .pc-kartu-tengah > div {
+            width: 360px; /* Ukuran card konsisten */
+        }
+
+        /* --- Kustom Scrollbar Modern & Ramping --- */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+        }
+        
+        /* Untuk Chrome, Safari, Edge */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
         }
     </style>
 @endpush
@@ -78,7 +118,7 @@
 
         @foreach($categories as $key => $label)
             <a href="{{ route('paket.index', ['category' => $key]) }}" 
-               class="px-8 py-3 rounded-full border-2 transition-all duration-300 font-bold uppercase text-[11px] tracking-widest font-inter btn-hover-anim
+               class="px-8 py-3 rounded-full border-2 duration-300 font-bold uppercase text-[11px] tracking-widest font-inter btn-hover-anim
                {{ $category == $key 
                   ? 'bg-primary border-primary text-white shadow-lg' 
                   : 'border-gray-200 text-gray-400 hover:border-primary hover:text-primary bg-white' }}">
@@ -98,7 +138,15 @@
                                 <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover" alt="{{ $p->name }}">
                             </div>
                             <div class="p-6 flex flex-col flex-grow font-inter">
-                                <h3 class="text-2xl font-bold mb-4 text-gray-800 uppercase italic line-clamp-2">{{ $p->name }}</h3>
+                                <h3 class="text-2xl font-bold mb-4 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
+                                
+                                {{-- Deskripsi Singkat Mobile --}}
+                                @if(!empty($p->description))
+                                    <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed line-clamp-3">
+                                        {!! nl2br(e($p->description)) !!}
+                                    </p>
+                                @endif
+
                                 <div class="flex-grow">
                                     <ul class="text-sm text-gray-600 mb-6 space-y-1.5 h-32 overflow-y-auto custom-scrollbar italic text-left">
                                         @forelse($p->details as $detail)
@@ -127,7 +175,8 @@
                         </div>
                     </div>
                 @empty
-                    <div class="swiper-slide w-full py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200 text-center">
+                    {{-- Kotak putih polos disembunyikan saat paket kosong pada slider mobile --}}
+                    <div class="swiper-slide w-full py-20 text-center flex items-center justify-center">
                         <div>
                             <h3 class="text-xl font-bold text-gray-400 font-inter tracking-widest uppercase">Belum Ada Paket</h3>
                             <p class="text-gray-300 text-sm mt-2">Kami sedang menyiapkan menu terbaik.</p>
@@ -141,51 +190,62 @@
         </div>
     </div>
 
-    {{-- Tampilan Grid PC (Disembunyikan pada layar kecil via hidden md:grid) --}}
-    <div class="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        @forelse($pakets as $p)
-            <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col w-full h-full group">
-                <div class="h-48 overflow-hidden">
-                    <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="{{ $p->name }}">
-                </div>
-                
-                <div class="p-6 flex flex-col flex-grow font-inter">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800 uppercase italic line-clamp-2">{{ $p->name }}</h3>
+    {{-- Tampilan Desktop (Disembunyikan pada layar kecil via hidden md:flex) --}}
+    <div class="hidden md:flex w-full py-4">
+        <div class="pc-kartu-tengah">
+            @forelse($pakets as $p)
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col h-full group">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="{{ $p->name }}">
+                    </div>
                     
-                    <div class="flex-grow">
-                        <ul class="text-sm text-gray-600 mb-6 space-y-1.5 h-32 overflow-y-auto custom-scrollbar italic text-left">
-                            @forelse($p->details as $detail)
-                                <li class="flex items-start">
-                                    <span class="mr-2 text-primary">•</span>
-                                    <span>
-                                        @if(is_array($detail->name))
-                                            {{ implode(', ', $detail->name) }}
-                                        @else
-                                            {{ $detail->name }}
-                                        @endif
-                                    </span>
-                                </li>
-                            @empty
-                                <li class="text-gray-400 italic text-xs">Menu belum diinput</li>
-                            @endforelse
-                        </ul>
-                    </div>
+                    <div class="p-6 flex flex-col flex-grow font-inter">
+                        {{-- Judul Paket dipaksa rata tengah --}}
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
+                        
+                        {{-- Deskripsi dengan fungsi enter --}}
+                        @if(!empty($p->description))
+                            <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed font-normal normal-case">
+                                {!! nl2br(e($p->description)) !!}
+                            </p>
+                        @endif
+                        
+                        <div class="flex-grow">
+                            <ul class="text-sm text-gray-600 mb-6 space-y-1.5 h-32 overflow-y-auto custom-scrollbar italic text-left">
+                                @forelse($p->details as $detail)
+                                    <li class="flex items-start">
+                                        <span class="mr-2 text-primary">•</span>
+                                        <span>
+                                            @if(is_array($detail->name))
+                                                {{ implode(', ', $detail->name) }}
+                                            @else
+                                                {{ $detail->name }}
+                                            @endif
+                                        </span>
+                                    </li>
+                                @empty
+                                    <li class="text-gray-400 italic text-xs">Menu belum diinput</li>
+                                @endforelse
+                            </ul>
+                        </div>
 
-                    {{-- Bagian Harga & Tombol --}}
-                    <div class="mt-auto pt-6 border-t border-gray-100">
-                        <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp {{ number_format($p->price, 0, ',', '.') }}</p>
-                        <a href="{{ route('paket.detail', $p->id) }}" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
-                            Pilih Paket
-                        </a>
+                        {{-- Bagian Harga & Tombol --}}
+                        <div class="mt-auto pt-6 border-t border-gray-100">
+                            <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp {{ number_format($p->price, 0, ',', '.') }}</p>
+                            <a href="{{ route('paket.detail', $p->id) }}" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
+                                Pilih Paket
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        @empty
-            <div class="col-span-full text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
-                <h3 class="text-xl font-bold text-gray-400 font-inter tracking-widest uppercase">Belum Ada Paket</h3>
-                <p class="text-gray-300 text-sm mt-2">Kami sedang menyiapkan menu terbaik untuk kategori ini.</p>
-            </div>
-        @endforelse
+            @empty
+                {{-- Teks polos saat kosong, tanpa border putus-putus atau background putih --}}
+                <div class="w-full text-center py-20">
+                    <h3 class="text-2xl font-bold text-gray-400 font-inter tracking-widest uppercase">Belum Ada Paket</h3>
+                    <p class="text-gray-400 text-sm mt-2 font-inter">Kami sedang menyiapkan menu terbaik untuk kategori ini.</p>
+                </div>
+            @endforelse
+        </div>
     </div>
 </div>
 
@@ -212,4 +272,3 @@
         });
     </script>
 @endpush
-@endsection

@@ -34,11 +34,21 @@
                         </div>
                     @endif
                 </div>
+                
                 <div class="space-y-4">
-                    <div class="bg-primary p-6 rounded-3xl text-white shadow-lg shadow-yellow-200">
-                        <p class="text-xs uppercase font-black tracking-widest opacity-80 mb-1">Harga Satuan</p>
-                        <p class="text-4xl font-black">Rp. {{ number_format($package->price, 0, ',', '.') }}</p>
-                    </div>
+                    {{-- Label Harga Menyesuaikan Kategori Akikah / Non-Akikah --}}
+                    @if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah')
+                        <div class="bg-primary p-6 rounded-3xl text-white shadow-lg shadow-yellow-200">
+                            <p class="text-xs uppercase font-black tracking-widest opacity-80 mb-1">Harga Paket (Sesuai Porsi Admin)</p>
+                            <p class="text-4xl font-black">Rp. {{ number_format($package->price, 0, ',', '.') }}</p>
+                        </div>
+                    @else
+                        <div class="bg-primary p-6 rounded-3xl text-white shadow-lg shadow-yellow-200">
+                            <p class="text-xs uppercase font-black tracking-widest opacity-80 mb-1">Harga Satuan</p>
+                            <p class="text-4xl font-black">Rp. {{ number_format($package->price, 0, ',', '.') }}</p>
+                        </div>
+                    @endif
+                    
                     <a href="{{ route('home') }}" class="flex items-center justify-center text-gray-500 hover:text-primary font-bold text-sm transition">← Kembali ke Beranda</a>
                 </div>
             </div>
@@ -151,22 +161,41 @@
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal & Jam Pengiriman</label>
                         <input type="text" id="delivery_date" name="delivery_date" value="{{ old('delivery_date') }}" required class="w-full rounded-2xl @error('delivery_date') border-red-500 border-2 @else border-gray-200 @enderror p-4 bg-white cursor-pointer" placeholder="Klik untuk pilih tanggal & jam...">
+                        
+                        {{-- Tambahan keterangan di bawah input tanggal --}}
+                        <p class="text-xs text-gray-500 font-bold mt-2 italic">
+                            (Pemesanan hanya bisa booking untuk 2 hari dari sekarang dan pembayaran wajib 2 hari sebelum tanggal pesanan yang ditentukan)
+                        </p>
+                    
                         @error('delivery_date')
                             <p class="text-red-600 text-xs font-black mt-2 ml-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
-                {{-- Kuantitas --}}
+                {{-- Kuantitas / Porsi --}}
                 <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
-                            <label class="block text-xl font-black text-gray-800 mb-1">Kuantitas Pesanan</label>
-                            <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi.</p>
+                            @if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah')
+                                <label class="block text-xl font-black text-gray-800 mb-1">Jumlah Paket</label>
+                                <p class="text-xs text-primary font-black uppercase tracking-wider mt-1">⚠️ Paket Akikah: Pesan Berdasarkan Paket</p>
+                            @else
+                                <label class="block text-xl font-black text-gray-800 mb-1">Kuantitas Pesanan</label>
+                                <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi.</p>
+                            @endif
                         </div>
+                        
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
-                            <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ old('quantity', $package->min_order ?? 1) }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
-                            <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
+                            @if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah')
+                                {{-- Kuantitas Input Jumlah Paket (Bisa 1, 2, dst) Mengikuti Nilai Default/Minimal Admin sbg acuan --}}
+                                <input type="number" name="quantity" min="1" value="{{ old('quantity', 1) }}" class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
+                                <span class="pr-4 text-gray-500 font-bold"> Paket </span>
+                            @else
+                                {{-- Input Kuantitas Normal Paket Non-Akikah --}}
+                                <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ old('quantity', $package->min_order ?? 1) }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
+                                <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
+                            @endif
                         </div>
                     </div>
                 </div>

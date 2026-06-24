@@ -68,6 +68,14 @@ class OrderController extends Controller
         $package = Paket::findOrFail($request->package_id);
         $selections = $request->input('selections', []);
     
+        // Pengecekan Kategori Akikah / Aqiqah (Case-Insensitive)
+        $isAkikah = strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah';
+        
+        // Kalkulasi Harga:
+        // Jika Akikah -> Harga paket dikali jumlah 'Paket' pesanan (tidak dikali porsi)
+        // Jika Non-Akikah -> Harga satuan dikali kuantitas 'Porsi' pesanan
+        $totalPrice = $package->price * $request->quantity;
+
         session(['order_data' => [
             'package_id'      => $package->id,
             'package_name'    => $package->name,
@@ -77,8 +85,9 @@ class OrderController extends Controller
             'address'         => $request->address,
             'delivery_date'   => $fullDateTime, 
             'quantity'        => $request->quantity,
-            'total_price'     => $package->price * $request->quantity,
+            'total_price'     => $totalPrice,
             'menu_selections' => is_array($selections) ? array_values($selections) : [$selections],
+            'is_akikah'       => $isAkikah, // Menyimpan flag penanda untuk diproses saat pembayaran
         ]]);
     
         return redirect()->route('order.payment');
@@ -118,12 +127,16 @@ class OrderController extends Controller
                 'order_status'     => 'DIPROSES',
             ]);
 
+            // Menyesuaikan nilai price (harga satuan) pada order item agar untuk Akikah 
+            // tercatat langsung sebagai harga total sepaket, bukan harga per-porsi.
+            $unitPrice = $orderData['is_akikah'] ? $orderData['total_price'] : $orderData['package_price'];
+
             OrderItem::create([
                 'order_id'  => $order->id,
                 'paket_id'  => $orderData['package_id'],
                 'item_name' => $orderData['package_name'], 
                 'quantity'  => $orderData['quantity'],
-                'price'     => $orderData['package_price'],
+                'price'     => $unitPrice,
                 'subtotal'  => $orderData['total_price'],
                 'side_dish' => $orderData['menu_selections'] ?? [], 
             ]);

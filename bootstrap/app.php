@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'api/midtrans-callback', 
         ]);
+
+        // Daftarkan middleware pencatat visitor sementara tanpa database
+        $middleware->web(append: [
+            \App\Http\Middleware\TrackVisitorSession::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
