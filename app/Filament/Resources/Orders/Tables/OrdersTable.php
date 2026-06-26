@@ -35,7 +35,7 @@ class OrdersTable
                 TextColumn::make('address')
                     ->label('Alamat')
                     ->searchable()
-                    ->wrap(),
+                    ->columnSpan('full'),
 
                 TextColumn::make('delivery_date')
                     ->label('Tgl & Jam Kirim')
