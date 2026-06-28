@@ -39,8 +39,9 @@
                     {{-- Label Harga Menyesuaikan Kategori Akikah / Non-Akikah --}}
                     @if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah')
                         <div class="bg-primary p-6 rounded-3xl text-white shadow-lg shadow-yellow-200">
-                            <p class="text-xs uppercase font-black tracking-widest opacity-80 mb-1">Harga Paket (Sesuai Porsi Admin)</p>
-                            <p class="text-4xl font-black">Rp. {{ number_format($package->price, 0, ',', '.') }}</p>
+                            <p class="text-xs uppercase font-black tracking-widest opacity-80 mb-1">Harga Paket Varian</p>
+                            {{-- Harga di-binding dengan ID agar dapat di-update secara dinamis via JS saat varian dipilih --}}
+                            <p class="text-4xl font-black">Rp. <span id="display-price">{{ number_format($package->price, 0, ',', '.') }}</span></p>
                         </div>
                     @else
                         <div class="bg-primary p-6 rounded-3xl text-white shadow-lg shadow-yellow-200">
@@ -172,14 +173,16 @@
                         @enderror
                     </div>
                 </div>
-
                 {{-- Kuantitas / Porsi --}}
                 <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             @if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah')
-                                <label class="block text-xl font-black text-gray-800 mb-1">Jumlah Paket</label>
-                                <p class="text-xs text-primary font-black uppercase tracking-wider mt-1">⚠️ Paket Akikah: Pesan Berdasarkan Paket</p>
+                                <label class="block text-xl font-black text-gray-800 mb-1">Pilih Jumlah Porsi</label>
+                                {{-- Peringatan Varian Harga Ukuran Kecil --}}
+                                <p class="text-xs text-gray-500 font-bold mt-2 italic">
+                                    (Menaikkan jumlah porsi berarti harga berubah)
+                                </p>
                             @else
                                 <label class="block text-xl font-black text-gray-800 mb-1">Kuantitas Pesanan</label>
                                 <p class="text-xs text-gray-500 font-bold">Minimal: {{ $package->min_order ?? 1 }} Porsi.</p>
@@ -188,9 +191,17 @@
                         
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
                             @if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah')
-                                {{-- Kuantitas Input Jumlah Paket (Bisa 1, 2, dst) Mengikuti Nilai Default/Minimal Admin sbg acuan --}}
-                                <input type="number" name="quantity" min="1" value="{{ old('quantity', 1) }}" class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
-                                <span class="pr-4 text-gray-500 font-bold"> Paket </span>
+                                {{-- Dropdown Varian Kuantitas Paten menggunakan 'variants' --}}
+                                <select name="quantity" id="akikah-variant" class="w-48 bg-transparent border-none text-center text-xl font-black text-primary focus:ring-0 cursor-pointer" required>
+                                    <option value="" disabled selected>Pilih Jumlah / Qty Box</option>
+                                    @if(is_array($package->variants))
+                                        @foreach($package->variants as $varian)
+                                            <option value="{{ $varian['qty'] }}" data-price="{{ $varian['price'] }}" {{ old('quantity') == $varian['qty'] ? 'selected' : '' }}>
+                                                {{ $varian['qty'] }} Box
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             @else
                                 {{-- Input Kuantitas Normal Paket Non-Akikah --}}
                                 <input type="number" name="quantity" min="{{ $package->min_order ?? 1 }}" value="{{ old('quantity', $package->min_order ?? 1) }}" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
@@ -199,7 +210,6 @@
                         </div>
                     </div>
                 </div>
-
                 <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-3xl shadow-2xl transition-all hover:-translate-y-1">
                     Lanjutkan ke Pembayaran
                 </button>
@@ -228,6 +238,28 @@
                 months: { shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'], longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] }
             }
         });
+
+        // Script Dinamis Auto-Update Harga Paket Akikah
+        const variantSelect = document.getElementById('akikah-variant');
+        const displayPrice = document.getElementById('display-price');
+
+        if (variantSelect && displayPrice) {
+            variantSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const price = selectedOption.getAttribute('data-price');
+                
+                if (price) {
+                    // Format angka ke Rupiah (Pemisah ribuan titik)
+                    const formattedPrice = parseInt(price).toLocaleString('id-ID');
+                    displayPrice.innerText = formattedPrice;
+                }
+            });
+            
+            // Trigger perubahan saat halaman di-refresh (jika tervalidasi error old input)
+            if (variantSelect.value) {
+                variantSelect.dispatchEvent(new Event('change'));
+            }
+        }
     });
 </script>
 @endpush

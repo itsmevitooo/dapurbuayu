@@ -40,7 +40,7 @@ class PaketForm
                 Grid::make(3)
                     ->components([
                         TextInput::make('price')
-                            ->label('Harga')
+                            ->label('Harga Dasar')
                             ->required()
                             ->numeric()
                             ->prefix('Rp'),
@@ -48,7 +48,7 @@ class PaketForm
                             ->label('Min. Order')
                             ->required()
                             ->numeric()
-                            ->default(25),
+                            ->default(0),
                         TextInput::make('total_orders')
                             ->label('Total Terjual')
                             ->numeric()
@@ -65,6 +65,25 @@ class PaketForm
                 Textarea::make('description')
                     ->label('Deskripsi Singkat')
                     ->columnSpanFull(),
+
+                // === Varian E-Commerce Khusus Akikah ===
+                Repeater::make('variants')
+                    ->label('Pengaturan Varian Kuantitas & Harga (Khusus Kategori Akikah)')
+                    ->schema([
+                        TextInput::make('qty')
+                            ->label('Jumlah / Kapasitas Box (Cth: 50, 60, 70, dst)')
+                            ->numeric()
+                            ->required(),
+                        TextInput::make('price')
+                            ->label('Harga Spesifik Varian Ini')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->required(),
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->defaultItems(1)
+                    ->visible(fn ($get) => $get('category') === 'akikah'),
 
                 Repeater::make('details')
                     ->relationship('details') 

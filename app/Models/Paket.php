@@ -18,7 +18,12 @@ class Paket extends Model
         'price', 
         'image',
         'description',
-        'total_orders'
+        'total_orders',
+        'variants' // Ditambahkan agar bisa diisi via mass assignment
+    ];
+
+    protected $casts = [
+        'variants' => 'array', // Mengubah text/json database menjadi array otomatis
     ];
 
     /**
