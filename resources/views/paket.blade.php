@@ -64,9 +64,12 @@
             margin-left: auto;
             margin-right: auto;
             padding-bottom: 0 !important;
+            align-items: stretch; /* Memaksa ketinggian merata antar kolom */
         }
         .pc-kartu-tengah > div {
             width: 380px; /* Melebar secara konsisten dan presisi */
+            display: flex;
+            flex-direction: column;
         }
 
         /* --- Kustom Scrollbar Modern & Ramping --- */
@@ -135,27 +138,29 @@
             <div class="swiper-wrapper">
                 @forelse($pakets as $p)
                     <div class="swiper-slide">
-                        <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col w-full h-full justify-between">
-                            <div>
-                                <div class="h-48 overflow-hidden">
+                        <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col w-full justify-between h-full">
+                            {{-- Bagian Atas Card --}}
+                            <div class="flex flex-col h-full">
+                                <div class="h-48 overflow-hidden shrink-0">
                                     <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover" alt="{{ $p->name }}">
                                 </div>
-                                <div class="p-6 flex flex-col font-inter">
+                                <div class="p-6 flex flex-col font-inter grow">
                                     <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
                                     
-                                    {{-- Deskripsi Ditampilkan Normal Dengan Enter dan Ukuran Proporsional --}}
+                                    {{-- Deskripsi --}}
                                     @if(!empty($p->description))
-                                        <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed">
+                                        <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed line-clamp-3">
                                             {!! nl2br(e($p->description)) !!}
                                         </p>
                                     @endif
 
-                                    <div>
-                                        <ul class="text-sm text-gray-600 space-y-1.5 h-28 overflow-y-auto custom-scrollbar italic text-left border-t border-gray-50 pt-3 mt-2">
+                                    {{-- Rincian List Menu (Dibatasi Tingginya Secara Statis) --}}
+                                    <div class="mt-auto border-t border-gray-50 pt-3">
+                                        <ul class="text-xs text-gray-600 space-y-1.5 max-h-24 overflow-y-auto custom-scrollbar italic text-left pr-1">
                                             @forelse($p->details as $detail)
                                                 <li class="flex items-start">
-                                                    <span class="mr-2 text-primary">•</span>
-                                                    <span>
+                                                    <span class="mr-2 text-primary shrink-0">•</span>
+                                                    <span class="line-clamp-2">
                                                         @if(is_array($detail->name))
                                                             {{ implode(', ', $detail->name) }}
                                                         @else
@@ -170,9 +175,9 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Bagian Harga & Tombol Disematkan Rapat Di Dalam Card --}}
-                            <div class="p-6 border-t border-gray-50 mt-auto">
+                            
+                            {{-- Bagian Bawah Harga & Tombol --}}
+                            <div class="p-6 border-t border-gray-50 bg-gray-50/50 shrink-0">
                                 <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp {{ number_format($p->price, 0, ',', '.') }}</p>
                                 <a href="{{ route('paket.detail', $p->id) }}" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
                                     Pilih Paket
@@ -181,7 +186,6 @@
                         </div>
                     </div>
                 @empty
-                    {{-- Teks polos saat kosong, tanpa layout card --}}
                     <div class="w-full text-center py-20">
                         <h3 class="text-2xl font-bold text-gray-400 font-inter tracking-widest uppercase">Belum Ada Paket</h3>
                         <p class="text-gray-400 text-sm mt-2 font-inter">Kami sedang menyiapkan menu terbaik untuk kategori ini.</p>
@@ -198,29 +202,30 @@
     <div class="hidden md:flex w-full py-4">
         <div class="pc-kartu-tengah">
             @forelse($pakets as $p)
-                <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col h-full group justify-between">
-                    <div>
-                        <div class="h-48 overflow-hidden">
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col justify-between group h-auto">
+                    {{-- Bagian Atas Card --}}
+                    <div class="flex flex-col h-full">
+                        <div class="h-48 overflow-hidden shrink-0">
                             <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="{{ $p->name }}">
                         </div>
                         
-                        <div class="p-6 pb-2 flex flex-col font-inter">
-                            {{-- Judul Paket Rata Tengah --}}
+                        <div class="p-6 flex flex-col font-inter grow">
                             <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
                             
-                            {{-- Deskripsi Ditampilkan Mengikuti Enter --}}
+                            {{-- Deskripsi --}}
                             @if(!empty($p->description))
-                                <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed">
+                                <p class="text-sm text-gray-600 mb-4 italic font-inter whitespace-pre-line leading-relaxed line-clamp-3">
                                     {!! nl2br(e($p->description)) !!}
                                 </p>
                             @endif
                             
-                            <div>
-                                <ul class="text-sm text-gray-600 space-y-1.5 h-28 overflow-y-auto custom-scrollbar italic text-left border-t border-gray-50 pt-3 mt-2">
+                            {{-- Rincian List Menu (Dibatasi Tingginya Secara Statis) --}}
+                            <div class="mt-auto border-t border-gray-50 pt-3">
+                                <ul class="text-xs text-gray-600 space-y-1.5 max-h-24 overflow-y-auto custom-scrollbar italic text-left pr-1">
                                     @forelse($p->details as $detail)
                                         <li class="flex items-start">
-                                            <span class="mr-2 text-primary">•</span>
-                                            <span>
+                                            <span class="mr-2 text-primary shrink-0">•</span>
+                                            <span class="line-clamp-2">
                                                 @if(is_array($detail->name))
                                                     {{ implode(', ', $detail->name) }}
                                                 @else
@@ -236,8 +241,8 @@
                         </div>
                     </div>
 
-                    {{-- Bagian Harga & Tombol Rapat Kebawah Sesuai Referensi Style --}}
-                    <div class="p-6 border-t border-gray-50 mt-auto">
+                    {{-- Bagian Bawah Harga & Tombol (Dibuat paten menempel di bawah) --}}
+                    <div class="p-6 border-t border-gray-50 bg-gray-50/50 shrink-0 mt-auto">
                         <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp {{ number_format($p->price, 0, ',', '.') }}</p>
                         <a href="{{ route('paket.detail', $p->id) }}" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
                             Pilih Paket

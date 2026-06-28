@@ -38,7 +38,6 @@
                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah'): ?>
                         <div class="bg-primary p-6 rounded-3xl text-white shadow-lg shadow-yellow-200">
                             <p class="text-xs uppercase font-black tracking-widest opacity-80 mb-1">Harga Paket Varian</p>
-                            
                             <p class="text-4xl font-black">Rp. <span id="display-price"><?php echo e(number_format($package->price, 0, ',', '.')); ?></span></p>
                         </div>
                     <?php else: ?>
@@ -55,6 +54,29 @@
 
         
         <div class="lg:w-2/3 p-8 lg:p-12">
+            
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($errors->any()): ?>
+                <div class="mb-10 bg-red-50 border-l-8 border-red-500 rounded-3xl p-6 shadow-md" id="error-alert">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-6 w-6 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-black text-red-800 uppercase tracking-wider italic">Terdapat kesalahan pada formulir pemesanan Anda:</h3>
+                            <div class="mt-2 text-sm text-red-700 font-bold">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <li><?php echo e($error === 'validation.required' ? 'Kolom harus diisi.' : $error); ?></li>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
             <form action="<?php echo e(route('order.process_detail')); ?>" method="POST" class="space-y-10">
                 <?php echo csrf_field(); ?>
                 <input type="hidden" name="package_id" value="<?php echo e($package->id); ?>">
@@ -121,6 +143,37 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
                             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                            
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah'): ?>
+                                <div class="pt-4 border-t border-gray-100 space-y-3">
+                                    <label class="block text-sm font-black text-gray-800 uppercase tracking-wider italic">
+                                        Tulis 2 Lauk Olahan Kambing/Domba
+                                    </label>
+                                    <textarea name="akikah_custom_dish" rows="3" required class="w-full rounded-2xl border-2 <?php $__errorArgs = ['akikah_custom_dish'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php else: ?> border-gray-200 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> p-4 font-bold text-gray-700" placeholder="Tuliskan usulan menu atau request masakan untuk melengkapi paket akikah Anda di sini..."></textarea>
+                                    <p class="text-xs text-gray-500 font-bold italic">
+                                        * Wajib mengisi usulan menu/lauk untuk melengkapi pesanan akikah Anda.
+                                    </p>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__errorArgs = ['akikah_custom_dish'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <p class="text-red-600 text-xs font-black mt-1 ml-1"><?php echo e($message); ?></p>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                </div>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                            
                         </div>
                     </div>
                 </div>
@@ -210,7 +263,6 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?> p-4 bg-white cursor-pointer" placeholder="Klik untuk pilih tanggal & jam...">
                         
-                        
                         <p class="text-xs text-gray-500 font-bold mt-2 italic">
                             (Pemesanan hanya bisa booking untuk 2 hari dari sekarang dan pembayaran wajib 2 hari sebelum tanggal pesanan yang ditentukan)
                         </p>
@@ -227,13 +279,13 @@ endif;
 unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
                 </div>
+
                 
                 <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah'): ?>
                                 <label class="block text-xl font-black text-gray-800 mb-1">Pilih Jumlah Porsi</label>
-                                
                                 <p class="text-xs text-gray-500 font-bold mt-2 italic">
                                     (Menaikkan jumlah porsi berarti harga berubah)
                                 </p>
@@ -245,7 +297,6 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                         
                         <div class="flex items-center bg-white p-2 rounded-2xl shadow-inner border border-gray-200">
                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah'): ?>
-                                
                                 <select name="quantity" id="akikah-variant" class="w-48 bg-transparent border-none text-center text-xl font-black text-primary focus:ring-0 cursor-pointer" required>
                                     <option value="" disabled selected>Pilih Jumlah / Qty Box</option>
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($package->variants)): ?>
@@ -257,13 +308,13 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </select>
                             <?php else: ?>
-                                
                                 <input type="number" name="quantity" min="<?php echo e($package->min_order ?? 1); ?>" value="<?php echo e(old('quantity', $package->min_order ?? 1)); ?>" required class="w-32 bg-transparent border-none text-center text-2xl font-black text-primary focus:ring-0">
                                 <span class="pr-4 text-gray-400 font-bold"> Porsi </span>
                             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                         </div>
                     </div>
                 </div>
+
                 <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-3xl shadow-2xl transition-all hover:-translate-y-1">
                     Lanjutkan ke Pembayaran
                 </button>
@@ -293,7 +344,6 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
             }
         });
 
-        // Script Dinamis Auto-Update Harga Paket Akikah
         const variantSelect = document.getElementById('akikah-variant');
         const displayPrice = document.getElementById('display-price');
 
@@ -303,17 +353,22 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                 const price = selectedOption.getAttribute('data-price');
                 
                 if (price) {
-                    // Format angka ke Rupiah (Pemisah ribuan titik)
                     const formattedPrice = parseInt(price).toLocaleString('id-ID');
                     displayPrice.innerText = formattedPrice;
                 }
             });
             
-            // Trigger perubahan saat halaman di-refresh (jika tervalidasi error old input)
             if (variantSelect.value) {
                 variantSelect.dispatchEvent(new Event('change'));
             }
         }
+
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($errors->any()): ?>
+            const errorAlert = document.getElementById('error-alert');
+            if (errorAlert) {
+                errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
     });
 </script>
 <?php $__env->stopPush(); ?>

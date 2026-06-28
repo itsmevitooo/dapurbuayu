@@ -35,19 +35,21 @@ class OrderController extends Controller
     public function processDetail(Request $request)
     {
         $request->validate([
-            'package_id'    => 'required|exists:paket,id', 
-            'full_name'     => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
-            'phone_number'  => 'required|string|max:20|regex:/^[0-9]+$/',
-            'address'       => 'required|string',
-            'delivery_date' => 'required', 
-            'quantity'      => 'required|integer|min:1',
+            'package_id'          => 'required|exists:paket,id', 
+            'full_name'           => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
+            'phone_number'        => 'required|string|max:20|regex:/^[0-9]+$/',
+            'address'             => 'required|string',
+            'delivery_date'       => 'required', 
+            'quantity'            => 'required|integer|min:1',
+            'akikah_custom_dish'  => 'nullable|required_if:category,akikah,aqiqah|string', // Validasi inputan usulan lauk no 2
         ], [
-            'full_name.required'     => 'Kolom tidak boleh kosong.',
-            'full_name.regex'        => 'Wajib menggunakan huruf pada kolom nama.',
-            'phone_number.required'  => 'Kolom tidak boleh kosong.',
-            'phone_number.regex'     => 'Masukkan angka pada nomor telepon.',
-            'address.required'       => 'Kolom tidak boleh kosong.',
-            'delivery_date.required' => 'Kolom tidak boleh kosong.',
+            'full_name.required'         => 'Kolom tidak boleh kosong.',
+            'full_name.regex'            => 'Wajib menggunakan huruf pada kolom nama.',
+            'phone_number.required'      => 'Kolom tidak boleh kosong.',
+            'phone_number.regex'         => 'Masukkan angka pada nomor telepon.',
+            'address.required'           => 'Kolom tidak boleh kosong.',
+            'delivery_date.required'     => 'Kolom tidak boleh kosong.',
+            'akikah_custom_dish.required'=> 'Usulan menu/lauk tambahan wajib diisi untuk paket akikah.',
         ]);
     
         $holidaysPath = storage_path('app/holidays.json');
@@ -71,10 +73,28 @@ class OrderController extends Controller
         // Pengecekan Kategori Akikah / Aqiqah (Case-Insensitive)
         $isAkikah = strtolower($package->category) === 'akikah' || strtolower($package->category) === 'aqiqah';
         
-        // Kalkulasi Harga:
-        // Jika Akikah -> Harga paket dikali jumlah 'Paket' pesanan (tidak dikali porsi)
-        // Jika Non-Akikah -> Harga satuan dikali kuantitas 'Porsi' pesanan
-        $totalPrice = $package->price * $request->quantity;
+        // Kalkulasi Harga Khusus Akikah (Flat Rate / Harga Paket Utuh Sesuai Varian Tanpa Dikalikan)
+        if ($isAkikah) {
+            $selectedPrice = $package->price; 
+            if (is_array($package->variants)) {
+                foreach ($package->variants as $variant) {
+                    if (isset($variant['qty']) && $variant['qty'] == $request->quantity) {
+                        $selectedPrice = $variant['price'];
+                        break;
+                    }
+                }
+            }
+            $totalPrice = $selectedPrice;
+        } else {
+            $totalPrice = $package->price * $request->quantity;
+        }
+
+        // --- GABUNGKAN USULAN LAUK MENU NO 2 KE SELECTIONS ---
+        $menuSelections = is_array($selections) ? array_values($selections) : [$selections];
+        if ($isAkikah && $request->filled('akikah_custom_dish')) {
+            // Tambahkan usulan lauk ke array menuSelections agar tercatat di order item
+            $menuSelections[] = $request->akikah_custom_dish;
+        }
 
         session(['order_data' => [
             'package_id'      => $package->id,
@@ -86,8 +106,8 @@ class OrderController extends Controller
             'delivery_date'   => $fullDateTime, 
             'quantity'        => $request->quantity,
             'total_price'     => $totalPrice,
-            'menu_selections' => is_array($selections) ? array_values($selections) : [$selections],
-            'is_akikah'       => $isAkikah, // Menyimpan flag penanda untuk diproses saat pembayaran
+            'menu_selections' => $menuSelections,
+            'is_akikah'       => $isAkikah, 
         ]]);
     
         return redirect()->route('order.payment');
@@ -127,8 +147,6 @@ class OrderController extends Controller
                 'order_status'     => 'DIPROSES',
             ]);
 
-            // Menyesuaikan nilai price (harga satuan) pada order item agar untuk Akikah 
-            // tercatat langsung sebagai harga total sepaket, bukan harga per-porsi.
             $unitPrice = $orderData['is_akikah'] ? $orderData['total_price'] : $orderData['package_price'];
 
             OrderItem::create([

@@ -92,8 +92,8 @@
         ?>
 
         
-        <section class="relative h-120 bg-cover bg-center rounded-lg shadow-xl mb-12" style="background-image: url('<?php echo e($bannerUrl); ?>');">
-            <div class="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
+        <section class="relative h-120 bg-cover bg-center shadow-xl mb-12" style="background-image: url('<?php echo e($bannerUrl); ?>');">
+            <div class="absolute inset-0 bg-black opacity-40"></div>
             <div class="relative flex flex-col items-center justify-center h-full text-center p-4">
                 <h1 class="text-6xl md:text-8xl font-bold font-[Qwitcher_Grypen] mb-2 text-primary">
                     <?php echo e($globalSettings['banner_title'] ?? 'Selamat Datang'); ?>
@@ -108,7 +108,7 @@
         </section>
 
         
-        <section class="mb-20 px-4 py-16 bg-primary rounded-3xl shadow-inner relative overflow-hidden">
+        <section class="mb-20 px-4 py-16 bg-primary shadow-inner relative overflow-hidden">
             <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-white/20 rounded-full"></div>
             <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-48 h-48 bg-black/5 rounded-full"></div>
             <div class="relative z-10">
@@ -117,21 +117,21 @@
                     <div class="h-1.5 w-24 bg-white mx-auto mt-2 rounded-full"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    <div class="text-center p-8 bg-white rounded-3xl shadow-xl">
+                    <div class="text-center p-8 bg-white shadow-xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Bahan Berkualitas</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Kami hanya menggunakan bahan baku segar dan premium untuk setiap hidangan Anda.</p>
                     </div>
-                    <div class="text-center p-8 bg-white rounded-3xl shadow-xl">
+                    <div class="text-center p-8 bg-white shadow-xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Tepat Waktu</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Pengiriman dijamin tepat waktu sesuai jadwal acara yang Anda tentukan.</p>
                     </div>
-                    <div class="text-center p-8 bg-white rounded-3xl shadow-xl">
+                    <div class="text-center p-8 bg-white shadow-xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         </div>
@@ -149,7 +149,6 @@
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Pilihan paket yang paling banyak dipesan pelanggan kami</p>
             </div>
             <div class="max-w-7xl mx-auto px-4 relative">
-                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $packages->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-8 border-primary flex flex-col h-full relative group w-full">
@@ -161,7 +160,6 @@
                         <div class="p-6 flex flex-col flex-grow font-inter bg-white justify-between">
                             <div>
                                 <h3 class="text-lg font-bold mb-3 text-gray-800 uppercase tracking-tight h-14 line-clamp-2"><?php echo e($package->name); ?></h3>
-                                
                                 <ul class="text-xs text-gray-600 mb-6 space-y-1.5 h-24 overflow-y-auto custom-scrollbar italic text-left">
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $package->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                         <?php $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true); ?>
