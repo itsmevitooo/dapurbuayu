@@ -83,16 +83,16 @@ class OrderChart extends ChartWidget
 
     protected function getOptions(): array
     {
-        $config = $this->getData();
-        
         return [
             'scales' => [
                 'y' => [
                     'beginAtZero' => true,
-                    'max' => $config['customMax'], // Skala terkunci di pesanan tertinggi atau kelipatan 10
                     'ticks' => [
-                        'stepSize' => $config['customStep'], // Kelipatan 1 atau 10 sesuai jumlah
-                        'precision' => 0,
+                        // Hapus precision: 0 jika menyebabkan error pada versi Chart.js Anda
+                        // Kita gunakan 'display' => true untuk memastikan label muncul
+                        'display' => true, 
+                        // Kita kunci stepSize ke 1 agar muncul angka urut 0, 1, 2, 3...
+                        'stepSize' => 1,
                     ],
                 ],
             ],

@@ -142,7 +142,7 @@
                             {{-- Bagian Atas Card --}}
                             <div class="flex flex-col h-full">
                                 <div class="h-48 overflow-hidden shrink-0">
-                                    <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover" alt="{{ $p->name }}">
+                                    <img src="{{ url('storage/app/public/' . $p->image) }}" class="w-full h-full object-cover" alt="{{ $p->name }}">
                                 </div>
                                 <div class="p-6 flex flex-col font-inter grow">
                                     <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
@@ -206,7 +206,7 @@
                     {{-- Bagian Atas Card --}}
                     <div class="flex flex-col h-full">
                         <div class="h-48 overflow-hidden shrink-0">
-                            <img src="{{ asset('storage/' . $p->image) }}" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="{{ $p->name }}">
+                            <img src="{{ url('storage/app/public/' . $p->image) }}" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="{{ $p->name }}">
                         </div>
                         
                         <div class="p-6 flex flex-col font-inter grow">

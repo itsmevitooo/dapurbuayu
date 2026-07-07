@@ -88,7 +88,7 @@
         <?php
             $settingsPath = storage_path('app/settings.json');
             $globalSettings = file_exists($settingsPath) ? json_decode(file_get_contents($settingsPath), true) : [];
-            $bannerUrl = !empty($globalSettings['banner_image']) ? asset('storage/' . $globalSettings['banner_image']) : asset('storage/banner.png');
+            $bannerUrl = !empty($globalSettings['banner_image']) ? url('storage/app/public/' . $globalSettings['banner_image']) : url('storage/app/public/banner.png');
         ?>
 
         
@@ -117,27 +117,34 @@
                     <div class="h-1.5 w-24 bg-white mx-auto mt-2 rounded-full"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    <div class="text-center p-8 bg-white shadow-xl">
+                    
+                    
+                    <div class="text-center p-8 bg-white shadow-xl rounded-2xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Bahan Berkualitas</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Kami hanya menggunakan bahan baku segar dan premium untuk setiap hidangan Anda.</p>
                     </div>
-                    <div class="text-center p-8 bg-white shadow-xl">
+        
+                    
+                    <div class="text-center p-8 bg-white shadow-xl rounded-2xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Tepat Waktu</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Pengiriman dijamin tepat waktu sesuai jadwal acara yang Anda tentukan.</p>
                     </div>
-                    <div class="text-center p-8 bg-white shadow-xl">
+        
+                    
+                    <div class="text-center p-8 bg-white shadow-xl rounded-2xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         </div>
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Harga Terbaik</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Paket katering hemat dengan porsi melimpah dan rasa yang tak terlupakan.</p>
                     </div>
+                    
                 </div>
             </div>
         </section>
@@ -155,7 +162,7 @@
                         <div class="ribbon-wrapper"><div class="ribbon">Best Seller</div></div>
                         <div class="rank-badge">RANK #<?php echo e($index + 1); ?></div>
                         <div class="h-48 overflow-hidden">
-                            <img src="<?php echo e(asset('storage/' . $package->image)); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <img src="<?php echo e(url('storage/app/public/' . $package->image)); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
                         <div class="p-6 flex flex-col flex-grow font-inter bg-white justify-between">
                             <div>
@@ -164,9 +171,9 @@
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $package->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                         <?php $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true); ?>
                                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($menuList)): ?>
-                                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $menuList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><li>• <?php echo e($menuItem); ?></li><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $menuList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><li>â€¢ <?php echo e($menuItem); ?></li><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                         <?php else: ?>
-                                            <li>• <?php echo e($detail->name); ?></li>
+                                            <li>â€¢ <?php echo e($detail->name); ?></li>
                                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
                                         <li class="text-gray-400">Menu sedang disiapkan</li>
@@ -180,7 +187,7 @@
                         </div>
                     </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                    <div class="col-span-full"><p class="text-center w-full py-10 italic">Belum ada paket.</p></div>
+                        <div class="col-span-full"><p class="text-center w-full py-10 italic">Belum ada paket.</p></div>
                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 </div>
 
@@ -207,10 +214,10 @@
                         <div class="swiper-slide">
                             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-primary flex flex-col h-full w-full font-inter">
                                 <div class="flex text-yellow-400 mb-3">
-                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php for($i = 1; $i <= 5; $i++): ?><span class="text-lg"><?php echo e($i <= $review->rating ? '★' : '☆'); ?></span><?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php for($i = 1; $i <= 5; $i++): ?><span class="text-lg"><?php echo e($i <= $review->rating ? 'â˜…' : 'â˜†'); ?></span><?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">📦 <?php echo e($review->product->name ?? 'Paket Katering'); ?></span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">ðŸ“¦ <?php echo e($review->product->name ?? 'Paket Katering'); ?></span>
                                 </div>
                                 <p class="italic text-gray-700 mb-4 flex-grow text-sm line-clamp-4 leading-relaxed">"<?php echo e(Str::limit($review->comment, 100)); ?>"</p>
                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($review->image): ?>
@@ -218,7 +225,8 @@
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($imgs)): ?>
                                         <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
                                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = array_slice((array)$imgs, 0, 3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <img src="<?php echo e(asset('storage/' . ltrim($img, '/'))); ?>" class="w-12 h-12 object-cover rounded-lg border border-gray-100 shadow-sm flex-shrink-0" onerror="this.src='https://placehold.co/100x100?text=Error'">
+                                                
+                                                <img src="<?php echo e(url('storage/app/public/' . ltrim($img, '/'))); ?>" class="w-12 h-12 object-cover rounded-lg border border-gray-100 shadow-sm flex-shrink-0" onerror="this.src='https://placehold.co/100x100?text=Error'">
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                         </div>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
@@ -253,7 +261,7 @@
                     <div class="space-y-5 text-left font-inter">
                         <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Nama Lengkap</label><input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Masukkan nama Anda"></div>
                         <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label><select name="paket_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500"><option value="" disabled selected>Pilih menu paket...</option><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($package->id); ?>"><?php echo e($package->name); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?></select></div>
-                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label><select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-yellow-500 font-bold focus:ring-yellow-500"><option value="5">★★★★★ (Sempurna)</option><option value="4">★★★★ (Bagus)</option><option value="3">★★★ (Cukup)</option><option value="2">★★ (Kurang)</option><option value="1">★ (Buruk)</option></select></div>
+                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label><select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-yellow-500 font-bold focus:ring-yellow-500"><option value="5">â˜…â˜…â˜…â˜…â˜… (Sempurna)</option><option value="4">â˜…â˜…â˜…â˜… (Bagus)</option><option value="3">â˜…â˜…â˜… (Cukup)</option><option value="2">â˜…â˜… (Kurang)</option><option value="1">â˜… (Buruk)</option></select></div>
                         <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Ulasan Anda</label><textarea name="comment" rows="4" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Ceritakan pengalaman Anda..."></textarea></div>
                         <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Foto Masakan (Opsional)</label><input type="file" name="image[]" multiple class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:bg-yellow-50 file:text-yellow-600 file:font-bold hover:file:bg-yellow-100 cursor-pointer"></div>
                     </div>

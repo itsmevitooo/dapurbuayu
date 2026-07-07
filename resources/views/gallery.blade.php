@@ -49,21 +49,26 @@ class="py-12 px-4 max-w-7xl mx-auto"
     @php $groupedGalleries = $galleries->groupBy('category'); @endphp
 
     @forelse($groupedGalleries as $category => $items)
-        @php
-            // BAGIAN YANG DIUPDATE: Mengambil data langsung dari relasi gallery
-            $categoryPhotosArr = $items->map(function($item) {
-                return [
-                    'src' => asset('storage/' . $item->image),
-                    'title' => $item->title ?? 'Galeri Dapur Bu Ayu',
-                    'category' => $item->category,
-                    'is_customer' => $item->category == 'testimoni pelanggan',
-                    'rating' => $item->review ? (int)$item->review->rating : 5,
-                    'comment' => $item->review ? $item->review->comment : 'Tidak ada komentar',
-                    'author' => $item->review ? $item->review->name : 'Pelanggan Dapur Bu Ayu'
-                ];
-            })->toArray();
-        @endphp
-
+    @php
+        $categoryPhotosArr = $items->map(function($item) {
+            // Karena database sudah menyimpan 'gallery/namafoto.jpg', 
+            // kita tidak perlu menambah subfolder lagi.
+            // Kita langsung pakai $item->image sebagai path lengkapnya.
+            
+            $src = url('storage/app/public/' . $item->image);
+    
+            return [
+                'src' => $src,
+                'title' => $item->title ?? 'Galeri Dapur Bu Ayu',
+                'category' => $item->category,
+                'is_customer' => $item->category == 'testimoni pelanggan',
+                'rating' => $item->review ? (int)$item->review->rating : 5,
+                'comment' => $item->review ? $item->review->comment : 'Tidak ada komentar',
+                'author' => $item->review ? $item->review->name : 'Pelanggan Dapur Bu Ayu'
+            ];
+        })->toArray();
+    @endphp
+    
         <div class="mb-20 relative group-section">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <h2 class="text-2xl font-black text-gray-800 uppercase tracking-wider flex items-center flex-1">
@@ -83,7 +88,7 @@ class="py-12 px-4 max-w-7xl mx-auto"
                             <div class="group relative overflow-hidden rounded-[2rem] shadow-sm bg-white cursor-pointer h-full"
                                  @click="openPhotoDetail({{ $index }}, '{{ $category }}', {{ json_encode($categoryPhotosArr) }})">
                                 <div class="aspect-square overflow-hidden">
-                                    <img src="{{ $photo['src'] }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                    <img src="{{ $photo['src'] }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/400x400?text=Gambar+Tidak+Ditemukan'">
                                 </div>
                             </div>
                         </div>

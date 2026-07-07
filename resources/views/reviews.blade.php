@@ -79,7 +79,7 @@
                                 {{-- Nama Paket --}}
                                 <div class="mb-4 text-left">
                                     <span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-yellow-200">
-                                        📦 {{ $review->product->name ?? 'Paket Katering' }}
+                                        ðŸ“¦ {{ $review->product->name ?? 'Paket Katering' }}
                                     </span>
                                 </div>
 
@@ -92,8 +92,9 @@
                                     <div class="flex flex-wrap gap-2 mb-6 overflow-x-auto pb-1 justify-start">
                                         @foreach($review->gallery as $foto)
                                             <div class="w-16 h-16 overflow-hidden rounded-xl border border-gray-100 shadow-sm cursor-pointer flex-shrink-0"
-                                                 @click="openModal = true; imgModalSrc = '{{ asset('storage/' . $foto->image) }}'">
-                                                <img src="{{ asset('storage/' . $foto->image) }}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                                                 @click="openModal = true; imgModalSrc = '{{ url('storage/app/public/' . $foto->image) }}'">
+                                                {{-- PATH DIUBAH --}}
+                                                <img src="{{ url('storage/app/public/' . $foto->image) }}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
                                             </div>
                                         @endforeach
                                     </div>
@@ -137,7 +138,7 @@
                     {{-- Nama Paket --}}
                     <div class="mb-4 text-left">
                         <span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-yellow-200">
-                            📦 {{ $review->product->name ?? 'Paket Katering' }}
+                            ðŸ“¦ {{ $review->product->name ?? 'Paket Katering' }}
                         </span>
                     </div>
 
@@ -150,8 +151,9 @@
                         <div class="flex flex-wrap gap-2 mb-6 justify-start">
                             @foreach($review->gallery as $foto)
                                 <div class="w-20 h-20 overflow-hidden rounded-xl border border-gray-100 shadow-sm cursor-pointer"
-                                     @click="openModal = true; imgModalSrc = '{{ asset('storage/' . $foto->image) }}'">
-                                    <img src="{{ asset('storage/' . $foto->image) }}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                                     @click="openModal = true; imgModalSrc = '{{ url('storage/app/public/' . $foto->image) }}'">
+                                    {{-- PATH DIUBAH --}}
+                                    <img src="{{ url('storage/app/public/' . $foto->image) }}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
                                 </div>
                             @endforeach
                         </div>
