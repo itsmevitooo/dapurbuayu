@@ -70,7 +70,6 @@
 
         .swiper-slide { height: auto !important; display: flex !important; }
 
-        /* --- Scrollbar Ramping & Rapi (Sesuai Scrollbar Paket) --- */
         .custom-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: #EAB308 #f1f1f1;
@@ -85,16 +84,16 @@
 @endpush
 
 @section('content')
-    <div x-data="{ openReview: false }">
+    <!-- REVISI: Tambahkan {{ $errors->any() ? 'true' : 'false' }} agar modal tetap buka saat error -->
+    <div x-data="{ openReview: {{ $errors->any() ? 'true' : 'false' }} }">
         
         @php
             $settingsPath = storage_path('app/settings.json');
             $globalSettings = file_exists($settingsPath) ? json_decode(file_get_contents($settingsPath), true) : [];
-            $bannerUrl = !empty($globalSettings['banner_image']) ? url('storage/app/public/' . $globalSettings['banner_image']) : url('storage/app/public/banner.png');
+            $bannerUrl = !empty($globalSettings['banner_image']) ? asset('storage/' . $globalSettings['banner_image']) : asset('storage/banner.png');
         @endphp
 
-        {{-- 1. Banner Utama (Sudut Siku-Siku) --}}
-        <section class="relative h-120 bg-cover bg-center shadow-xl mb-12" style="background-image: url('{{ $bannerUrl }}');">
+        <section class="relative h-120 bg-cover bg-center shadow-xl mb-12" style="background-image: url('{{ $bannerUrl . '?v=' . time() }}');">
             <div class="absolute inset-0 bg-black opacity-40"></div>
             <div class="relative flex flex-col items-center justify-center h-full text-center p-4">
                 <h1 class="text-6xl md:text-8xl font-bold font-[Qwitcher_Grypen] mb-2 text-primary">
@@ -107,7 +106,6 @@
             </div>
         </section>
 
-        {{-- 2. Section Kenapa Memilih Kami --}}
         <section class="mb-20 px-4 py-16 bg-primary shadow-inner relative overflow-hidden">
             <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-white/20 rounded-full"></div>
             <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-48 h-48 bg-black/5 rounded-full"></div>
@@ -117,8 +115,6 @@
                     <div class="h-1.5 w-24 bg-white mx-auto mt-2 rounded-full"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    
-                    {{-- KOTAK 1 - Dibuat Rounded --}}
                     <div class="text-center p-8 bg-white shadow-xl rounded-2xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -126,8 +122,6 @@
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Bahan Berkualitas</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Kami hanya menggunakan bahan baku segar dan premium untuk setiap hidangan Anda.</p>
                     </div>
-        
-                    {{-- KOTAK 2 - Dibuat Rounded --}}
                     <div class="text-center p-8 bg-white shadow-xl rounded-2xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -135,8 +129,6 @@
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Tepat Waktu</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Pengiriman dijamin tepat waktu sesuai jadwal acara yang Anda tentukan.</p>
                     </div>
-        
-                    {{-- KOTAK 3 - Dibuat Rounded --}}
                     <div class="text-center p-8 bg-white shadow-xl rounded-2xl">
                         <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
@@ -144,12 +136,10 @@
                         <h3 class="text-xl font-black mb-3 text-gray-800 uppercase tracking-tight">Harga Terbaik</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">Paket katering hemat dengan porsi melimpah dan rasa yang tak terlupakan.</p>
                     </div>
-                    
                 </div>
             </div>
         </section>
 
-        {{-- 3. Section Paket Terlaris --}}
         <section id="packages" class="mb-12 py-10 bg-yellow-50 rounded-xl shadow-inner border border-yellow-100">
             <div class="text-center mb-4">
                 <h2 class="text-6xl font-bold text-primary font-[Qwitcher_Grypen]">Menu Terlaris</h2>
@@ -162,7 +152,7 @@
                         <div class="ribbon-wrapper"><div class="ribbon">Best Seller</div></div>
                         <div class="rank-badge">RANK #{{ $index + 1 }}</div>
                         <div class="h-48 overflow-hidden">
-                            <img src="{{ url('storage/app/public/' . $package->image) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <img src="{{ asset('storage/' . $package->image) . '?v=' . time() }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
                         <div class="p-6 flex flex-col flex-grow font-inter bg-white justify-between">
                             <div>
@@ -171,9 +161,9 @@
                                     @forelse($package->details as $detail)
                                         @php $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true); @endphp
                                         @if(is_array($menuList))
-                                            @foreach($menuList as $menuItem)<li>â€¢ {{ $menuItem }}</li>@endforeach
+                                            @foreach($menuList as $menuItem)<li>• {{ $menuItem }}</li>@endforeach
                                         @else
-                                            <li>â€¢ {{ $detail->name }}</li>
+                                            <li>• {{ $detail->name }}</li>
                                         @endif
                                     @empty
                                         <li class="text-gray-400">Menu sedang disiapkan</li>
@@ -190,15 +180,12 @@
                         <div class="col-span-full"><p class="text-center w-full py-10 italic">Belum ada paket.</p></div>
                     @endforelse
                 </div>
-
-                {{-- Tombol Lihat Semua Paket --}}
                 <div class="text-center mt-8">
                     <a href="{{ route('paket.index') }}" class="inline-block bg-primary hover:bg-yellow-600 text-white font-bold py-3.5 px-10 rounded-full shadow-lg transition duration-300 uppercase text-xs tracking-widest btn-hover-anim">Lihat Semua Paket</a>
                 </div>
             </div>
         </section>
 
-        {{-- 4. Section Review Slider --}}
         <section class="mb-12 px-4">
             <div class="flex flex-col md:flex-row justify-between items-end border-b-4 border-primary pb-4 mb-8 gap-4">
                 <h2 class="text-5xl font-bold text-primary font-[Qwitcher_Grypen]">Review Pelanggan</h2>
@@ -214,10 +201,10 @@
                         <div class="swiper-slide">
                             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-primary flex flex-col h-full w-full font-inter">
                                 <div class="flex text-yellow-400 mb-3">
-                                    @for($i = 1; $i <= 5; $i++)<span class="text-lg">{{ $i <= $review->rating ? 'â˜…' : 'â˜†' }}</span>@endfor
+                                    @for($i = 1; $i <= 5; $i++)<span class="text-lg">{{ $i <= $review->rating ? '★' : '☆' }}</span>@endfor
                                 </div>
                                 <div class="mb-3">
-                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">ðŸ“¦ {{ $review->product->name ?? 'Paket Katering' }}</span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">📦 {{ $review->product->name ?? 'Paket Katering' }}</span>
                                 </div>
                                 <p class="italic text-gray-700 mb-4 flex-grow text-sm line-clamp-4 leading-relaxed">"{{ Str::limit($review->comment, 100) }}"</p>
                                 @if($review->image)
@@ -225,8 +212,7 @@
                                     @if(!empty($imgs))
                                         <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
                                             @foreach(array_slice((array)$imgs, 0, 3) as $img)
-                                                {{-- PATH DIUBAH KE URL FISIK --}}
-                                                <img src="{{ url('storage/app/public/' . ltrim($img, '/')) }}" class="w-12 h-12 object-cover rounded-lg border border-gray-100 shadow-sm flex-shrink-0" onerror="this.src='https://placehold.co/100x100?text=Error'">
+                                                <img src="{{ asset('storage/' . ltrim($img, '/')) . '?v=' . time() }}" class="w-12 h-12 object-cover rounded-lg border border-gray-100 shadow-sm flex-shrink-0" onerror="this.src='https://placehold.co/100x100?text=Error'">
                                             @endforeach
                                         </div>
                                     @endif
@@ -248,7 +234,6 @@
             </div>
         </section>
 
-        {{-- 5. MODAL REVIEW --}}
         <div x-show="openReview" x-cloak class="fixed inset-0 z-[9999] flex items-center justify-center">
             <div @click="openReview = false" class="fixed inset-0 bg-black bg-opacity-80 transition-opacity"></div>
             <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 overflow-hidden transform transition-all" x-show="openReview" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
@@ -259,10 +244,34 @@
                     @csrf
                     <h3 class="text-3xl font-extrabold text-primary font-inter uppercase tracking-tight">Kirim Ulasan</h3>
                     <div class="space-y-5 text-left font-inter">
-                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Nama Lengkap</label><input type="text" name="name" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Masukkan nama Anda"></div>
-                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label><select name="paket_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500"><option value="" disabled selected>Pilih menu paket...</option>@foreach($packages as $package)<option value="{{ $package->id }}">{{ $package->name }}</option>@endforeach</select></div>
-                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label><select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-yellow-500 font-bold focus:ring-yellow-500"><option value="5">â˜…â˜…â˜…â˜…â˜… (Sempurna)</option><option value="4">â˜…â˜…â˜…â˜… (Bagus)</option><option value="3">â˜…â˜…â˜… (Cukup)</option><option value="2">â˜…â˜… (Kurang)</option><option value="1">â˜… (Buruk)</option></select></div>
-                        <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Ulasan Anda</label><textarea name="comment" rows="4" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Ceritakan pengalaman Anda..."></textarea></div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Nama Lengkap</label>
+                            <input type="text" name="name" value="{{ old('name') }}" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Masukkan nama Anda">
+                            @error('name')<span class="text-red-500 text-xs">{{ $message }}</span>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Produk yang Diulas</label>
+                            <select name="paket_id" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500">
+                                <option value="" disabled selected>Pilih menu paket...</option>
+                                @foreach($packages as $package)<option value="{{ $package->id }}" {{ old('paket_id') == $package->id ? 'selected' : '' }}>{{ $package->name }}</option>@endforeach
+                            </select>
+                            @error('paket_id')<span class="text-red-500 text-xs">{{ $message }}</span>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label>
+                            <select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-yellow-500 font-bold focus:ring-yellow-500">
+                                <option value="5" {{ old('rating') == 5 ? 'selected' : '' }}>★★★★★ (Sempurna)</option>
+                                <option value="4" {{ old('rating') == 4 ? 'selected' : '' }}>★★★★ (Bagus)</option>
+                                <option value="3" {{ old('rating') == 3 ? 'selected' : '' }}>★★★ (Cukup)</option>
+                                <option value="2" {{ old('rating') == 2 ? 'selected' : '' }}>★★ (Kurang)</option>
+                                <option value="1" {{ old('rating') == 1 ? 'selected' : '' }}>★ (Buruk)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Ulasan Anda</label>
+                            <textarea name="comment" rows="4" required class="w-full border-gray-200 rounded-xl p-3 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Ceritakan pengalaman Anda...">{{ old('comment') }}</textarea>
+                            @error('comment')<span class="text-red-500 text-xs font-bold">{{ $message }}</span>@enderror
+                        </div>
                         <div><label class="block text-xs font-bold text-gray-800 uppercase mb-2">Foto Masakan (Opsional)</label><input type="file" name="image[]" multiple class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:bg-yellow-50 file:text-yellow-600 file:font-bold hover:file:bg-yellow-100 cursor-pointer"></div>
                     </div>
                     <div class="flex items-center justify-end gap-6 pt-4">

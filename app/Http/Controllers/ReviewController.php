@@ -19,12 +19,25 @@ class ReviewController extends Controller
 
     public function store(Request $request)
     {
-        // ... (code store anda tetap sama) ...
         $request->validate([
             'paket_id' => 'required|exists:paket,id',
             'name'     => 'required|string|max:255',
             'rating'   => 'required|integer|min:1|max:5',
-            'comment'  => 'required|string',
+            'comment'  => [
+                'required',
+                'string',
+                // --- INI TAMBAHAN KODENYA: Custom rule anti-link khusus untuk kolom comment ---
+                function ($attribute, $value, $fail) {
+                    $forbiddenWords = ['http', 'https', 'www', '.com', '.net', '.org', '.id', '.info'];
+                    foreach ($forbiddenWords as $word) {
+                        if (stripos($value, $word) !== false) {
+                            $fail('Maaf, review tidak boleh mengandung tautan atau link website.');
+                            return;
+                        }
+                    }
+                },
+                // -------------------------------------------------------------------------------
+            ],
             'image.*'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
