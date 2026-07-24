@@ -24,7 +24,8 @@
                 <h3 class="text-4xl font-black mb-6 text-gray-800 italic uppercase tracking-tighter"><?php echo e($package->name); ?></h3>
                 <div class="w-full h-64 overflow-hidden rounded-lg bg-gray-100 mb-6">
                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($package->image): ?>
-                        <img src="<?php echo e(asset('storage/' . $package->image)); ?>" alt="<?php echo e($package->name); ?>" class="w-full h-full object-cover">
+                        
+                        <img src="<?php echo e(url('storage/app/public/' . $package->image)); ?>" alt="<?php echo e($package->name); ?>" class="w-full h-full object-cover">
                     <?php else: ?>
                         <div class="flex flex-col items-center justify-center h-full text-gray-400">
                              <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -173,7 +174,6 @@ endif;
 unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
                             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
-                            
                         </div>
                     </div>
                 </div>

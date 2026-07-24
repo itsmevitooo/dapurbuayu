@@ -134,12 +134,19 @@ class OrderController extends Controller
             $invoiceCode = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
             $deadline = Carbon::parse($orderData['delivery_date'])->subDays(2)->endOfDay();
             
+            // 1. CEK METODE PEMBAYARAN DAN TENTUKAN HARGA MIDTRANS (DP 50% ATAU FULL)
+            $paymentMethod = $request->payment_method;
+            $totalPriceOriginal = (int) $orderData['total_price'];
+            
+            // Jika COD, harga dipotong 50%. Jika MIDTRANS (Lunas), harga full.
+            $midtransAmount = ($paymentMethod === 'COD') ? (int)($totalPriceOriginal / 2) : $totalPriceOriginal;
+
             $order = Order::create([
                 'invoice_code'     => $invoiceCode,
                 'full_name'        => $orderData['full_name'],
                 'phone_number'     => $orderData['phone_number'],
-                'total_price'      => $orderData['total_price'],
-                'payment_method'   => $request->payment_method,
+                'total_price'      => $totalPriceOriginal, // Tetap simpan harga total asli di database
+                'payment_method'   => $paymentMethod,
                 'address'          => $orderData['address'],
                 'delivery_date'    => $orderData['delivery_date'],
                 'payment_deadline' => $deadline,
@@ -155,54 +162,48 @@ class OrderController extends Controller
                 'item_name' => $orderData['package_name'], 
                 'quantity'  => $orderData['quantity'],
                 'price'     => $unitPrice,
-                'subtotal'  => $orderData['total_price'],
+                'subtotal'  => $orderData['total_price'], // Tetap subtotal asli
                 'side_dish' => $orderData['menu_selections'] ?? [], 
             ]);
 
             Paket::where('id', $orderData['package_id'])->increment('total_orders');
 
             $params = [
-                'transaction_details' => ['order_id' => $invoiceCode, 'gross_amount' => (int) $orderData['total_price']],
-                'customer_details' => ['first_name' => $orderData['full_name'], 'phone' => $orderData['phone_number']],
+                'transaction_details' => [
+                    'order_id' => $invoiceCode, 
+                    // 2. MASUKKAN VARIABEL YANG SUDAH DIHITUNG 50% KE GROSS AMOUNT
+                    'gross_amount' => $midtransAmount 
+                ],
+                'customer_details' => [
+                    'first_name' => $orderData['full_name'], 
+                    'phone' => $orderData['phone_number']
+                ],
             ];
 
             $snapToken = Snap::getSnapToken($params);
             $order->update(['snap_token' => $snapToken]);
 
             DB::commit();
-            return response()->json(['snap_token' => $snapToken, 'invoice_code' => $invoiceCode]);
+
+            // 3. SIAPKAN LINK REDIRECT WA UNTUK COD (Sesuaikan nomor WA Admin)
+            $adminWhatsApp = "6281234567890"; // Ganti dengan nomor WA Dapur Bu Ayu
+            $waMessage = urlencode("Halo Admin Dapur Bu Ayu, saya telah membayar DP pesanan catering dengan Nomor Invoice: {$invoiceCode}. Mohon segera diproses.");
+            $waRedirectUrl = "https://wa.me/{$adminWhatsApp}?text={$waMessage}";
+
+            // 4. KEMBALIKAN METHOD DAN REDIRECT_URL AGAR SCRIPT JS DI VIEW BERJALAN
+            return response()->json([
+                'snap_token' => $snapToken, 
+                'invoice_code' => $invoiceCode,
+                'method' => $paymentMethod,
+                'redirect_url' => $waRedirectUrl
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-    public function callback()
-    {
-        try {
-            $notification = new Notification();
-            $orderId = $notification->order_id;
-            $transactionStatus = $notification->transaction_status;
-
-            $order = Order::where('invoice_code', $orderId)->first();
-
-            if ($order) {
-                if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
-                    $order->update(['payment_status' => 'LUNAS']);
-                } else if ($transactionStatus == 'cancel' || $transactionStatus == 'deny' || $transactionStatus == 'expire') {
-                    $order->update(['payment_status' => 'EXPIRED']);
-                } else if ($transactionStatus == 'pending') {
-                    $order->update(['payment_status' => 'PENDING']);
-                }
-                return response()->json(['status' => 'OK']);
-            }
-        } catch (\Exception $e) {
-            Log::error("Error Callback: " . $e->getMessage());
-            return response()->json(['status' => 'Error'], 500);
-        }
-    }
-
+    
     public function success()
     {
         session()->forget('order_data');
