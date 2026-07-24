@@ -162,7 +162,7 @@ class OrderController extends Controller
                 'item_name' => $orderData['package_name'], 
                 'quantity'  => $orderData['quantity'],
                 'price'     => $unitPrice,
-                'subtotal'  => $orderData['total_price'], // Tetap subtotal asli
+                'subtotal'  => $orderData['total_price'],
                 'side_dish' => $orderData['menu_selections'] ?? [], 
             ]);
 
@@ -171,8 +171,7 @@ class OrderController extends Controller
             $params = [
                 'transaction_details' => [
                     'order_id' => $invoiceCode, 
-                    // 2. MASUKKAN VARIABEL YANG SUDAH DIHITUNG 50% KE GROSS AMOUNT
-                    'gross_amount' => $midtransAmount 
+                    'gross_amount' => $midtransAmount // Masukkan harga yang sudah dihitung 50% jika COD
                 ],
                 'customer_details' => [
                     'first_name' => $orderData['full_name'], 
@@ -185,12 +184,12 @@ class OrderController extends Controller
 
             DB::commit();
 
-            // 3. SIAPKAN LINK REDIRECT WA UNTUK COD (Sesuaikan nomor WA Admin)
-            $adminWhatsApp = "6281234567890"; // Ganti dengan nomor WA Dapur Bu Ayu
+            // 2. SIAPKAN LINK REDIRECT WA UNTUK COD
+            $adminWhatsApp = "6281234567890"; // Ganti dengan nomor WA Dapur Bu Ayu yang asli
             $waMessage = urlencode("Halo Admin Dapur Bu Ayu, saya telah membayar DP pesanan catering dengan Nomor Invoice: {$invoiceCode}. Mohon segera diproses.");
             $waRedirectUrl = "https://wa.me/{$adminWhatsApp}?text={$waMessage}";
 
-            // 4. KEMBALIKAN METHOD DAN REDIRECT_URL AGAR SCRIPT JS DI VIEW BERJALAN
+            // 3. KEMBALIKAN METHOD DAN REDIRECT_URL AGAR SCRIPT JS DI VIEW BERJALAN
             return response()->json([
                 'snap_token' => $snapToken, 
                 'invoice_code' => $invoiceCode,
@@ -201,6 +200,35 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function callback()
+    {
+        try {
+            $notification = new Notification();
+            $orderId = $notification->order_id;
+            $transactionStatus = $notification->transaction_status;
+
+            $order = Order::where('invoice_code', $orderId)->first();
+
+            if ($order) {
+                if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
+                    
+                    // CEK STATUS: Jika dia COD (bayar 50%), ubah status jadi DP DIBAYAR. Jika tidak, LUNAS.
+                    $status = ($order->payment_method === 'COD') ? 'DP DIBAYAR' : 'LUNAS';
+                    $order->update(['payment_status' => $status]);
+                    
+                } else if ($transactionStatus == 'cancel' || $transactionStatus == 'deny' || $transactionStatus == 'expire') {
+                    $order->update(['payment_status' => 'EXPIRED']);
+                } else if ($transactionStatus == 'pending') {
+                    $order->update(['payment_status' => 'PENDING']);
+                }
+                return response()->json(['status' => 'OK']);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error Callback: " . $e->getMessage());
+            return response()->json(['status' => 'Error'], 500);
         }
     }
     
