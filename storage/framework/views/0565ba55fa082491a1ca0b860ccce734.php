@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -46,10 +44,10 @@ class="py-12 px-4 max-w-7xl mx-auto"
         <p class="text-gray-500 font-inter uppercase tracking-[0.3em] text-[10px] mt-2 font-bold">Koleksi Foto Hidangan dan Momen Spesial</p>
     </div>
 
-    @php $groupedGalleries = $galleries->groupBy('category'); @endphp
+    <?php $groupedGalleries = $galleries->groupBy('category'); ?>
 
-    @forelse($groupedGalleries as $category => $items)
-    @php
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $groupedGalleries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+    <?php
         $categoryPhotosArr = $items->map(function($item) {
             // DIREVISI: Menggunakan asset() dengan timestamp untuk menghindari cache
             $src = asset('storage/' . $item->image) . '?v=' . time();
@@ -64,42 +62,43 @@ class="py-12 px-4 max-w-7xl mx-auto"
                 'author' => $item->review ? $item->review->name : 'Pelanggan Dapur Bu Ayu'
             ];
         })->toArray();
-    @endphp
+    ?>
     
         <div class="mb-20 relative group-section">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <h2 class="text-2xl font-black text-gray-800 uppercase tracking-wider flex items-center flex-1">
-                    {{ $category }}
+                    <?php echo e($category); ?>
+
                     <span class="hidden md:block flex-1 h-px bg-gray-200 ml-6"></span>
                 </h2>
-                <button @click="openGrid('{{ $category }}', {{ json_encode($categoryPhotosArr) }})" 
+                <button @click="openGrid('<?php echo e($category); ?>', <?php echo e(json_encode($categoryPhotosArr)); ?>)" 
                         class="px-6 py-3 bg-[#F1B168] hover:bg-[#E29A4D] text-white rounded-full font-inter text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow-md">
                     <span>Lihat Semua Foto</span>
                 </button>
             </div>
             
-            <div class="swiper mySwiper-{{ Str::slug($category) }} overflow-visible">
+            <div class="swiper mySwiper-<?php echo e(Str::slug($category)); ?> overflow-visible">
                 <div class="swiper-wrapper">
-                    @foreach($categoryPhotosArr as $index => $photo)
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $categoryPhotosArr; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="swiper-slide">
                             <div class="group relative overflow-hidden rounded-[2rem] shadow-sm bg-white cursor-pointer h-full"
-                                 @click="openPhotoDetail({{ $index }}, '{{ $category }}', {{ json_encode($categoryPhotosArr) }})">
+                                 @click="openPhotoDetail(<?php echo e($index); ?>, '<?php echo e($category); ?>', <?php echo e(json_encode($categoryPhotosArr)); ?>)">
                                 <div class="aspect-square overflow-hidden">
-                                    <img src="{{ $photo['src'] }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/400x400?text=Gambar+Tidak+Ditemukan'">
+                                    <img src="<?php echo e($photo['src']); ?>" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/400x400?text=Gambar+Tidak+Ditemukan'">
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 </div>
             </div>
         </div>
-    @empty
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
         <div class="text-center py-20 bg-gray-50 rounded-[3rem]">
             <p class="text-gray-400 italic text-lg tracking-widest uppercase font-bold">Belum ada koleksi foto.</p>
         </div>
-    @endforelse
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
-    {{-- MODAL GRID --}}
+    
     <div x-show="openGridModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md" @click="openGridModal = false" x-cloak>
         <div class="bg-white rounded-[2.5rem] max-w-5xl w-full p-8" @click.stop>
             <h3 class="text-xl font-black uppercase mb-4" x-text="'Foto ' + currentCategory"></h3>
@@ -111,7 +110,7 @@ class="py-12 px-4 max-w-7xl mx-auto"
         </div>
     </div>
 
-    {{-- MODAL CAROUSEL --}}
+    
     <div x-show="openCarouselModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90" @click="openCarouselModal = false" x-cloak>
         <div class="max-w-4xl w-full" @click.stop>
             <img :src="photos[currentIndex]?.src" class="max-h-[60vh] mx-auto rounded-2xl">
@@ -127,9 +126,10 @@ class="py-12 px-4 max-w-7xl mx-auto"
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        @foreach($groupedGalleries as $category => $items)
-            new Swiper(".mySwiper-{{ Str::slug($category) }}", { slidesPerView: 1, spaceBetween: 20, breakpoints: { 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } } });
-        @endforeach
+        <?php $__currentLoopData = $groupedGalleries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            new Swiper(".mySwiper-<?php echo e(Str::slug($category)); ?>", { slidesPerView: 1, spaceBetween: 20, breakpoints: { 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } } });
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\dapurbuayu\resources\views/gallery.blade.php ENDPATH**/ ?>

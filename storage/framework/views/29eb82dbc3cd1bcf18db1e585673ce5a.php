@@ -141,7 +141,8 @@
                             
                             <div class="flex flex-col h-full">
                                 <div class="h-48 overflow-hidden shrink-0">
-                                    <img src="<?php echo e(url('storage/app/public/' . $p->image)); ?>" class="w-full h-full object-cover" alt="<?php echo e($p->name); ?>">
+                                    
+                                    <img src="<?php echo e(asset('storage/' . $p->image) . '?v=' . time()); ?>" class="w-full h-full object-cover" alt="<?php echo e($p->name); ?>">
                                 </div>
                                 <div class="p-6 flex flex-col font-inter grow">
                                     <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2"><?php echo e($p->name); ?></h3>
@@ -208,7 +209,8 @@
                     
                     <div class="flex flex-col h-full">
                         <div class="h-48 overflow-hidden shrink-0">
-                            <img src="<?php echo e(url('storage/app/public/' . $p->image)); ?>" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="<?php echo e($p->name); ?>">
+                            
+                            <img src="<?php echo e(asset('storage/' . $p->image) . '?v=' . time()); ?>" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="<?php echo e($p->name); ?>">
                         </div>
                         
                         <div class="p-6 flex flex-col font-inter grow">
@@ -268,7 +270,6 @@
 <?php $__env->startPush('scripts'); ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Inisialisasi Swiper khusus halaman paket mobile
             new Swiper('.swiper-paket', {
                 slidesPerView: 1, 
                 spaceBetween: 20, 

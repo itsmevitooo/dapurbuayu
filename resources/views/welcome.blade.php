@@ -84,7 +84,6 @@
 @endpush
 
 @section('content')
-    <!-- REVISI: Tambahkan {{ $errors->any() ? 'true' : 'false' }} agar modal tetap buka saat error -->
     <div x-data="{ openReview: {{ $errors->any() ? 'true' : 'false' }} }">
         
         @php
@@ -161,9 +160,9 @@
                                     @forelse($package->details as $detail)
                                         @php $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true); @endphp
                                         @if(is_array($menuList))
-                                            @foreach($menuList as $menuItem)<li>• {{ $menuItem }}</li>@endforeach
+                                            @foreach($menuList as $menuItem)<li>&bull; {{ $menuItem }}</li>@endforeach
                                         @else
-                                            <li>• {{ $detail->name }}</li>
+                                            <li>&bull; {{ $detail->name }}</li>
                                         @endif
                                     @empty
                                         <li class="text-gray-400">Menu sedang disiapkan</li>
@@ -201,10 +200,10 @@
                         <div class="swiper-slide">
                             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-primary flex flex-col h-full w-full font-inter">
                                 <div class="flex text-yellow-400 mb-3">
-                                    @for($i = 1; $i <= 5; $i++)<span class="text-lg">{{ $i <= $review->rating ? '★' : '☆' }}</span>@endfor
+                                    @for($i = 1; $i <= 5; $i++)<span class="text-lg">{{ $i <= $review->rating ? 'â˜…' : 'â˜†' }}</span>@endfor
                                 </div>
                                 <div class="mb-3">
-                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">📦 {{ $review->product->name ?? 'Paket Katering' }}</span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">ðŸ“¦ {{ $review->product->name ?? 'Paket Katering' }}</span>
                                 </div>
                                 <p class="italic text-gray-700 mb-4 flex-grow text-sm line-clamp-4 leading-relaxed">"{{ Str::limit($review->comment, 100) }}"</p>
                                 @if($review->image)
@@ -260,11 +259,11 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label>
                             <select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-yellow-500 font-bold focus:ring-yellow-500">
-                                <option value="5" {{ old('rating') == 5 ? 'selected' : '' }}>★★★★★ (Sempurna)</option>
-                                <option value="4" {{ old('rating') == 4 ? 'selected' : '' }}>★★★★ (Bagus)</option>
-                                <option value="3" {{ old('rating') == 3 ? 'selected' : '' }}>★★★ (Cukup)</option>
-                                <option value="2" {{ old('rating') == 2 ? 'selected' : '' }}>★★ (Kurang)</option>
-                                <option value="1" {{ old('rating') == 1 ? 'selected' : '' }}>★ (Buruk)</option>
+                                <option value="5" {{ old('rating') == 5 ? 'selected' : '' }}>&#9733;&#9733;&#9733;&#9733;&#9733; (Sempurna)</option>
+                                <option value="4" {{ old('rating') == 4 ? 'selected' : '' }}>&#9733;&#9733;&#9733;&#9733; (Bagus)</option>
+                                <option value="3" {{ old('rating') == 3 ? 'selected' : '' }}>&#9733;&#9733;&#9733; (Cukup)</option>
+                                <option value="2" {{ old('rating') == 2 ? 'selected' : '' }}>&#9733;&#9733; (Kurang)</option>
+                                <option value="1" {{ old('rating') == 1 ? 'selected' : '' }}>&#9733; (Buruk)</option>
                             </select>
                         </div>
                         <div>

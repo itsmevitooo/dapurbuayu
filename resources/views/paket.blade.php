@@ -142,7 +142,8 @@
                             {{-- Bagian Atas Card --}}
                             <div class="flex flex-col h-full">
                                 <div class="h-48 overflow-hidden shrink-0">
-                                    <img src="{{ url('storage/app/public/' . $p->image) }}" class="w-full h-full object-cover" alt="{{ $p->name }}">
+                                    {{-- DIREVISI: Menggunakan asset() dengan timestamp --}}
+                                    <img src="{{ asset('storage/' . $p->image) . '?v=' . time() }}" class="w-full h-full object-cover" alt="{{ $p->name }}">
                                 </div>
                                 <div class="p-6 flex flex-col font-inter grow">
                                     <h3 class="text-2xl font-bold mb-2 text-gray-800 uppercase italic text-center line-clamp-2">{{ $p->name }}</h3>
@@ -154,7 +155,7 @@
                                         </p>
                                     @endif
 
-                                    {{-- Rincian List Menu (Dibatasi Tingginya Secara Statis) --}}
+                                    {{-- Rincian List Menu --}}
                                     <div class="mt-auto border-t border-gray-50 pt-3">
                                         <ul class="text-xs text-gray-600 space-y-1.5 max-h-24 overflow-y-auto custom-scrollbar italic text-left pr-1">
                                             @forelse($p->details as $detail)
@@ -198,7 +199,7 @@
         </div>
     </div>
 
-    {{-- Tampilan Desktop (Disembunyikan pada layar kecil via hidden md:flex) --}}
+    {{-- Tampilan Desktop --}}
     <div class="hidden md:flex w-full py-4">
         <div class="pc-kartu-tengah">
             @forelse($pakets as $p)
@@ -206,7 +207,8 @@
                     {{-- Bagian Atas Card --}}
                     <div class="flex flex-col h-full">
                         <div class="h-48 overflow-hidden shrink-0">
-                            <img src="{{ url('storage/app/public/' . $p->image) }}" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="{{ $p->name }}">
+                            {{-- DIREVISI: Menggunakan asset() dengan timestamp --}}
+                            <img src="{{ asset('storage/' . $p->image) . '?v=' . time() }}" class="w-full h-full object-cover duration-500 group-hover:scale-110" alt="{{ $p->name }}">
                         </div>
                         
                         <div class="p-6 flex flex-col font-inter grow">
@@ -219,7 +221,7 @@
                                 </p>
                             @endif
                             
-                            {{-- Rincian List Menu (Dibatasi Tingginya Secara Statis) --}}
+                            {{-- Rincian List Menu --}}
                             <div class="mt-auto border-t border-gray-50 pt-3">
                                 <ul class="text-xs text-gray-600 space-y-1.5 max-h-24 overflow-y-auto custom-scrollbar italic text-left pr-1">
                                     @forelse($p->details as $detail)
@@ -241,7 +243,7 @@
                         </div>
                     </div>
 
-                    {{-- Bagian Bawah Harga & Tombol (Dibuat paten menempel di bawah) --}}
+                    {{-- Bagian Bawah Harga & Tombol --}}
                     <div class="p-6 border-t border-gray-50 bg-gray-50/50 shrink-0 mt-auto">
                         <p class="text-2xl font-black text-primary mb-4 text-center italic">Rp {{ number_format($p->price, 0, ',', '.') }}</p>
                         <a href="{{ route('paket.detail', $p->id) }}" class="block w-full bg-slate-800 text-white font-bold py-3 rounded-full text-center uppercase text-[10px] tracking-widest shadow-md hover:bg-slate-900 transition-colors btn-hover-anim">
@@ -263,7 +265,6 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Inisialisasi Swiper khusus halaman paket mobile
             new Swiper('.swiper-paket', {
                 slidesPerView: 1, 
                 spaceBetween: 20, 

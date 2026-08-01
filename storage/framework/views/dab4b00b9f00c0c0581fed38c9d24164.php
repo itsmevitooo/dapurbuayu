@@ -82,7 +82,6 @@
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
-    <!-- REVISI: Tambahkan <?php echo e($errors->any() ? 'true' : 'false'); ?> agar modal tetap buka saat error -->
     <div x-data="{ openReview: <?php echo e($errors->any() ? 'true' : 'false'); ?> }">
         
         <?php
@@ -161,9 +160,9 @@
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_2 = true; $__currentLoopData = $package->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                         <?php $menuList = is_array($detail->name) ? $detail->name : json_decode($detail->name, true); ?>
                                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(is_array($menuList)): ?>
-                                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $menuList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><li>• <?php echo e($menuItem); ?></li><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $menuList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menuItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><li>&bull; <?php echo e($menuItem); ?></li><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                         <?php else: ?>
-                                            <li>• <?php echo e($detail->name); ?></li>
+                                            <li>&bull; <?php echo e($detail->name); ?></li>
                                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
                                         <li class="text-gray-400">Menu sedang disiapkan</li>
@@ -201,10 +200,10 @@
                         <div class="swiper-slide">
                             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-primary flex flex-col h-full w-full font-inter">
                                 <div class="flex text-yellow-400 mb-3">
-                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php for($i = 1; $i <= 5; $i++): ?><span class="text-lg"><?php echo e($i <= $review->rating ? '★' : '☆'); ?></span><?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php for($i = 1; $i <= 5; $i++): ?><span class="text-lg"><?php echo e($i <= $review->rating ? 'â˜…' : 'â˜†'); ?></span><?php endfor; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">📦 <?php echo e($review->product->name ?? 'Paket Katering'); ?></span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter border border-yellow-200">ðŸ“¦ <?php echo e($review->product->name ?? 'Paket Katering'); ?></span>
                                 </div>
                                 <p class="italic text-gray-700 mb-4 flex-grow text-sm line-clamp-4 leading-relaxed">"<?php echo e(Str::limit($review->comment, 100)); ?>"</p>
                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($review->image): ?>
@@ -274,11 +273,11 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                         <div>
                             <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Rating</label>
                             <select name="rating" required class="w-full border-gray-200 rounded-xl p-3 text-yellow-500 font-bold focus:ring-yellow-500">
-                                <option value="5" <?php echo e(old('rating') == 5 ? 'selected' : ''); ?>>★★★★★ (Sempurna)</option>
-                                <option value="4" <?php echo e(old('rating') == 4 ? 'selected' : ''); ?>>★★★★ (Bagus)</option>
-                                <option value="3" <?php echo e(old('rating') == 3 ? 'selected' : ''); ?>>★★★ (Cukup)</option>
-                                <option value="2" <?php echo e(old('rating') == 2 ? 'selected' : ''); ?>>★★ (Kurang)</option>
-                                <option value="1" <?php echo e(old('rating') == 1 ? 'selected' : ''); ?>>★ (Buruk)</option>
+                                <option value="5" <?php echo e(old('rating') == 5 ? 'selected' : ''); ?>>&#9733;&#9733;&#9733;&#9733;&#9733; (Sempurna)</option>
+                                <option value="4" <?php echo e(old('rating') == 4 ? 'selected' : ''); ?>>&#9733;&#9733;&#9733;&#9733; (Bagus)</option>
+                                <option value="3" <?php echo e(old('rating') == 3 ? 'selected' : ''); ?>>&#9733;&#9733;&#9733; (Cukup)</option>
+                                <option value="2" <?php echo e(old('rating') == 2 ? 'selected' : ''); ?>>&#9733;&#9733; (Kurang)</option>
+                                <option value="1" <?php echo e(old('rating') == 1 ? 'selected' : ''); ?>>&#9733; (Buruk)</option>
                             </select>
                         </div>
                         <div>
